@@ -29,10 +29,96 @@ export interface Account {
   userId: string
 }
 
+export interface Community {
+  bannerImageKey: string | null
+  createdAt: Generated<Timestamp>
+  createdByUserId: string | null
+  defaultCommentSort: Generated<string>
+  description: string
+  displayName: string | null
+  iconImageKey: string | null
+  id: string
+  isNsfw: Generated<boolean>
+  memberCount: Generated<number>
+  name: string
+  topicId: string | null
+  visibility: Generated<string>
+}
+
+export interface CommunityJoinRequest {
+  communityId: string
+  createdAt: Generated<Timestamp>
+  id: string
+  message: string | null
+  resolvedAt: Timestamp | null
+  resolvedByUserId: string | null
+  status: Generated<string>
+  userId: string
+}
+
+export interface CommunityMember {
+  communityId: string
+  id: string
+  isFavorite: Generated<boolean>
+  joinedAt: Generated<Timestamp>
+  notificationLevel: Generated<string>
+  userId: string
+}
+
+export interface CommunityModerator {
+  addedAt: Generated<Timestamp>
+  communityId: string
+  id: string
+  permConfig: Generated<boolean>
+  permEverything: Generated<boolean>
+  permFlair: Generated<boolean>
+  permMail: Generated<boolean>
+  permPostsComments: Generated<boolean>
+  permUsers: Generated<boolean>
+  permWiki: Generated<boolean>
+  position: number
+  userId: string
+}
+
+export interface CommunityRule {
+  communityId: string
+  createdAt: Generated<Timestamp>
+  description: string | null
+  id: string
+  name: string
+  position: number
+}
+
+export interface CommunityUserFlair {
+  communityId: string
+  customText: string | null
+  id: string
+  userFlairTemplateId: string | null
+  userId: string
+}
+
+export interface PostFlairTemplate {
+  bgColor: string | null
+  communityId: string
+  createdAt: Generated<Timestamp>
+  id: string
+  modOnly: Generated<boolean>
+  position: Generated<number>
+  text: string
+  textColor: string | null
+}
+
 export interface Session {
   expires: Timestamp
   sessionKey: string
   userId: string
+}
+
+export interface Topic {
+  displayOrder: number
+  id: string
+  name: string
+  slug: string
 }
 
 export interface User {
@@ -51,6 +137,18 @@ export interface User {
   suspendedAt: Timestamp | null
   suspensionReason: string | null
   username: string
+}
+
+export interface UserFlairTemplate {
+  bgColor: string | null
+  communityId: string
+  createdAt: Generated<Timestamp>
+  id: string
+  modOnly: Generated<boolean>
+  position: Generated<number>
+  selfAssignable: Generated<boolean>
+  text: string
+  textColor: string | null
 }
 
 export interface UserSettings {
@@ -74,7 +172,16 @@ export interface UserSettings {
 
 export interface DB {
   account: Account
+  community: Community
+  communityJoinRequest: CommunityJoinRequest
+  communityMember: CommunityMember
+  communityModerator: CommunityModerator
+  communityRule: CommunityRule
+  communityUserFlair: CommunityUserFlair
+  postFlairTemplate: PostFlairTemplate
   session: Session
+  topic: Topic
   user: User
+  userFlairTemplate: UserFlairTemplate
   userSettings: UserSettings
 }
