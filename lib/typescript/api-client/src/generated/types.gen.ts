@@ -356,3 +356,978 @@ export type PatchApiV1UserMeSettingsResponses = {
 
 export type PatchApiV1UserMeSettingsResponse =
   PatchApiV1UserMeSettingsResponses[keyof PatchApiV1UserMeSettingsResponses]
+
+export type GetApiV1TopicData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/topic"
+}
+
+export type GetApiV1TopicResponses = {
+  /**
+   * List of topics
+   */
+  200: {
+    data: Array<{
+      id: string
+      name: string
+      slug: string
+      displayOrder: number
+    }>
+  }
+}
+
+export type GetApiV1TopicResponse = GetApiV1TopicResponses[keyof GetApiV1TopicResponses]
+
+export type GetApiV1CommunityNameAvailableData = {
+  body?: never
+  path?: never
+  query: {
+    name: string
+  }
+  url: "/api/v1/community/name-available"
+}
+
+export type GetApiV1CommunityNameAvailableErrors = {
+  /**
+   * Invalid community name
+   */
+  400: ErrorResponseT
+}
+
+export type GetApiV1CommunityNameAvailableError =
+  GetApiV1CommunityNameAvailableErrors[keyof GetApiV1CommunityNameAvailableErrors]
+
+export type GetApiV1CommunityNameAvailableResponses = {
+  /**
+   * Availability result
+   */
+  200: {
+    available: boolean
+  }
+}
+
+export type GetApiV1CommunityNameAvailableResponse =
+  GetApiV1CommunityNameAvailableResponses[keyof GetApiV1CommunityNameAvailableResponses]
+
+export type GetApiV1CommunityByNameData = {
+  body?: never
+  path: {
+    name: string
+  }
+  query?: never
+  url: "/api/v1/community/{name}"
+}
+
+export type GetApiV1CommunityByNameErrors = {
+  /**
+   * Community not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1CommunityByNameError =
+  GetApiV1CommunityByNameErrors[keyof GetApiV1CommunityByNameErrors]
+
+export type GetApiV1CommunityByNameResponses = {
+  /**
+   * Community detail
+   */
+  200: {
+    id: string
+    name: string
+    displayName: string | null
+    description: string
+    visibility: string
+    isNsfw: boolean
+    topicId: string | null
+    iconImageKey: string | null
+    bannerImageKey: string | null
+    memberCount: number
+    defaultCommentSort: string
+    createdAt: Date
+    rules: Array<{
+      id: string
+      name: string
+      description: string | null
+      position: number
+    }>
+    moderators: Array<{
+      userId: string
+      username: string
+      avatarImageKey: string | null
+      position: number
+    }>
+    viewer: {
+      isMember: boolean
+      isFavorite: boolean
+      isModerator: boolean
+      notificationLevel: "off" | "low" | "frequent" | null
+      pendingJoinRequest: boolean
+    }
+  }
+}
+
+export type GetApiV1CommunityByNameResponse =
+  GetApiV1CommunityByNameResponses[keyof GetApiV1CommunityByNameResponses]
+
+export type PostApiV1CommunityData = {
+  body?: {
+    name: string
+    displayName?: string | null
+    description: string
+    visibility?: "public" | "restricted" | "private"
+    isNsfw?: boolean
+    topicId?: string | null
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/community"
+}
+
+export type PostApiV1CommunityErrors = {
+  /**
+   * Invalid request or name already taken
+   */
+  400: ErrorResponseT
+}
+
+export type PostApiV1CommunityError = PostApiV1CommunityErrors[keyof PostApiV1CommunityErrors]
+
+export type PostApiV1CommunityResponses = {
+  /**
+   * Community created
+   */
+  201: {
+    id: string
+    name: string
+  }
+}
+
+export type PostApiV1CommunityResponse =
+  PostApiV1CommunityResponses[keyof PostApiV1CommunityResponses]
+
+export type PatchApiV1CommunityByIdData = {
+  body?: {
+    displayName?: string | null
+    description?: string
+    defaultCommentSort?: "best" | "top" | "new" | "controversial" | "old"
+    topicId?: string | null
+    isNsfw?: boolean
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community/{id}"
+}
+
+export type PatchApiV1CommunityByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Community not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1CommunityByIdError =
+  PatchApiV1CommunityByIdErrors[keyof PatchApiV1CommunityByIdErrors]
+
+export type PatchApiV1CommunityByIdResponses = {
+  /**
+   * Community updated
+   */
+  200: {
+    id: string
+    name: string
+  }
+}
+
+export type PatchApiV1CommunityByIdResponse =
+  PatchApiV1CommunityByIdResponses[keyof PatchApiV1CommunityByIdResponses]
+
+export type GetApiV1CommunityMemberMineData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/community-member/mine"
+}
+
+export type GetApiV1CommunityMemberMineResponses = {
+  /**
+   * Joined communities
+   */
+  200: {
+    data: Array<{
+      id: string
+      name: string
+      displayName: string | null
+      iconImageKey: string | null
+      isFavorite: boolean
+      notificationLevel: string
+    }>
+  }
+}
+
+export type GetApiV1CommunityMemberMineResponse =
+  GetApiV1CommunityMemberMineResponses[keyof GetApiV1CommunityMemberMineResponses]
+
+export type GetApiV1CommunityMemberModeratedData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/community-member/moderated"
+}
+
+export type GetApiV1CommunityMemberModeratedResponses = {
+  /**
+   * Moderated communities
+   */
+  200: {
+    data: Array<{
+      id: string
+      name: string
+      displayName: string | null
+      iconImageKey: string | null
+    }>
+  }
+}
+
+export type GetApiV1CommunityMemberModeratedResponse =
+  GetApiV1CommunityMemberModeratedResponses[keyof GetApiV1CommunityMemberModeratedResponses]
+
+export type PostApiV1CommunityMemberByCommunityIdJoinData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-member/{communityId}/join"
+}
+
+export type PostApiV1CommunityMemberByCommunityIdJoinErrors = {
+  /**
+   * Community not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1CommunityMemberByCommunityIdJoinError =
+  PostApiV1CommunityMemberByCommunityIdJoinErrors[keyof PostApiV1CommunityMemberByCommunityIdJoinErrors]
+
+export type PostApiV1CommunityMemberByCommunityIdJoinResponses = {
+  /**
+   * Join or request result
+   */
+  200: {
+    joined: boolean
+    requested: boolean
+  }
+}
+
+export type PostApiV1CommunityMemberByCommunityIdJoinResponse =
+  PostApiV1CommunityMemberByCommunityIdJoinResponses[keyof PostApiV1CommunityMemberByCommunityIdJoinResponses]
+
+export type PostApiV1CommunityMemberByCommunityIdLeaveData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-member/{communityId}/leave"
+}
+
+export type PostApiV1CommunityMemberByCommunityIdLeaveResponses = {
+  /**
+   * Left the community
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1CommunityMemberByCommunityIdLeaveResponse =
+  PostApiV1CommunityMemberByCommunityIdLeaveResponses[keyof PostApiV1CommunityMemberByCommunityIdLeaveResponses]
+
+export type PatchApiV1CommunityMemberByCommunityIdMembershipData = {
+  body?: {
+    isFavorite?: boolean
+    notificationLevel?: "off" | "low" | "frequent"
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-member/{communityId}/membership"
+}
+
+export type PatchApiV1CommunityMemberByCommunityIdMembershipErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Membership not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1CommunityMemberByCommunityIdMembershipError =
+  PatchApiV1CommunityMemberByCommunityIdMembershipErrors[keyof PatchApiV1CommunityMemberByCommunityIdMembershipErrors]
+
+export type PatchApiV1CommunityMemberByCommunityIdMembershipResponses = {
+  /**
+   * Membership updated
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PatchApiV1CommunityMemberByCommunityIdMembershipResponse =
+  PatchApiV1CommunityMemberByCommunityIdMembershipResponses[keyof PatchApiV1CommunityMemberByCommunityIdMembershipResponses]
+
+export type GetApiV1CommunityRuleByCommunityIdData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-rule/{communityId}"
+}
+
+export type GetApiV1CommunityRuleByCommunityIdResponses = {
+  /**
+   * Community rules
+   */
+  200: {
+    data: Array<{
+      id: string
+      name: string
+      description: string | null
+      position: number
+    }>
+  }
+}
+
+export type GetApiV1CommunityRuleByCommunityIdResponse =
+  GetApiV1CommunityRuleByCommunityIdResponses[keyof GetApiV1CommunityRuleByCommunityIdResponses]
+
+export type PostApiV1CommunityRuleByCommunityIdData = {
+  body?: {
+    name: string
+    description?: string | null
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-rule/{communityId}"
+}
+
+export type PostApiV1CommunityRuleByCommunityIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1CommunityRuleByCommunityIdError =
+  PostApiV1CommunityRuleByCommunityIdErrors[keyof PostApiV1CommunityRuleByCommunityIdErrors]
+
+export type PostApiV1CommunityRuleByCommunityIdResponses = {
+  /**
+   * Rule created
+   */
+  201: {
+    id: string
+  }
+}
+
+export type PostApiV1CommunityRuleByCommunityIdResponse =
+  PostApiV1CommunityRuleByCommunityIdResponses[keyof PostApiV1CommunityRuleByCommunityIdResponses]
+
+export type DeleteApiV1CommunityRuleByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community-rule/{id}"
+}
+
+export type DeleteApiV1CommunityRuleByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Rule not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1CommunityRuleByIdError =
+  DeleteApiV1CommunityRuleByIdErrors[keyof DeleteApiV1CommunityRuleByIdErrors]
+
+export type DeleteApiV1CommunityRuleByIdResponses = {
+  /**
+   * Rule deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1CommunityRuleByIdResponse =
+  DeleteApiV1CommunityRuleByIdResponses[keyof DeleteApiV1CommunityRuleByIdResponses]
+
+export type PatchApiV1CommunityRuleByIdData = {
+  body?: {
+    name?: string
+    description?: string | null
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community-rule/{id}"
+}
+
+export type PatchApiV1CommunityRuleByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Rule not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1CommunityRuleByIdError =
+  PatchApiV1CommunityRuleByIdErrors[keyof PatchApiV1CommunityRuleByIdErrors]
+
+export type PatchApiV1CommunityRuleByIdResponses = {
+  /**
+   * Rule updated
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PatchApiV1CommunityRuleByIdResponse =
+  PatchApiV1CommunityRuleByIdResponses[keyof PatchApiV1CommunityRuleByIdResponses]
+
+export type PutApiV1CommunityRuleByCommunityIdReorderData = {
+  body?: {
+    orderedIds: Array<string>
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-rule/{communityId}/reorder"
+}
+
+export type PutApiV1CommunityRuleByCommunityIdReorderErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PutApiV1CommunityRuleByCommunityIdReorderError =
+  PutApiV1CommunityRuleByCommunityIdReorderErrors[keyof PutApiV1CommunityRuleByCommunityIdReorderErrors]
+
+export type PutApiV1CommunityRuleByCommunityIdReorderResponses = {
+  /**
+   * Rules reordered
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PutApiV1CommunityRuleByCommunityIdReorderResponse =
+  PutApiV1CommunityRuleByCommunityIdReorderResponses[keyof PutApiV1CommunityRuleByCommunityIdReorderResponses]
+
+export type GetApiV1CommunityJoinRequestByCommunityIdPendingData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-join-request/{communityId}/pending"
+}
+
+export type GetApiV1CommunityJoinRequestByCommunityIdPendingErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type GetApiV1CommunityJoinRequestByCommunityIdPendingError =
+  GetApiV1CommunityJoinRequestByCommunityIdPendingErrors[keyof GetApiV1CommunityJoinRequestByCommunityIdPendingErrors]
+
+export type GetApiV1CommunityJoinRequestByCommunityIdPendingResponses = {
+  /**
+   * Pending join requests
+   */
+  200: {
+    data: Array<{
+      id: string
+      userId: string
+      username: string
+      avatarImageKey: string | null
+      message: string | null
+      createdAt: Date
+    }>
+  }
+}
+
+export type GetApiV1CommunityJoinRequestByCommunityIdPendingResponse =
+  GetApiV1CommunityJoinRequestByCommunityIdPendingResponses[keyof GetApiV1CommunityJoinRequestByCommunityIdPendingResponses]
+
+export type PostApiV1CommunityJoinRequestByIdApproveData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community-join-request/{id}/approve"
+}
+
+export type PostApiV1CommunityJoinRequestByIdApproveErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Join request not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1CommunityJoinRequestByIdApproveError =
+  PostApiV1CommunityJoinRequestByIdApproveErrors[keyof PostApiV1CommunityJoinRequestByIdApproveErrors]
+
+export type PostApiV1CommunityJoinRequestByIdApproveResponses = {
+  /**
+   * Join request approved
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1CommunityJoinRequestByIdApproveResponse =
+  PostApiV1CommunityJoinRequestByIdApproveResponses[keyof PostApiV1CommunityJoinRequestByIdApproveResponses]
+
+export type PostApiV1CommunityJoinRequestByIdDenyData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community-join-request/{id}/deny"
+}
+
+export type PostApiV1CommunityJoinRequestByIdDenyErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Join request not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1CommunityJoinRequestByIdDenyError =
+  PostApiV1CommunityJoinRequestByIdDenyErrors[keyof PostApiV1CommunityJoinRequestByIdDenyErrors]
+
+export type PostApiV1CommunityJoinRequestByIdDenyResponses = {
+  /**
+   * Join request denied
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1CommunityJoinRequestByIdDenyResponse =
+  PostApiV1CommunityJoinRequestByIdDenyResponses[keyof PostApiV1CommunityJoinRequestByIdDenyResponses]
+
+export type GetApiV1FlairByCommunityIdPostTemplatesData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/flair/{communityId}/post-templates"
+}
+
+export type GetApiV1FlairByCommunityIdPostTemplatesResponses = {
+  /**
+   * Post flair templates
+   */
+  200: {
+    data: Array<{
+      id: string
+      text: string
+      bgColor: string | null
+      textColor: string | null
+      modOnly: boolean
+      position: number
+    }>
+  }
+}
+
+export type GetApiV1FlairByCommunityIdPostTemplatesResponse =
+  GetApiV1FlairByCommunityIdPostTemplatesResponses[keyof GetApiV1FlairByCommunityIdPostTemplatesResponses]
+
+export type PostApiV1FlairByCommunityIdPostTemplatesData = {
+  body?: {
+    text: string
+    bgColor?: string | null
+    textColor?: string | null
+    modOnly?: boolean
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/flair/{communityId}/post-templates"
+}
+
+export type PostApiV1FlairByCommunityIdPostTemplatesErrors = {
+  /**
+   * Flair cap reached
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1FlairByCommunityIdPostTemplatesError =
+  PostApiV1FlairByCommunityIdPostTemplatesErrors[keyof PostApiV1FlairByCommunityIdPostTemplatesErrors]
+
+export type PostApiV1FlairByCommunityIdPostTemplatesResponses = {
+  /**
+   * Post flair template created
+   */
+  201: {
+    id: string
+  }
+}
+
+export type PostApiV1FlairByCommunityIdPostTemplatesResponse =
+  PostApiV1FlairByCommunityIdPostTemplatesResponses[keyof PostApiV1FlairByCommunityIdPostTemplatesResponses]
+
+export type GetApiV1FlairByCommunityIdUserTemplatesData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/flair/{communityId}/user-templates"
+}
+
+export type GetApiV1FlairByCommunityIdUserTemplatesResponses = {
+  /**
+   * User flair templates
+   */
+  200: {
+    data: Array<{
+      id: string
+      text: string
+      bgColor: string | null
+      textColor: string | null
+      modOnly: boolean
+      selfAssignable: boolean
+      position: number
+    }>
+  }
+}
+
+export type GetApiV1FlairByCommunityIdUserTemplatesResponse =
+  GetApiV1FlairByCommunityIdUserTemplatesResponses[keyof GetApiV1FlairByCommunityIdUserTemplatesResponses]
+
+export type PostApiV1FlairByCommunityIdUserTemplatesData = {
+  body?: {
+    text: string
+    bgColor?: string | null
+    textColor?: string | null
+    modOnly?: boolean
+    selfAssignable?: boolean
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/flair/{communityId}/user-templates"
+}
+
+export type PostApiV1FlairByCommunityIdUserTemplatesErrors = {
+  /**
+   * Flair cap reached
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1FlairByCommunityIdUserTemplatesError =
+  PostApiV1FlairByCommunityIdUserTemplatesErrors[keyof PostApiV1FlairByCommunityIdUserTemplatesErrors]
+
+export type PostApiV1FlairByCommunityIdUserTemplatesResponses = {
+  /**
+   * User flair template created
+   */
+  201: {
+    id: string
+  }
+}
+
+export type PostApiV1FlairByCommunityIdUserTemplatesResponse =
+  PostApiV1FlairByCommunityIdUserTemplatesResponses[keyof PostApiV1FlairByCommunityIdUserTemplatesResponses]
+
+export type DeleteApiV1FlairPostTemplatesByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/flair/post-templates/{id}"
+}
+
+export type DeleteApiV1FlairPostTemplatesByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Post flair template not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1FlairPostTemplatesByIdError =
+  DeleteApiV1FlairPostTemplatesByIdErrors[keyof DeleteApiV1FlairPostTemplatesByIdErrors]
+
+export type DeleteApiV1FlairPostTemplatesByIdResponses = {
+  /**
+   * Post flair template deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1FlairPostTemplatesByIdResponse =
+  DeleteApiV1FlairPostTemplatesByIdResponses[keyof DeleteApiV1FlairPostTemplatesByIdResponses]
+
+export type PatchApiV1FlairPostTemplatesByIdData = {
+  body?: {
+    text?: string
+    bgColor?: string | null
+    textColor?: string | null
+    modOnly?: boolean
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/flair/post-templates/{id}"
+}
+
+export type PatchApiV1FlairPostTemplatesByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Post flair template not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1FlairPostTemplatesByIdError =
+  PatchApiV1FlairPostTemplatesByIdErrors[keyof PatchApiV1FlairPostTemplatesByIdErrors]
+
+export type PatchApiV1FlairPostTemplatesByIdResponses = {
+  /**
+   * Post flair template updated
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PatchApiV1FlairPostTemplatesByIdResponse =
+  PatchApiV1FlairPostTemplatesByIdResponses[keyof PatchApiV1FlairPostTemplatesByIdResponses]
+
+export type DeleteApiV1FlairUserTemplatesByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/flair/user-templates/{id}"
+}
+
+export type DeleteApiV1FlairUserTemplatesByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * User flair template not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1FlairUserTemplatesByIdError =
+  DeleteApiV1FlairUserTemplatesByIdErrors[keyof DeleteApiV1FlairUserTemplatesByIdErrors]
+
+export type DeleteApiV1FlairUserTemplatesByIdResponses = {
+  /**
+   * User flair template deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1FlairUserTemplatesByIdResponse =
+  DeleteApiV1FlairUserTemplatesByIdResponses[keyof DeleteApiV1FlairUserTemplatesByIdResponses]
+
+export type PatchApiV1FlairUserTemplatesByIdData = {
+  body?: {
+    text?: string
+    bgColor?: string | null
+    textColor?: string | null
+    modOnly?: boolean
+    selfAssignable?: boolean
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/flair/user-templates/{id}"
+}
+
+export type PatchApiV1FlairUserTemplatesByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * User flair template not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1FlairUserTemplatesByIdError =
+  PatchApiV1FlairUserTemplatesByIdErrors[keyof PatchApiV1FlairUserTemplatesByIdErrors]
+
+export type PatchApiV1FlairUserTemplatesByIdResponses = {
+  /**
+   * User flair template updated
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PatchApiV1FlairUserTemplatesByIdResponse =
+  PatchApiV1FlairUserTemplatesByIdResponses[keyof PatchApiV1FlairUserTemplatesByIdResponses]
+
+export type PutApiV1FlairByCommunityIdMyFlairData = {
+  body?: {
+    userFlairTemplateId?: string | null
+    customText?: string | null
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/flair/{communityId}/my-flair"
+}
+
+export type PutApiV1FlairByCommunityIdMyFlairErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Flair template not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1FlairByCommunityIdMyFlairError =
+  PutApiV1FlairByCommunityIdMyFlairErrors[keyof PutApiV1FlairByCommunityIdMyFlairErrors]
+
+export type PutApiV1FlairByCommunityIdMyFlairResponses = {
+  /**
+   * User flair updated
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PutApiV1FlairByCommunityIdMyFlairResponse =
+  PutApiV1FlairByCommunityIdMyFlairResponses[keyof PutApiV1FlairByCommunityIdMyFlairResponses]
+
+export type GetApiV1ExploreData = {
+  body?: never
+  path?: never
+  query?: {
+    topic?: string
+    offset?: number
+  }
+  url: "/api/v1/explore"
+}
+
+export type GetApiV1ExploreResponses = {
+  /**
+   * Explore feed
+   */
+  200: {
+    topics: Array<{
+      id: string
+      name: string
+      slug: string
+    }>
+    sections: Array<{
+      topicId: string
+      topicName: string
+      topicSlug: string
+      communities: Array<{
+        id: string
+        name: string
+        displayName: string | null
+        description: string
+        iconImageKey: string | null
+        memberCount: number
+        isNsfw: boolean
+      }>
+      hasMore: boolean
+    }>
+  }
+}
+
+export type GetApiV1ExploreResponse = GetApiV1ExploreResponses[keyof GetApiV1ExploreResponses]

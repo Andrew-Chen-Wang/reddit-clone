@@ -3,11 +3,43 @@
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from "./client"
 import { client } from "./client.gen"
 import type {
+  DeleteApiV1CommunityRuleByIdData,
+  DeleteApiV1CommunityRuleByIdErrors,
+  DeleteApiV1CommunityRuleByIdResponses,
+  DeleteApiV1FlairPostTemplatesByIdData,
+  DeleteApiV1FlairPostTemplatesByIdErrors,
+  DeleteApiV1FlairPostTemplatesByIdResponses,
+  DeleteApiV1FlairUserTemplatesByIdData,
+  DeleteApiV1FlairUserTemplatesByIdErrors,
+  DeleteApiV1FlairUserTemplatesByIdResponses,
   DeleteApiV1UserMeDeleteData,
   DeleteApiV1UserMeDeleteErrors,
   DeleteApiV1UserMeDeleteResponses,
   GetApiV1AuthMeData,
   GetApiV1AuthMeResponses,
+  GetApiV1CommunityByNameData,
+  GetApiV1CommunityByNameErrors,
+  GetApiV1CommunityByNameResponses,
+  GetApiV1CommunityJoinRequestByCommunityIdPendingData,
+  GetApiV1CommunityJoinRequestByCommunityIdPendingErrors,
+  GetApiV1CommunityJoinRequestByCommunityIdPendingResponses,
+  GetApiV1CommunityMemberMineData,
+  GetApiV1CommunityMemberMineResponses,
+  GetApiV1CommunityMemberModeratedData,
+  GetApiV1CommunityMemberModeratedResponses,
+  GetApiV1CommunityNameAvailableData,
+  GetApiV1CommunityNameAvailableErrors,
+  GetApiV1CommunityNameAvailableResponses,
+  GetApiV1CommunityRuleByCommunityIdData,
+  GetApiV1CommunityRuleByCommunityIdResponses,
+  GetApiV1ExploreData,
+  GetApiV1ExploreResponses,
+  GetApiV1FlairByCommunityIdPostTemplatesData,
+  GetApiV1FlairByCommunityIdPostTemplatesResponses,
+  GetApiV1FlairByCommunityIdUserTemplatesData,
+  GetApiV1FlairByCommunityIdUserTemplatesResponses,
+  GetApiV1TopicData,
+  GetApiV1TopicResponses,
   GetApiV1UserByUsernameByUsernameData,
   GetApiV1UserByUsernameByUsernameErrors,
   GetApiV1UserByUsernameByUsernameResponses,
@@ -19,6 +51,21 @@ import type {
   GetApiV1UserUsernameAvailableData,
   GetApiV1UserUsernameAvailableErrors,
   GetApiV1UserUsernameAvailableResponses,
+  PatchApiV1CommunityByIdData,
+  PatchApiV1CommunityByIdErrors,
+  PatchApiV1CommunityByIdResponses,
+  PatchApiV1CommunityMemberByCommunityIdMembershipData,
+  PatchApiV1CommunityMemberByCommunityIdMembershipErrors,
+  PatchApiV1CommunityMemberByCommunityIdMembershipResponses,
+  PatchApiV1CommunityRuleByIdData,
+  PatchApiV1CommunityRuleByIdErrors,
+  PatchApiV1CommunityRuleByIdResponses,
+  PatchApiV1FlairPostTemplatesByIdData,
+  PatchApiV1FlairPostTemplatesByIdErrors,
+  PatchApiV1FlairPostTemplatesByIdResponses,
+  PatchApiV1FlairUserTemplatesByIdData,
+  PatchApiV1FlairUserTemplatesByIdErrors,
+  PatchApiV1FlairUserTemplatesByIdResponses,
   PatchApiV1UserMeData,
   PatchApiV1UserMeErrors,
   PatchApiV1UserMeResponses,
@@ -28,6 +75,35 @@ import type {
   PostApiV1AuthLogoutData,
   PostApiV1AuthLogoutErrors,
   PostApiV1AuthLogoutResponses,
+  PostApiV1CommunityData,
+  PostApiV1CommunityErrors,
+  PostApiV1CommunityJoinRequestByIdApproveData,
+  PostApiV1CommunityJoinRequestByIdApproveErrors,
+  PostApiV1CommunityJoinRequestByIdApproveResponses,
+  PostApiV1CommunityJoinRequestByIdDenyData,
+  PostApiV1CommunityJoinRequestByIdDenyErrors,
+  PostApiV1CommunityJoinRequestByIdDenyResponses,
+  PostApiV1CommunityMemberByCommunityIdJoinData,
+  PostApiV1CommunityMemberByCommunityIdJoinErrors,
+  PostApiV1CommunityMemberByCommunityIdJoinResponses,
+  PostApiV1CommunityMemberByCommunityIdLeaveData,
+  PostApiV1CommunityMemberByCommunityIdLeaveResponses,
+  PostApiV1CommunityResponses,
+  PostApiV1CommunityRuleByCommunityIdData,
+  PostApiV1CommunityRuleByCommunityIdErrors,
+  PostApiV1CommunityRuleByCommunityIdResponses,
+  PostApiV1FlairByCommunityIdPostTemplatesData,
+  PostApiV1FlairByCommunityIdPostTemplatesErrors,
+  PostApiV1FlairByCommunityIdPostTemplatesResponses,
+  PostApiV1FlairByCommunityIdUserTemplatesData,
+  PostApiV1FlairByCommunityIdUserTemplatesErrors,
+  PostApiV1FlairByCommunityIdUserTemplatesResponses,
+  PutApiV1CommunityRuleByCommunityIdReorderData,
+  PutApiV1CommunityRuleByCommunityIdReorderErrors,
+  PutApiV1CommunityRuleByCommunityIdReorderResponses,
+  PutApiV1FlairByCommunityIdMyFlairData,
+  PutApiV1FlairByCommunityIdMyFlairErrors,
+  PutApiV1FlairByCommunityIdMyFlairResponses,
 } from "./types.gen"
 
 export type Options<
@@ -164,4 +240,484 @@ export const patchApiV1UserMeSettings = <ThrowOnError extends boolean = false>(
       "Content-Type": "application/json",
       ...options?.headers,
     },
+  })
+
+/**
+ * List all topics ordered by display order
+ */
+export const getApiV1Topic = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1TopicData, ThrowOnError>,
+): RequestResult<GetApiV1TopicResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1TopicResponses, unknown, ThrowOnError>({
+    url: "/api/v1/topic",
+    ...options,
+  })
+
+/**
+ * Check whether a community name is available
+ */
+export const getApiV1CommunityNameAvailable = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1CommunityNameAvailableData, ThrowOnError>,
+): RequestResult<
+  GetApiV1CommunityNameAvailableResponses,
+  GetApiV1CommunityNameAvailableErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1CommunityNameAvailableResponses,
+    GetApiV1CommunityNameAvailableErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community/name-available", ...options })
+
+/**
+ * Public community detail by name
+ */
+export const getApiV1CommunityByName = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1CommunityByNameData, ThrowOnError>,
+): RequestResult<GetApiV1CommunityByNameResponses, GetApiV1CommunityByNameErrors, ThrowOnError> =>
+  (options.client ?? client).get<
+    GetApiV1CommunityByNameResponses,
+    GetApiV1CommunityByNameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community/{name}", ...options })
+
+/**
+ * Create a community
+ */
+export const postApiV1Community = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1CommunityData, ThrowOnError>,
+): RequestResult<PostApiV1CommunityResponses, PostApiV1CommunityErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1CommunityResponses,
+    PostApiV1CommunityErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Update community settings (moderators with config permission)
+ */
+export const patchApiV1CommunityById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1CommunityByIdData, ThrowOnError>,
+): RequestResult<PatchApiV1CommunityByIdResponses, PatchApiV1CommunityByIdErrors, ThrowOnError> =>
+  (options.client ?? client).patch<
+    PatchApiV1CommunityByIdResponses,
+    PatchApiV1CommunityByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Communities the current user has joined, favorites first
+ */
+export const getApiV1CommunityMemberMine = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1CommunityMemberMineData, ThrowOnError>,
+): RequestResult<GetApiV1CommunityMemberMineResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1CommunityMemberMineResponses, unknown, ThrowOnError>({
+    url: "/api/v1/community-member/mine",
+    ...options,
+  })
+
+/**
+ * Communities the current user moderates
+ */
+export const getApiV1CommunityMemberModerated = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1CommunityMemberModeratedData, ThrowOnError>,
+): RequestResult<GetApiV1CommunityMemberModeratedResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1CommunityMemberModeratedResponses, unknown, ThrowOnError>(
+    { url: "/api/v1/community-member/moderated", ...options },
+  )
+
+/**
+ * Join a public community, or request to join a restricted/private one
+ */
+export const postApiV1CommunityMemberByCommunityIdJoin = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1CommunityMemberByCommunityIdJoinData, ThrowOnError>,
+): RequestResult<
+  PostApiV1CommunityMemberByCommunityIdJoinResponses,
+  PostApiV1CommunityMemberByCommunityIdJoinErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1CommunityMemberByCommunityIdJoinResponses,
+    PostApiV1CommunityMemberByCommunityIdJoinErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community-member/{communityId}/join", ...options })
+
+/**
+ * Leave a community
+ */
+export const postApiV1CommunityMemberByCommunityIdLeave = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1CommunityMemberByCommunityIdLeaveData, ThrowOnError>,
+): RequestResult<PostApiV1CommunityMemberByCommunityIdLeaveResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).post<
+    PostApiV1CommunityMemberByCommunityIdLeaveResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/community-member/{communityId}/leave", ...options })
+
+/**
+ * Update the current user's membership preferences
+ */
+export const patchApiV1CommunityMemberByCommunityIdMembership = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PatchApiV1CommunityMemberByCommunityIdMembershipData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1CommunityMemberByCommunityIdMembershipResponses,
+  PatchApiV1CommunityMemberByCommunityIdMembershipErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1CommunityMemberByCommunityIdMembershipResponses,
+    PatchApiV1CommunityMemberByCommunityIdMembershipErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-member/{communityId}/membership",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * List a community's rules
+ */
+export const getApiV1CommunityRuleByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1CommunityRuleByCommunityIdData, ThrowOnError>,
+): RequestResult<GetApiV1CommunityRuleByCommunityIdResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).get<
+    GetApiV1CommunityRuleByCommunityIdResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/community-rule/{communityId}", ...options })
+
+/**
+ * Create a rule (moderators with config permission)
+ */
+export const postApiV1CommunityRuleByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1CommunityRuleByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  PostApiV1CommunityRuleByCommunityIdResponses,
+  PostApiV1CommunityRuleByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1CommunityRuleByCommunityIdResponses,
+    PostApiV1CommunityRuleByCommunityIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-rule/{communityId}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Delete a rule (moderators with config permission)
+ */
+export const deleteApiV1CommunityRuleById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1CommunityRuleByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1CommunityRuleByIdResponses,
+  DeleteApiV1CommunityRuleByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1CommunityRuleByIdResponses,
+    DeleteApiV1CommunityRuleByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community-rule/{id}", ...options })
+
+/**
+ * Update a rule (moderators with config permission)
+ */
+export const patchApiV1CommunityRuleById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1CommunityRuleByIdData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1CommunityRuleByIdResponses,
+  PatchApiV1CommunityRuleByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1CommunityRuleByIdResponses,
+    PatchApiV1CommunityRuleByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-rule/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Reorder a community's rules (moderators with config permission)
+ */
+export const putApiV1CommunityRuleByCommunityIdReorder = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1CommunityRuleByCommunityIdReorderData, ThrowOnError>,
+): RequestResult<
+  PutApiV1CommunityRuleByCommunityIdReorderResponses,
+  PutApiV1CommunityRuleByCommunityIdReorderErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1CommunityRuleByCommunityIdReorderResponses,
+    PutApiV1CommunityRuleByCommunityIdReorderErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-rule/{communityId}/reorder",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * List pending join requests (moderators with users permission)
+ */
+export const getApiV1CommunityJoinRequestByCommunityIdPending = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetApiV1CommunityJoinRequestByCommunityIdPendingData, ThrowOnError>,
+): RequestResult<
+  GetApiV1CommunityJoinRequestByCommunityIdPendingResponses,
+  GetApiV1CommunityJoinRequestByCommunityIdPendingErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1CommunityJoinRequestByCommunityIdPendingResponses,
+    GetApiV1CommunityJoinRequestByCommunityIdPendingErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community-join-request/{communityId}/pending", ...options })
+
+/**
+ * Approve a join request (moderators with users permission)
+ */
+export const postApiV1CommunityJoinRequestByIdApprove = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1CommunityJoinRequestByIdApproveData, ThrowOnError>,
+): RequestResult<
+  PostApiV1CommunityJoinRequestByIdApproveResponses,
+  PostApiV1CommunityJoinRequestByIdApproveErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1CommunityJoinRequestByIdApproveResponses,
+    PostApiV1CommunityJoinRequestByIdApproveErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community-join-request/{id}/approve", ...options })
+
+/**
+ * Deny a join request (moderators with users permission)
+ */
+export const postApiV1CommunityJoinRequestByIdDeny = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1CommunityJoinRequestByIdDenyData, ThrowOnError>,
+): RequestResult<
+  PostApiV1CommunityJoinRequestByIdDenyResponses,
+  PostApiV1CommunityJoinRequestByIdDenyErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1CommunityJoinRequestByIdDenyResponses,
+    PostApiV1CommunityJoinRequestByIdDenyErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community-join-request/{id}/deny", ...options })
+
+/**
+ * List a community's post flair templates
+ */
+export const getApiV1FlairByCommunityIdPostTemplates = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1FlairByCommunityIdPostTemplatesData, ThrowOnError>,
+): RequestResult<GetApiV1FlairByCommunityIdPostTemplatesResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).get<
+    GetApiV1FlairByCommunityIdPostTemplatesResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/flair/{communityId}/post-templates", ...options })
+
+/**
+ * Create a post flair template (moderators with flair permission)
+ */
+export const postApiV1FlairByCommunityIdPostTemplates = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1FlairByCommunityIdPostTemplatesData, ThrowOnError>,
+): RequestResult<
+  PostApiV1FlairByCommunityIdPostTemplatesResponses,
+  PostApiV1FlairByCommunityIdPostTemplatesErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1FlairByCommunityIdPostTemplatesResponses,
+    PostApiV1FlairByCommunityIdPostTemplatesErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/flair/{communityId}/post-templates",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * List a community's user flair templates
+ */
+export const getApiV1FlairByCommunityIdUserTemplates = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1FlairByCommunityIdUserTemplatesData, ThrowOnError>,
+): RequestResult<GetApiV1FlairByCommunityIdUserTemplatesResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).get<
+    GetApiV1FlairByCommunityIdUserTemplatesResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/flair/{communityId}/user-templates", ...options })
+
+/**
+ * Create a user flair template (moderators with flair permission)
+ */
+export const postApiV1FlairByCommunityIdUserTemplates = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1FlairByCommunityIdUserTemplatesData, ThrowOnError>,
+): RequestResult<
+  PostApiV1FlairByCommunityIdUserTemplatesResponses,
+  PostApiV1FlairByCommunityIdUserTemplatesErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1FlairByCommunityIdUserTemplatesResponses,
+    PostApiV1FlairByCommunityIdUserTemplatesErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/flair/{communityId}/user-templates",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Delete a post flair template (moderators with flair permission)
+ */
+export const deleteApiV1FlairPostTemplatesById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1FlairPostTemplatesByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1FlairPostTemplatesByIdResponses,
+  DeleteApiV1FlairPostTemplatesByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1FlairPostTemplatesByIdResponses,
+    DeleteApiV1FlairPostTemplatesByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/flair/post-templates/{id}", ...options })
+
+/**
+ * Update a post flair template (moderators with flair permission)
+ */
+export const patchApiV1FlairPostTemplatesById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1FlairPostTemplatesByIdData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1FlairPostTemplatesByIdResponses,
+  PatchApiV1FlairPostTemplatesByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1FlairPostTemplatesByIdResponses,
+    PatchApiV1FlairPostTemplatesByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/flair/post-templates/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Delete a user flair template (moderators with flair permission)
+ */
+export const deleteApiV1FlairUserTemplatesById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1FlairUserTemplatesByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1FlairUserTemplatesByIdResponses,
+  DeleteApiV1FlairUserTemplatesByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1FlairUserTemplatesByIdResponses,
+    DeleteApiV1FlairUserTemplatesByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/flair/user-templates/{id}", ...options })
+
+/**
+ * Update a user flair template (moderators with flair permission)
+ */
+export const patchApiV1FlairUserTemplatesById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1FlairUserTemplatesByIdData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1FlairUserTemplatesByIdResponses,
+  PatchApiV1FlairUserTemplatesByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1FlairUserTemplatesByIdResponses,
+    PatchApiV1FlairUserTemplatesByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/flair/user-templates/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Set or clear the current user's flair in a community
+ */
+export const putApiV1FlairByCommunityIdMyFlair = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1FlairByCommunityIdMyFlairData, ThrowOnError>,
+): RequestResult<
+  PutApiV1FlairByCommunityIdMyFlairResponses,
+  PutApiV1FlairByCommunityIdMyFlairErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1FlairByCommunityIdMyFlairResponses,
+    PutApiV1FlairByCommunityIdMyFlairErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/flair/{communityId}/my-flair",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Explore communities grouped by topic
+ */
+export const getApiV1Explore = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1ExploreData, ThrowOnError>,
+): RequestResult<GetApiV1ExploreResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1ExploreResponses, unknown, ThrowOnError>({
+    url: "/api/v1/explore",
+    ...options,
   })
