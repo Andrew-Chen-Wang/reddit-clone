@@ -2,3 +2,5 @@
 @import "@fontsource-variable/geist-mono";
 @import "tailwindcss";
 @import "@ui/base/theme.css";
+
+@plugin 'tailwindcss-animate';
