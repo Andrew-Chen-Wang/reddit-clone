@@ -13,6 +13,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -146,13 +147,15 @@ export function TopNav() {
             <DropdownMenuContent align="end" className="w-56">
               {user ? (
                 <>
-                  <DropdownMenuLabel className="truncate">u/{user.username}</DropdownMenuLabel>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="truncate">u/{user.username}</DropdownMenuLabel>
+                  </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                 </>
               ) : null}
               <DropdownMenuItem
                 disabled={!user}
-                onSelect={() => {
+                onClick={() => {
                   if (user)
                     void navigate({ to: "/u/$username", params: { username: user.username } })
                 }}
@@ -160,13 +163,12 @@ export function TopNav() {
                 <User className="size-4" />
                 View Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => void navigate({ to: "/settings" })}>
+              <DropdownMenuItem onClick={() => void navigate({ to: "/settings" })}>
                 <Settings className="size-4" />
                 Settings
               </DropdownMenuItem>
               <DropdownMenuItem
-                onSelect={(event) => {
-                  event.preventDefault()
+                onClick={() => {
                   setDisplayOpen(true)
                 }}
               >
@@ -176,8 +178,7 @@ export function TopNav() {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 disabled={logout.isPending}
-                onSelect={(event) => {
-                  event.preventDefault()
+                onClick={() => {
                   void logout.mutateAsync({})
                 }}
               >
