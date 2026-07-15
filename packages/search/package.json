@@ -1,0 +1,25 @@
+{
+  "name": "@template-nextjs/search",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Elasticsearch client, index bootstrap, and community access filters",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "exports": [
+    {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  ],
+  "scripts": {},
+  "dependencies": {
+    "@elastic/elasticsearch": "catalog:",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  }
+}

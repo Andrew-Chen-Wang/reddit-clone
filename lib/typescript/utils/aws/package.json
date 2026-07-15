@@ -1,0 +1,27 @@
+{
+  "name": "@utils/aws",
+  "version": "1.0.0",
+  "private": true,
+  "description": "S3 client and presigned upload/download helpers for media storage",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "exports": [
+    {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  ],
+  "scripts": {},
+  "dependencies": {
+    "@aws-sdk/client-s3": "catalog:",
+    "@aws-sdk/s3-presigned-post": "catalog:",
+    "@aws-sdk/s3-request-presigner": "catalog:",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  }
+}

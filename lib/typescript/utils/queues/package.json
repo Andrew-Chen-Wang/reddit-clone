@@ -1,0 +1,26 @@
+{
+  "name": "@utils/queues",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BullMQ queue definitions and typed enqueue helpers backed by Valkey",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "exports": [
+    {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  ],
+  "scripts": {},
+  "dependencies": {
+    "bullmq": "catalog:",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  },
+  "config": {}
+}
