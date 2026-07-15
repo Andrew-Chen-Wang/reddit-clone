@@ -91,6 +91,157 @@ export type PostApiV1AuthLogoutResponses = {
 export type PostApiV1AuthLogoutResponse =
   PostApiV1AuthLogoutResponses[keyof PostApiV1AuthLogoutResponses]
 
+export type GetApiV1UserByUsernameByUsernameData = {
+  body?: never
+  path: {
+    username: string
+  }
+  query?: never
+  url: "/api/v1/user/by-username/{username}"
+}
+
+export type GetApiV1UserByUsernameByUsernameErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1UserByUsernameByUsernameError =
+  GetApiV1UserByUsernameByUsernameErrors[keyof GetApiV1UserByUsernameByUsernameErrors]
+
+export type GetApiV1UserByUsernameByUsernameResponses = {
+  /**
+   * Public user profile
+   */
+  200: {
+    id: string
+    username: string
+    displayName: string | null
+    about: string | null
+    avatarImageKey: string | null
+    bannerImageKey: string | null
+    postKarma: number
+    commentKarma: number
+    createdAt: Date
+  }
+}
+
+export type GetApiV1UserByUsernameByUsernameResponse =
+  GetApiV1UserByUsernameByUsernameResponses[keyof GetApiV1UserByUsernameByUsernameResponses]
+
+export type GetApiV1UserMeData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/user/me"
+}
+
+export type GetApiV1UserMeErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1UserMeError = GetApiV1UserMeErrors[keyof GetApiV1UserMeErrors]
+
+export type GetApiV1UserMeResponses = {
+  /**
+   * Current user profile
+   */
+  200: {
+    id: string
+    username: string
+    displayName: string | null
+    about: string | null
+    avatarImageKey: string | null
+    bannerImageKey: string | null
+    postKarma: number
+    commentKarma: number
+    createdAt: Date
+    email: string
+    isAdmin: boolean
+  }
+}
+
+export type GetApiV1UserMeResponse = GetApiV1UserMeResponses[keyof GetApiV1UserMeResponses]
+
+export type PatchApiV1UserMeData = {
+  body?: {
+    displayName?: string | null
+    about?: string | null
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/user/me"
+}
+
+export type PatchApiV1UserMeErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1UserMeError = PatchApiV1UserMeErrors[keyof PatchApiV1UserMeErrors]
+
+export type PatchApiV1UserMeResponses = {
+  /**
+   * Updated user profile
+   */
+  200: {
+    id: string
+    username: string
+    displayName: string | null
+    about: string | null
+    avatarImageKey: string | null
+    bannerImageKey: string | null
+    postKarma: number
+    commentKarma: number
+    createdAt: Date
+    email: string
+    isAdmin: boolean
+  }
+}
+
+export type PatchApiV1UserMeResponse = PatchApiV1UserMeResponses[keyof PatchApiV1UserMeResponses]
+
+export type GetApiV1UserUsernameAvailableData = {
+  body?: never
+  path?: never
+  query: {
+    username: string
+  }
+  url: "/api/v1/user/username-available"
+}
+
+export type GetApiV1UserUsernameAvailableErrors = {
+  /**
+   * Invalid username format
+   */
+  400: ErrorResponseT
+}
+
+export type GetApiV1UserUsernameAvailableError =
+  GetApiV1UserUsernameAvailableErrors[keyof GetApiV1UserUsernameAvailableErrors]
+
+export type GetApiV1UserUsernameAvailableResponses = {
+  /**
+   * Availability result
+   */
+  200: {
+    available: boolean
+  }
+}
+
+export type GetApiV1UserUsernameAvailableResponse =
+  GetApiV1UserUsernameAvailableResponses[keyof GetApiV1UserUsernameAvailableResponses]
+
 export type DeleteApiV1UserMeDeleteData = {
   body?: never
   path?: never
@@ -116,3 +267,92 @@ export type DeleteApiV1UserMeDeleteResponses = {
 
 export type DeleteApiV1UserMeDeleteResponse =
   DeleteApiV1UserMeDeleteResponses[keyof DeleteApiV1UserMeDeleteResponses]
+
+export type GetApiV1UserMeSettingsData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/user/me/settings"
+}
+
+export type GetApiV1UserMeSettingsResponses = {
+  /**
+   * User settings
+   */
+  200: {
+    displayMode: string
+    feedView: string
+    chatRequestPolicy: string
+    defaultMarkdownEditor: boolean
+    showMature: boolean
+    blurMature: boolean
+    allowFollows: boolean
+    showInSearch: boolean
+    showRecommendations: boolean
+    autoplayMedia: boolean
+    reduceMotion: boolean
+    openPostsNewTab: boolean
+    safeSearch: boolean
+    showFollowerCount: boolean
+  }
+}
+
+export type GetApiV1UserMeSettingsResponse =
+  GetApiV1UserMeSettingsResponses[keyof GetApiV1UserMeSettingsResponses]
+
+export type PatchApiV1UserMeSettingsData = {
+  body?: {
+    displayMode?: "auto" | "light" | "dark"
+    feedView?: "card" | "compact"
+    chatRequestPolicy?: "everyone" | "accounts_30d" | "nobody"
+    defaultMarkdownEditor?: boolean
+    showMature?: boolean
+    blurMature?: boolean
+    allowFollows?: boolean
+    showInSearch?: boolean
+    showRecommendations?: boolean
+    autoplayMedia?: boolean
+    reduceMotion?: boolean
+    openPostsNewTab?: boolean
+    safeSearch?: boolean
+    showFollowerCount?: boolean
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/user/me/settings"
+}
+
+export type PatchApiV1UserMeSettingsErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+}
+
+export type PatchApiV1UserMeSettingsError =
+  PatchApiV1UserMeSettingsErrors[keyof PatchApiV1UserMeSettingsErrors]
+
+export type PatchApiV1UserMeSettingsResponses = {
+  /**
+   * Updated user settings
+   */
+  200: {
+    displayMode: string
+    feedView: string
+    chatRequestPolicy: string
+    defaultMarkdownEditor: boolean
+    showMature: boolean
+    blurMature: boolean
+    allowFollows: boolean
+    showInSearch: boolean
+    showRecommendations: boolean
+    autoplayMedia: boolean
+    reduceMotion: boolean
+    openPostsNewTab: boolean
+    safeSearch: boolean
+    showFollowerCount: boolean
+  }
+}
+
+export type PatchApiV1UserMeSettingsResponse =
+  PatchApiV1UserMeSettingsResponses[keyof PatchApiV1UserMeSettingsResponses]
