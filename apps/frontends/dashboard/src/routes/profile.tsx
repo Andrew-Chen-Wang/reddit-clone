@@ -1,29 +1,25 @@
-import { Button } from "@ui/base/ui/button"
-import { createFileRoute } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
+import { Navigate, createFileRoute } from "@tanstack/react-router"
+import { getApiV1UserMeOptions } from "@lib/api-client/generated/@tanstack/react-query.gen"
 
 export const Route = createFileRoute("/profile")({
-  component: ProfilePage,
+  component: ProfileRedirect,
 })
 
-function ProfilePage() {
-  return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold">Profile</h1>
-      <div className="max-w-md space-y-4 rounded-lg border bg-card p-6">
-        <div>
-          <p className="text-sm text-muted-foreground">Name</p>
-          <p className="text-lg">John Doe</p>
-        </div>
-        <div>
-          <p className="text-sm text-muted-foreground">Email</p>
-          <p className="text-lg">john@example.com</p>
-        </div>
-        <div>
-          <p className="text-sm text-muted-foreground">Role</p>
-          <p className="text-lg">Member</p>
-        </div>
-        <Button variant="outline">Edit Profile</Button>
+function ProfileRedirect() {
+  const { data, isLoading } = useQuery(getApiV1UserMeOptions())
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
       </div>
-    </div>
-  )
+    )
+  }
+
+  if (!data) {
+    return <Navigate to="/dashboard" />
+  }
+
+  return <Navigate to="/u/$username" params={{ username: data.username }} />
 }

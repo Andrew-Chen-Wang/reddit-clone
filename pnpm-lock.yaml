@@ -294,15 +294,24 @@ importers:
       '@ui/base':
         specifier: workspace:*
         version: link:../../../lib/typescript/ui/base
+      '@ui/seo-shared':
+        specifier: workspace:*
+        version: link:../../../lib/typescript/ui/seo-shared
       '@ui/spa-shared':
         specifier: workspace:*
         version: link:../../../lib/typescript/ui/spa-shared
+      lucide-react:
+        specifier: 'catalog:'
+        version: 1.24.0(react@19.2.7)
       react:
         specifier: 'catalog:'
         version: 19.2.7
       react-dom:
         specifier: 'catalog:'
         version: 19.2.7(react@19.2.7)
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.2
