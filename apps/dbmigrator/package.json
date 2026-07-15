@@ -15,8 +15,10 @@
     "seed:run": "kysely seed:run --cwd src"
   },
   "dependencies": {
+    "@faker-js/faker": "catalog:",
     "@template-nextjs/db": "workspace:*",
-    "kysely": "catalog:"
+    "kysely": "catalog:",
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "kysely-ctl": "^0.21.0"

@@ -4,6 +4,9 @@ import { validateSessionToken } from "./lib/auth"
 
 /** Public paths handled by Next.js — everything else goes to the dashboard SPA */
 const NEXTJS_PUBLIC_PREFIXES = ["/login", "/blog", "/api", "/legal"]
+if (process.env.NODE_ENV === "development") {
+  NEXTJS_PUBLIC_PREFIXES.push("/dev-login")
+}
 
 /** Exact public paths */
 const NEXTJS_PUBLIC_EXACT = new Set(["/"])
@@ -168,6 +171,9 @@ export async function proxy(request: NextRequest) {
     if (token !== null) {
       const result = await validateSessionToken(token)
       if (result !== null) {
+        if (!result.user.isAdmin) {
+          return NextResponse.redirect(new URL("/", request.url))
+        }
         return rewriteToSpa(request, pathname, SPA_ADMIN.devPort, "/admin", "/admin")
       }
     }
