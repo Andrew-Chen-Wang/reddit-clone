@@ -26,6 +26,7 @@
       "@lib/dao/*": ["../../lib/typescript/dao/src/*"],
       "@ui/base/*": ["../../lib/typescript/ui/base/src/*"],
       "@ui/seo-shared/*": ["../../lib/typescript/ui/seo-shared/src/*"],
+      "@ui/spa-shared/*": ["../../lib/typescript/ui/spa-shared/src/*"],
       "@lib/api-client/*": ["../../lib/typescript/api-client/src/*"]
     }
   },
