@@ -36,16 +36,45 @@ export interface Session {
 }
 
 export interface User {
+  about: string | null
+  avatarImageKey: string | null
+  bannerImageKey: string | null
+  commentKarma: Generated<number>
   createdAt: Generated<Timestamp>
+  displayName: string | null
   email: string
   id: string
   image: string | null
   isAdmin: Generated<boolean>
   name: string | null
+  postKarma: Generated<number>
+  suspendedAt: Timestamp | null
+  suspensionReason: string | null
+  username: string
+}
+
+export interface UserSettings {
+  allowFollows: Generated<boolean>
+  autoplayMedia: Generated<boolean>
+  blurMature: Generated<boolean>
+  chatRequestPolicy: Generated<string>
+  createdAt: Generated<Timestamp>
+  defaultMarkdownEditor: Generated<boolean>
+  displayMode: Generated<string>
+  feedView: Generated<string>
+  openPostsNewTab: Generated<boolean>
+  reduceMotion: Generated<boolean>
+  safeSearch: Generated<boolean>
+  showFollowerCount: Generated<boolean>
+  showInSearch: Generated<boolean>
+  showMature: Generated<boolean>
+  showRecommendations: Generated<boolean>
+  userId: string
 }
 
 export interface DB {
   account: Account
   session: Session
   user: User
+  userSettings: UserSettings
 }
