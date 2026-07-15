@@ -1,5 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
+import { Toaster } from "@ui/base/ui/sonner"
+import { ThemeProvider } from "@ui/spa-shared/theme"
 import { client } from "@lib/api-client/generated/client.gen"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
@@ -26,8 +28,11 @@ declare module "@tanstack/react-router" {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster />
+      </QueryClientProvider>
+    </ThemeProvider>
   </StrictMode>,
 )
