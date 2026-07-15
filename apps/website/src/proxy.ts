@@ -19,6 +19,8 @@ const SHARED_ROUTES: SharedRoute[] = [
   { path: "/posting", spa: "dashboard" },
   { path: "/posting/[id]", spa: "dashboard" },
   { path: "/u/[username]", spa: "dashboard" },
+  { path: "/r/[name]", spa: "dashboard" },
+  { path: "/explore", spa: "dashboard" },
 ]
 
 /** Match a URL pathname against a route pattern.
