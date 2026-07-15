@@ -1,0 +1,138 @@
+name: Deploy SPAs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/frontends/dashboard/**"
+      - "apps/frontends/admin/**"
+      - "lib/typescript/ui/**"
+      - "lib/typescript/api-client/**"
+  workflow_dispatch:
+    inputs:
+      spa:
+        description: "Which SPA to deploy"
+        required: true
+        type: choice
+        options:
+          - all
+          - dashboard
+          - admin
+
+env:
+  NPM_CONFIG_FUND: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  changes:
+    name: Detect Changes
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      dashboard: ${{ steps.filter.outputs.dashboard }}
+      admin: ${{ steps.filter.outputs.admin }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            dashboard:
+              - 'apps/frontends/dashboard/**'
+              - 'lib/typescript/ui/**'
+              - 'lib/typescript/api-client/**'
+            admin:
+              - 'apps/frontends/admin/**'
+              - 'lib/typescript/ui/**'
+              - 'lib/typescript/api-client/**'
+
+  deploy-dashboard:
+    name: Deploy Dashboard
+    needs: changes
+    if: |
+      always() && (
+        (github.event_name == 'workflow_dispatch' && (inputs.spa == 'dashboard' || inputs.spa == 'all')) ||
+        (github.event_name == 'push' && needs.changes.outputs.dashboard == 'true')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24.14.0"
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Cache for Turbo
+        uses: rharkor/caching-for-turbo@v2.4.2
+        with:
+          max-age: 1w
+          max-files: 50
+          max-size: 3gb
+      - name: Build Dashboard
+        run: pnpm exec turbo run build --filter=dashboard
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::471112590391:role/github-actions-spa-deploy
+          aws-region: us-east-1
+      - name: Deploy to S3
+        run: |
+          aws s3 sync apps/frontends/dashboard/dist/ s3://nextjs-spa-split/dashboard/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          aws s3 cp apps/frontends/dashboard/dist/index.html s3://nextjs-spa-split/dashboard/index.html \
+            --cache-control "no-cache"
+      - name: Invalidate CloudFront
+        run: aws cloudfront create-invalidation --distribution-id EWFWU5QPDS7B3 --paths "/dashboard/index.html"
+
+  deploy-admin:
+    name: Deploy Admin
+    needs: changes
+    if: |
+      always() && (
+        (github.event_name == 'workflow_dispatch' && (inputs.spa == 'admin' || inputs.spa == 'all')) ||
+        (github.event_name == 'push' && needs.changes.outputs.admin == 'true')
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24.14.0"
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Cache for Turbo
+        uses: rharkor/caching-for-turbo@v2.4.2
+        with:
+          max-age: 1w
+          max-files: 50
+          max-size: 3gb
+      - name: Build Admin
+        run: pnpm exec turbo run build --filter=admin
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::471112590391:role/github-actions-spa-deploy
+          aws-region: us-east-1
+      - name: Deploy to S3
+        run: |
+          aws s3 sync apps/frontends/admin/dist/ s3://nextjs-spa-split/admin/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          aws s3 cp apps/frontends/admin/dist/index.html s3://nextjs-spa-split/admin/index.html \
+            --cache-control "no-cache"
+      - name: Invalidate CloudFront
+        run: aws cloudfront create-invalidation --distribution-id EWFWU5QPDS7B3 --paths "/admin/index.html"

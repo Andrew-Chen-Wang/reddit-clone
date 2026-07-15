@@ -1,0 +1,51 @@
+{
+  "name": "website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@api/internal": "workspace:*",
+    "@base-ui/react": "catalog:",
+    "@lib/api-client": "workspace:*",
+    "@oslojs/crypto": "catalog:",
+    "@oslojs/encoding": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
+    "@tailwindcss/typography": "^0.5.20",
+    "@tanstack/react-query": "catalog:",
+    "@template-nextjs/db": "workspace:*",
+    "@ui/base": "workspace:*",
+    "@ui/seo-shared": "workspace:*",
+    "arctic": "^3.7.0",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "hono": "catalog:",
+    "kysely": "catalog:",
+    "lucide-react": "catalog:",
+    "next": "16.3.0-canary.86",
+    "postcss": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwind-merge": "catalog:",
+    "tailwindcss-animate": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vercel/config": "^0.5.5",
+    "babel-plugin-react-compiler": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
+  },
+  "optionalDependencies": {
+    "@tailwindcss/oxide-linux-arm64-musl": "^4.3.2",
+    "@tailwindcss/oxide-linux-x64-musl": "^4.3.2",
+    "lightningcss-linux-arm64-musl": "^1.32.0",
+    "lightningcss-linux-x64-musl": "^1.32.0"
+  }
+}

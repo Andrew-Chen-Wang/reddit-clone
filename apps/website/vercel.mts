@@ -1,0 +1,7 @@
+import type { VercelConfig } from "@vercel/config/v1"
+
+export const config: VercelConfig = {
+  framework: "nextjs",
+  cleanUrls: true,
+  trailingSlash: false,
+}

@@ -1,0 +1,46 @@
+packages:
+  - "apps/*"
+  - "apps/frontends/*"
+  - "packages/*"
+  - "lib/typescript/*"
+  - "lib/typescript/utils/*"
+  - "lib/typescript/ui/*"
+allowBuilds:
+  esbuild: true
+  lefthook: true
+  sharp: true
+catalog:
+  "@base-ui/react": ^1.6.0
+  "@fontsource-variable/geist": ^5.2.9
+  "@fontsource-variable/geist-mono": ^5.2.8
+  # next tag for TypeScript 7 compatibility: https://github.com/hey-api/hey-api/issues/4235
+  "@hey-api/openapi-ts": 0.0.0-next-20260711024907
+  "@oslojs/crypto": ^1.0.1
+  "@oslojs/encoding": ^1.1.0
+  "@rolldown/plugin-babel": ^0.2.3
+  "@tailwindcss/postcss": ^4.3.2
+  "@tailwindcss/vite": ^4.3.2
+  "@tanstack/react-query": ^5.101.2
+  "@tanstack/react-router": ^1.170.18
+  "@tanstack/router-plugin": ^1.168.20
+  "@types/node": ^26.1.1
+  "@types/react": ^19.2.17
+  "@types/react-dom": ^19.2.3
+  "@vitejs/plugin-react": ^6.0.3
+  babel-plugin-react-compiler: ^1.0.0
+  class-variance-authority: ^0.7.1
+  clsx: ^2.1.1
+  hono: ^4.12.30
+  kysely: ^0.29.3
+  lucide-react: ^1.24.0
+  postcss: ^8.5.19
+  react: ^19.2.7
+  react-dom: ^19.2.7
+  tailwind-merge: ^3.6.0
+  tailwindcss: ^4.3.2
+  tailwindcss-animate: ^1.0.7
+  typebox: ^1.3.6
+  typescript: ^7.0.2
+  uuid: ^14.0.1
+  vite: ^8.1.4
+  vite-plugin-static-copy: ^4.1.1

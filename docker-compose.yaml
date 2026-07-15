@@ -1,0 +1,26 @@
+services:
+  postgres:
+    container_name: nextjs_spa_split_postgres
+    image: postgres:18
+    ports:
+      - "24313:5432"
+    volumes:
+      - postgres:/var/lib/postgresql
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=main
+
+  #valkey:
+  #  image: valkey:latest
+  #  container_name: template_nextjs_valkey
+  #  ports:
+  #    - "41013:6379"
+  #  volumes:
+  #    - valkey-data:/data
+
+volumes:
+  postgres:
+    driver: local
+  #valkey-data:
+  #  driver: local
