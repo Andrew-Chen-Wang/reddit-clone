@@ -1,0 +1,26 @@
+{
+  "name": "bullground",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Background worker process running the fast/medium/slow BullMQ queues",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "bin": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@lib/dao": "workspace:*",
+    "@template-nextjs/db": "workspace:*",
+    "@utils/queues": "workspace:*",
+    "bullmq": "catalog:",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsx": "^4.22.3"
+  }
+}
