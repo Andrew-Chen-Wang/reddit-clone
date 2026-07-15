@@ -1,5 +1,7 @@
 import { crudAccount } from "@lib/dao/account/crud"
+import { fetchAccount } from "@lib/dao/account/fetch"
 import { crudUser } from "@lib/dao/user/crud"
+import { fetchUser } from "@lib/dao/user/fetch"
 import { db } from "@template-nextjs/db"
 import { createSession, generateSessionToken, setSessionTokenCookie } from "@website/lib/auth"
 import { oauthGoogle } from "@website/lib/oauth"
@@ -16,6 +18,24 @@ interface GoogleClaims {
   family_name: string
   given_name: string
   exp: number
+}
+
+async function generateUniqueUsername(email: string): Promise<string> {
+  const base =
+    email
+      .split("@")[0]
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, "") || "user"
+  let candidate = base
+  while (await fetchUser(db).isUsernameTaken(candidate)) {
+    const length = 4 + Math.floor(Math.random() * 3)
+    const suffix = Math.random()
+      .toString(36)
+      .replace(/[^a-z0-9]/g, "")
+      .slice(0, length)
+    candidate = `${base}${suffix}`
+  }
+  return candidate
 }
 
 export async function GET(request: Request): Promise<Response> {
@@ -55,16 +75,13 @@ export async function GET(request: Request): Promise<Response> {
   // const emailVerified = claims.email_verified
   const exp = claims.exp
 
-  const existingUser = await db
-    .selectFrom("account")
-    .where("providerAccountId", "=", googleUserId)
-    .where("provider", "=", "google")
-    .select("userId")
-    .executeTakeFirst()
+  const existingAccount = await fetchAccount(db).getOneByProvider("google", googleUserId, [
+    "userId",
+  ])
 
-  if (existingUser) {
+  if (existingAccount) {
     const sessionToken = generateSessionToken()
-    const session = await createSession(sessionToken, existingUser.userId)
+    const session = await createSession(sessionToken, existingAccount.userId)
     await setSessionTokenCookie(sessionToken, session.expires)
     return new Response(null, {
       status: 302,
@@ -74,14 +91,19 @@ export async function GET(request: Request): Promise<Response> {
     })
   }
 
-  let user = await db.selectFrom("user").where("email", "=", email).selectAll().executeTakeFirst()
-  user ??= await crudUser(db).createUser({
-    name,
-    email,
-    image,
-  })
+  const existingUser = await fetchUser(db).getOneByEmail(email, ["id"])
+  const userId =
+    existingUser?.id ??
+    (
+      await crudUser(db).createUser({
+        name,
+        email,
+        image,
+        username: await generateUniqueUsername(email),
+      })
+    ).id
   await crudAccount(db).createAccount({
-    userId: user.id,
+    userId,
     provider: "google",
     providerAccountId: googleUserId,
     type: "oauth",
@@ -93,7 +115,7 @@ export async function GET(request: Request): Promise<Response> {
   })
 
   const sessionToken = generateSessionToken()
-  const session = await createSession(sessionToken, user.id)
+  const session = await createSession(sessionToken, userId)
   await setSessionTokenCookie(sessionToken, session.expires)
   return new Response(null, {
     status: 302,

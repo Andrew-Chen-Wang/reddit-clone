@@ -1,5 +1,5 @@
 import type { DB } from "@template-nextjs/db"
-import type { Insertable, Kysely, Selectable } from "kysely"
+import type { Insertable, Kysely, Selectable, Updateable } from "kysely"
 import { v7 } from "uuid"
 import { PartialBy } from "../utils/types"
 
@@ -13,6 +13,18 @@ export function crudUser(db: Kysely<DB>) {
     })
   }
 
+  async function updateUser(
+    id: string,
+    data: Updateable<DB["user"]>,
+  ): Promise<Selectable<DB["user"]> | undefined> {
+    return await db
+      .updateTable("user")
+      .set(data)
+      .where("id", "=", id)
+      .returningAll()
+      .executeTakeFirst()
+  }
+
   async function deleteUser(userId: string): Promise<boolean> {
     try {
       await db.transaction().execute(async (tx) => {
@@ -24,5 +36,5 @@ export function crudUser(db: Kysely<DB>) {
     }
   }
 
-  return { createUser, deleteUser }
+  return { createUser, updateUser, deleteUser }
 }

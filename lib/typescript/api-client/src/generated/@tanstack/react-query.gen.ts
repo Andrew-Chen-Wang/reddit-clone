@@ -6,7 +6,13 @@ import { client } from "../client.gen"
 import {
   deleteApiV1UserMeDelete,
   getApiV1AuthMe,
+  getApiV1UserByUsernameByUsername,
+  getApiV1UserMe,
+  getApiV1UserMeSettings,
+  getApiV1UserUsernameAvailable,
   type Options,
+  patchApiV1UserMe,
+  patchApiV1UserMeSettings,
   postApiV1AuthLogout,
 } from "../sdk.gen"
 import type {
@@ -15,6 +21,23 @@ import type {
   DeleteApiV1UserMeDeleteResponse,
   GetApiV1AuthMeData,
   GetApiV1AuthMeResponse,
+  GetApiV1UserByUsernameByUsernameData,
+  GetApiV1UserByUsernameByUsernameError,
+  GetApiV1UserByUsernameByUsernameResponse,
+  GetApiV1UserMeData,
+  GetApiV1UserMeError,
+  GetApiV1UserMeResponse,
+  GetApiV1UserMeSettingsData,
+  GetApiV1UserMeSettingsResponse,
+  GetApiV1UserUsernameAvailableData,
+  GetApiV1UserUsernameAvailableError,
+  GetApiV1UserUsernameAvailableResponse,
+  PatchApiV1UserMeData,
+  PatchApiV1UserMeError,
+  PatchApiV1UserMeResponse,
+  PatchApiV1UserMeSettingsData,
+  PatchApiV1UserMeSettingsError,
+  PatchApiV1UserMeSettingsResponse,
   PostApiV1AuthLogoutData,
   PostApiV1AuthLogoutError,
   PostApiV1AuthLogoutResponse,
@@ -37,7 +60,7 @@ const createQueryKey = <TOptions extends Options>(
   const params: QueryKey<TOptions>[0] = {
     _id: id,
     baseUrl: options?.baseUrl || (options?.client ?? client).getConfig().baseUrl,
-  }
+  } as QueryKey<TOptions>[0]
   if (infinite) {
     params._infinite = infinite
   }
@@ -105,6 +128,114 @@ export const postApiV1AuthLogoutMutation = (
   return mutationOptions
 }
 
+export const getApiV1UserByUsernameByUsernameQueryKey = (
+  options: Options<GetApiV1UserByUsernameByUsernameData>,
+) => createQueryKey("getApiV1UserByUsernameByUsername", options)
+
+/**
+ * Public profile for a username
+ */
+export const getApiV1UserByUsernameByUsernameOptions = (
+  options: Options<GetApiV1UserByUsernameByUsernameData>,
+) =>
+  queryOptions<
+    GetApiV1UserByUsernameByUsernameResponse,
+    GetApiV1UserByUsernameByUsernameError,
+    GetApiV1UserByUsernameByUsernameResponse,
+    ReturnType<typeof getApiV1UserByUsernameByUsernameQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserByUsernameByUsername({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserByUsernameByUsernameQueryKey(options),
+  })
+
+export const getApiV1UserMeQueryKey = (options?: Options<GetApiV1UserMeData>) =>
+  createQueryKey("getApiV1UserMe", options)
+
+/**
+ * Current authenticated user's profile
+ */
+export const getApiV1UserMeOptions = (options?: Options<GetApiV1UserMeData>) =>
+  queryOptions<
+    GetApiV1UserMeResponse,
+    GetApiV1UserMeError,
+    GetApiV1UserMeResponse,
+    ReturnType<typeof getApiV1UserMeQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserMe({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserMeQueryKey(options),
+  })
+
+/**
+ * Update the current user's profile
+ */
+export const patchApiV1UserMeMutation = (
+  options?: Partial<Options<PatchApiV1UserMeData>>,
+): UseMutationOptions<
+  PatchApiV1UserMeResponse,
+  PatchApiV1UserMeError,
+  Options<PatchApiV1UserMeData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1UserMeResponse,
+    PatchApiV1UserMeError,
+    Options<PatchApiV1UserMeData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1UserMe({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1UserUsernameAvailableQueryKey = (
+  options: Options<GetApiV1UserUsernameAvailableData>,
+) => createQueryKey("getApiV1UserUsernameAvailable", options)
+
+/**
+ * Check whether a username is available
+ */
+export const getApiV1UserUsernameAvailableOptions = (
+  options: Options<GetApiV1UserUsernameAvailableData>,
+) =>
+  queryOptions<
+    GetApiV1UserUsernameAvailableResponse,
+    GetApiV1UserUsernameAvailableError,
+    GetApiV1UserUsernameAvailableResponse,
+    ReturnType<typeof getApiV1UserUsernameAvailableQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserUsernameAvailable({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserUsernameAvailableQueryKey(options),
+  })
+
 export const deleteApiV1UserMeDeleteMutation = (
   options?: Partial<Options<DeleteApiV1UserMeDeleteData>>,
 ): UseMutationOptions<
@@ -119,6 +250,58 @@ export const deleteApiV1UserMeDeleteMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await deleteApiV1UserMeDelete({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1UserMeSettingsQueryKey = (options?: Options<GetApiV1UserMeSettingsData>) =>
+  createQueryKey("getApiV1UserMeSettings", options)
+
+/**
+ * Current user's settings, or defaults when none are stored
+ */
+export const getApiV1UserMeSettingsOptions = (options?: Options<GetApiV1UserMeSettingsData>) =>
+  queryOptions<
+    GetApiV1UserMeSettingsResponse,
+    DefaultError,
+    GetApiV1UserMeSettingsResponse,
+    ReturnType<typeof getApiV1UserMeSettingsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserMeSettings({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserMeSettingsQueryKey(options),
+  })
+
+/**
+ * Update a subset of the current user's settings
+ */
+export const patchApiV1UserMeSettingsMutation = (
+  options?: Partial<Options<PatchApiV1UserMeSettingsData>>,
+): UseMutationOptions<
+  PatchApiV1UserMeSettingsResponse,
+  PatchApiV1UserMeSettingsError,
+  Options<PatchApiV1UserMeSettingsData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1UserMeSettingsResponse,
+    PatchApiV1UserMeSettingsError,
+    Options<PatchApiV1UserMeSettingsData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1UserMeSettings({
         ...options,
         ...fnOptions,
         throwOnError: true,
