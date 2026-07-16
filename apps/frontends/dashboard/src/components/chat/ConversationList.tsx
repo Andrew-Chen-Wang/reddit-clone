@@ -13,6 +13,7 @@ import { RelativeTime } from "@ui/seo-shared/RelativeTime"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import { getApiV1ChatOptions } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import { ListFilter, SquarePen, Users } from "lucide-react"
+import { ModInviteList } from "@frontends/dashboard/components/chat/ModInviteList"
 import { RequestRowActions } from "@frontends/dashboard/components/chat/RequestRowActions"
 import {
   conversationTitle,
@@ -28,6 +29,51 @@ const FILTER_OPTIONS: { value: ChatFilter; label: string }[] = [
   { value: "requests", label: "Requests" },
   { value: "unread", label: "Unread" },
 ]
+
+/**
+ * The new-chat + filter controls shared between the list header (on the /chat
+ * page) and the floating dock's chrome bar.
+ */
+export function ChatListControls({
+  filter,
+  onFilterChange,
+  onNewChat,
+}: {
+  filter: ChatFilter
+  onFilterChange: (f: ChatFilter) => void
+  onNewChat: () => void
+}) {
+  return (
+    <div className="flex items-center gap-0.5">
+      <Button variant="ghost" size="icon" aria-label="New chat" onClick={onNewChat}>
+        <SquarePen className="size-4" />
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" size="icon" aria-label="Filter conversations">
+              <ListFilter className="size-4" />
+            </Button>
+          }
+        />
+        <DropdownMenuContent align="end">
+          <DropdownMenuRadioGroup
+            value={filter}
+            onValueChange={(v) => {
+              onFilterChange(v as ChatFilter)
+            }}
+          >
+            {FILTER_OPTIONS.map((opt) => (
+              <DropdownMenuRadioItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+}
 
 function previewText(conversation: Conversation): string {
   const last = conversation.lastMessage
@@ -117,6 +163,8 @@ export function ConversationList({
   currentUserId,
   onSelect,
   onNewChat,
+  showHeader = true,
+  showModInvites = true,
 }: {
   filter: ChatFilter
   onFilterChange: (f: ChatFilter) => void
@@ -124,6 +172,8 @@ export function ConversationList({
   currentUserId: string | undefined
   onSelect: (id: string) => void
   onNewChat: () => void
+  showHeader?: boolean
+  showModInvites?: boolean
 }) {
   const { data, isLoading } = useQuery({
     ...getApiV1ChatOptions({ query: { filter } }),
@@ -136,39 +186,21 @@ export function ConversationList({
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="flex items-center gap-1 border-b px-3 py-2.5">
-        <h1 className="text-lg font-bold">Chats</h1>
-        <div className="ml-auto flex items-center gap-0.5">
-          <Button variant="ghost" size="icon" aria-label="New chat" onClick={onNewChat}>
-            <SquarePen className="size-4" />
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="ghost" size="icon" aria-label="Filter conversations">
-                  <ListFilter className="size-4" />
-                </Button>
-              }
+      {showHeader ? (
+        <div className="flex items-center gap-1 border-b px-3 py-2.5">
+          <h1 className="text-lg font-bold">Chats</h1>
+          <div className="ml-auto">
+            <ChatListControls
+              filter={filter}
+              onFilterChange={onFilterChange}
+              onNewChat={onNewChat}
             />
-            <DropdownMenuContent align="end">
-              <DropdownMenuRadioGroup
-                value={filter}
-                onValueChange={(v) => {
-                  onFilterChange(v as ChatFilter)
-                }}
-              >
-                {FILTER_OPTIONS.map((opt) => (
-                  <DropdownMenuRadioItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="min-h-0 flex-1 overflow-y-auto">
+        {showModInvites ? <ModInviteList /> : null}
         {isLoading ? (
           <p className="px-3 py-6 text-center text-sm text-muted-foreground">Loading…</p>
         ) : conversations.length === 0 ? (

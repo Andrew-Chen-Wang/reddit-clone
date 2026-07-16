@@ -1,15 +1,19 @@
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "@tanstack/react-router"
-import { buttonVariants } from "@ui/base/ui/button"
-import { cn } from "@ui/base/lib/utils"
+import { useNavigate } from "@tanstack/react-router"
+import { Button } from "@ui/base/ui/button"
+import { useChatDock } from "@frontends/dashboard/components/chat/ChatDockContext"
 import { getApiV1ChatUnreadCountOptions } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import { MessageCircle } from "lucide-react"
 
 /**
  * TopNav entry point for chat. Polls the unread-conversation count every 15s
- * (paused while the tab is hidden) and renders a badge over the icon.
+ * (paused while the tab is hidden) and renders a badge over the icon. Toggles
+ * the floating chat dock when it's mounted; otherwise navigates to the full
+ * `/chat` page.
  */
 export function ChatButton() {
+  const dock = useChatDock()
+  const navigate = useNavigate()
   const { data } = useQuery({
     ...getApiV1ChatUnreadCountOptions(),
     refetchInterval: 15_000,
@@ -19,11 +23,15 @@ export function ChatButton() {
   const count = data?.count ?? 0
 
   return (
-    <Link
-      to="/chat"
-      search={{ filter: "all" }}
+    <Button
+      variant="ghost"
+      size="icon"
       aria-label={count > 0 ? `Chat, ${count} unread` : "Chat"}
-      className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "relative rounded-full")}
+      className="relative rounded-full"
+      onClick={() => {
+        if (dock.available) dock.toggle()
+        else void navigate({ to: "/chat", search: { filter: "all" } })
+      }}
     >
       <MessageCircle className="size-5" />
       {count > 0 ? (
@@ -31,6 +39,6 @@ export function ChatButton() {
           {count > 99 ? "99+" : count}
         </span>
       ) : null}
-    </Link>
+    </Button>
   )
 }
