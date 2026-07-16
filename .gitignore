@@ -51,6 +51,7 @@ tofu/.terraform.lock.hcl
 
 # tanstack router
 **/routeTree.gen.ts
+**/.tanstack/
 
 # Local .terraform directories
 .terraform/
