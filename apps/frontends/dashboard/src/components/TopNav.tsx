@@ -21,6 +21,7 @@ import {
 } from "@ui/base/ui/dropdown-menu"
 import { Label } from "@ui/base/ui/label"
 import { RadioGroup, RadioGroupItem } from "@ui/base/ui/radio-group"
+import { useSidebar } from "@ui/base/ui/sidebar"
 import { useTheme, type Theme } from "@ui/spa-shared/theme"
 import { SearchSuggest } from "@frontends/dashboard/components/SearchSuggest"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
@@ -30,7 +31,7 @@ import {
   patchApiV1UserMeSettingsMutation,
   postApiV1AuthLogoutMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { LogOut, Monitor, Moon, Plus, Settings, Sun, User } from "lucide-react"
+import { LogOut, Menu, Monitor, Moon, Plus, Settings, Sun, User } from "lucide-react"
 import { useState } from "react"
 import { ChatButton } from "@frontends/dashboard/components/ChatButton"
 import { NotificationBell } from "@frontends/dashboard/components/NotificationBell"
@@ -109,6 +110,7 @@ function DisplayModeDialog({
 export function TopNav() {
   const navigate = useNavigate()
   const [displayOpen, setDisplayOpen] = useState(false)
+  const { toggleSidebar } = useSidebar()
   const { data: user } = useQuery(getApiV1UserMeOptions())
 
   const logout = useMutation({
@@ -122,10 +124,23 @@ export function TopNav() {
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4">
-        <Link to="/" className="text-lg font-bold text-primary">
-          ReadIt
-        </Link>
+      <div className="flex h-14 items-center gap-4 px-4">
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            aria-label="Toggle sidebar"
+            onClick={toggleSidebar}
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon" }),
+              "rounded-full text-foreground",
+            )}
+          >
+            <Menu className="size-5" />
+          </button>
+          <Link to="/" className="text-lg font-bold text-primary">
+            ReadIt
+          </Link>
+        </div>
         <SearchSuggest />
         <div className="ml-auto flex items-center gap-1">
           <ChatButton />

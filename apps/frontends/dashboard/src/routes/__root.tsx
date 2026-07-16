@@ -26,14 +26,14 @@ function RootLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <SidebarProvider className="flex min-h-screen w-full flex-col">
       <TopNav />
-      <SidebarProvider className="min-h-0 flex-1">
+      <div className="flex min-h-0 w-full flex-1">
         <AppSidebar />
         <SidebarInset className="min-w-0">
           <Outlet />
         </SidebarInset>
-      </SidebarProvider>
-    </div>
+      </div>
+    </SidebarProvider>
   )
 }
