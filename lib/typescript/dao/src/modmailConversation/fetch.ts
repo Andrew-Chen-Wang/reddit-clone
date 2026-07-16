@@ -41,7 +41,7 @@ export function fetchModmailConversation(db: Kysely<DB>) {
       .innerJoin("community as c", "c.id", "mc.communityId")
       .innerJoin("user as u", "u.id", "mc.participantUserId")
       .where("mc.communityId", "in", communityIds)
-      .$if(folder !== null, (qb) => qb.where("mc.folder", "=", folder as string))
+      .$if(folder !== null, (qb) => qb.where("mc.folder", "=", folder!))
       .select([
         "mc.id as id",
         "mc.subject as subject",

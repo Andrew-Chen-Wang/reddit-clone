@@ -236,7 +236,7 @@ export async function seed(db: Kysely<any>): Promise<void> {
       score: r.raw / (maxByCommunity.get(r.communityId) as number),
       computedAt: new Date(),
     }))
-    .sort((a, b) => b.score - a.score)
+    .toSorted((a, b) => b.score - a.score)
     .slice(0, 200)
   if (risingRows.length > 0) {
     await db.insertInto("postRising").values(risingRows).execute()

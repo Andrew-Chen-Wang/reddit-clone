@@ -17,7 +17,7 @@ const FOLDERS: { value: ModmailFolder; label: string }[] = [
   { value: "in_progress", label: "In Progress" },
   { value: "archived", label: "Archived" },
 ]
-const FOLDER_VALUES = FOLDERS.map((f) => f.value)
+const FOLDER_VALUES = new Set(FOLDERS.map((f) => f.value))
 const MODMAIL_LIST_POLL_MS = 15_000
 
 type ModmailSearch = {
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/mod/$name/modmail")({
   validateSearch: (search: Record<string, unknown>): ModmailSearch => ({
     m: typeof search.m === "string" ? search.m : undefined,
     folder:
-      typeof search.folder === "string" && FOLDER_VALUES.includes(search.folder as ModmailFolder)
+      typeof search.folder === "string" && FOLDER_VALUES.has(search.folder as ModmailFolder)
         ? (search.folder as ModmailFolder)
         : "new",
   }),

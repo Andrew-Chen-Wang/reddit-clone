@@ -13,7 +13,13 @@ import {
 import { ArrowLeft, MessageSquare } from "lucide-react"
 import { useState } from "react"
 
-const FILTER_VALUES: ChatFilter[] = ["all", "groups", "dms", "requests", "unread"]
+const FILTER_VALUES: ReadonlySet<ChatFilter> = new Set([
+  "all",
+  "groups",
+  "dms",
+  "requests",
+  "unread",
+])
 
 type ChatSearch = {
   c?: string
@@ -24,7 +30,7 @@ export const Route = createFileRoute("/chat")({
   validateSearch: (search: Record<string, unknown>): ChatSearch => ({
     c: typeof search.c === "string" ? search.c : undefined,
     filter:
-      typeof search.filter === "string" && FILTER_VALUES.includes(search.filter as ChatFilter)
+      typeof search.filter === "string" && FILTER_VALUES.has(search.filter as ChatFilter)
         ? (search.filter as ChatFilter)
         : "all",
   }),
