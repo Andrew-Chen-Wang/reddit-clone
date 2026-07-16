@@ -848,6 +848,64 @@ export type GetApiV1CommunityByNameResponses = {
 export type GetApiV1CommunityByNameResponse =
   GetApiV1CommunityByNameResponses[keyof GetApiV1CommunityByNameResponses]
 
+export type GetApiV1CommunityByIdSettingsData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community/{id}/settings"
+}
+
+export type GetApiV1CommunityByIdSettingsErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Community not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1CommunityByIdSettingsError =
+  GetApiV1CommunityByIdSettingsErrors[keyof GetApiV1CommunityByIdSettingsErrors]
+
+export type GetApiV1CommunityByIdSettingsResponses = {
+  /**
+   * Community settings
+   */
+  200: {
+    id: string
+    name: string
+    displayName: string | null
+    description: string
+    defaultCommentSort: string
+    topicId: string | null
+    isNsfw: boolean
+    welcomeMessage: string | null
+    postGuidelines: string | null
+    allowedPostTypes: string
+    bodyPolicy: string
+    titleRegex: string | null
+    linkDomainWhitelist: Array<string> | null
+    linkDomainBlacklist: Array<string> | null
+    mediaInComments: boolean
+    requirePostFlair: boolean
+    holdForReview: boolean
+    spoilerEnabled: boolean
+    archiveOldPosts: boolean
+    appearInFeeds: boolean
+    appearInRecommendations: boolean
+    notifyActivity: boolean
+    notifyReports: boolean
+    notifyMilestones: boolean
+  }
+}
+
+export type GetApiV1CommunityByIdSettingsResponse =
+  GetApiV1CommunityByIdSettingsResponses[keyof GetApiV1CommunityByIdSettingsResponses]
+
 export type PostApiV1CommunityData = {
   body?: {
     name: string

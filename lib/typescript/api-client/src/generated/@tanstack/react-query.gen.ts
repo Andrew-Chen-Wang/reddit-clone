@@ -36,6 +36,7 @@ import {
   deleteApiV1UserMeDelete,
   getApiV1AuthMe,
   getApiV1CommentPostByPostId,
+  getApiV1CommunityByIdSettings,
   getApiV1CommunityByName,
   getApiV1CommunityJoinRequestByCommunityIdPending,
   getApiV1CommunityMemberMine,
@@ -221,6 +222,9 @@ import type {
   GetApiV1CommentPostByPostIdData,
   GetApiV1CommentPostByPostIdError,
   GetApiV1CommentPostByPostIdResponse,
+  GetApiV1CommunityByIdSettingsData,
+  GetApiV1CommunityByIdSettingsError,
+  GetApiV1CommunityByIdSettingsResponse,
   GetApiV1CommunityByNameData,
   GetApiV1CommunityByNameError,
   GetApiV1CommunityByNameResponse,
@@ -1288,6 +1292,34 @@ export const getApiV1CommunityByNameOptions = (options: Options<GetApiV1Communit
       return data
     },
     queryKey: getApiV1CommunityByNameQueryKey(options),
+  })
+
+export const getApiV1CommunityByIdSettingsQueryKey = (
+  options: Options<GetApiV1CommunityByIdSettingsData>,
+) => createQueryKey("getApiV1CommunityByIdSettings", options)
+
+/**
+ * Get all community settings for prefill (moderators with config permission)
+ */
+export const getApiV1CommunityByIdSettingsOptions = (
+  options: Options<GetApiV1CommunityByIdSettingsData>,
+) =>
+  queryOptions<
+    GetApiV1CommunityByIdSettingsResponse,
+    GetApiV1CommunityByIdSettingsError,
+    GetApiV1CommunityByIdSettingsResponse,
+    ReturnType<typeof getApiV1CommunityByIdSettingsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1CommunityByIdSettings({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1CommunityByIdSettingsQueryKey(options),
   })
 
 /**
