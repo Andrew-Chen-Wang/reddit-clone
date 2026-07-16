@@ -73,6 +73,9 @@ import type {
   GetApiV1CommentPostByPostIdData,
   GetApiV1CommentPostByPostIdErrors,
   GetApiV1CommentPostByPostIdResponses,
+  GetApiV1CommunityByIdSettingsData,
+  GetApiV1CommunityByIdSettingsErrors,
+  GetApiV1CommunityByIdSettingsResponses,
   GetApiV1CommunityByNameData,
   GetApiV1CommunityByNameErrors,
   GetApiV1CommunityByNameResponses,
@@ -621,6 +624,22 @@ export const getApiV1CommunityByName = <ThrowOnError extends boolean = false>(
     GetApiV1CommunityByNameErrors,
     ThrowOnError
   >({ url: "/api/v1/community/{name}", ...options })
+
+/**
+ * Get all community settings for prefill (moderators with config permission)
+ */
+export const getApiV1CommunityByIdSettings = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1CommunityByIdSettingsData, ThrowOnError>,
+): RequestResult<
+  GetApiV1CommunityByIdSettingsResponses,
+  GetApiV1CommunityByIdSettingsErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1CommunityByIdSettingsResponses,
+    GetApiV1CommunityByIdSettingsErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community/{id}/settings", ...options })
 
 /**
  * Create a community
