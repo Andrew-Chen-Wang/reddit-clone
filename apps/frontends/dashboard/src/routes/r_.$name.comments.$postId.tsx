@@ -4,6 +4,7 @@ import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
 import { PostDetailCard } from "@ui/seo-shared/post/PostDetailCard"
 import type { CommentSortValue } from "@ui/seo-shared/comment/types"
 import { CommentSection } from "@frontends/dashboard/components/CommentSection"
+import { PostCommentSearch } from "@frontends/dashboard/components/PostCommentSearch"
 import { PostActionsMenu } from "@frontends/dashboard/components/PostActionsMenu"
 import { PostShareMenu } from "@frontends/dashboard/components/PostShareMenu"
 import {
@@ -156,6 +157,8 @@ function PostDetailPage() {
             />
           }
         />
+
+        <PostCommentSearch postId={postId} communityName={name} />
 
         <CommentSection
           postId={postId}

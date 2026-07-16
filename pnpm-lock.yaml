@@ -440,6 +440,9 @@ importers:
       '@template-nextjs/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@template-nextjs/search':
+        specifier: workspace:*
+        version: link:../../packages/search
       '@ui/base':
         specifier: workspace:*
         version: link:../../lib/typescript/ui/base

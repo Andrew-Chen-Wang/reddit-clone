@@ -147,6 +147,7 @@ function GeneralSettingsInner({ community }: { community: CommunityWithSettings 
               <p className="text-sm text-muted-foreground">Primary topic for discovery.</p>
             </div>
             <Select
+              items={Object.fromEntries(topics.map((t) => [t.id, t.name]))}
               value={community.topicId ?? ""}
               onValueChange={(v) => {
                 save({ topicId: v })
@@ -171,6 +172,7 @@ function GeneralSettingsInner({ community }: { community: CommunityWithSettings 
               <p className="text-sm text-muted-foreground">How comments are ordered by default.</p>
             </div>
             <Select
+              items={Object.fromEntries(COMMENT_SORTS.map((s) => [s.value, s.label]))}
               value={community.defaultCommentSort}
               onValueChange={(v) => {
                 const match = COMMENT_SORTS.find((s) => s.value === v)
