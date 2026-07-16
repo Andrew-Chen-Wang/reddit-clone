@@ -50,7 +50,8 @@ function CommunityPage() {
     ...postApiV1CommunityMemberByCommunityIdJoinMutation(),
     onSuccess: (result) => {
       invalidate()
-      if (result.requested) toast.success("Request sent", { description: "A moderator will review it." })
+      if (result.requested)
+        toast.success("Request sent", { description: "A moderator will review it." })
     },
     onError: () => toast.error("Could not join community"),
   })
@@ -107,7 +108,9 @@ function CommunityPage() {
       size="sm"
       className="group"
       disabled={pending}
-      onClick={() =>{  leaveMutation.mutate({ path: { communityId } }); }}
+      onClick={() => {
+        leaveMutation.mutate({ path: { communityId } })
+      }}
     >
       <span className="group-hover:hidden">Joined</span>
       <span className="hidden group-hover:inline">Leave</span>
@@ -120,7 +123,9 @@ function CommunityPage() {
     <Button
       size="sm"
       disabled={pending}
-      onClick={() =>{  joinMutation.mutate({ path: { communityId } }); }}
+      onClick={() => {
+        joinMutation.mutate({ path: { communityId } })
+      }}
     >
       {isPublic ? "Join" : "Request to Join"}
     </Button>
@@ -136,7 +141,12 @@ function CommunityPage() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {(Object.keys(NOTIFICATION_LABELS) as NotificationLevel[]).map((level) => (
-          <DropdownMenuItem key={level} onClick={() =>{  setNotificationLevel(level); }}>
+          <DropdownMenuItem
+            key={level}
+            onClick={() => {
+              setNotificationLevel(level)
+            }}
+          >
             {viewer.notificationLevel === level ? (
               <Check className="size-4" />
             ) : (
@@ -170,9 +180,7 @@ function CommunityPage() {
           disabled={pending}
           onClick={toggleFavorite}
         >
-          <Star
-            className={cn("size-4", viewer.isFavorite && "fill-yellow-400 text-yellow-400")}
-          />
+          <Star className={cn("size-4", viewer.isFavorite && "fill-yellow-400 text-yellow-400")} />
         </Button>
       ) : null}
       {viewer.isModerator ? (

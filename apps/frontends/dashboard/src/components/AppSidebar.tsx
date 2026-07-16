@@ -18,15 +18,7 @@ import {
   getApiV1CommunityMemberModeratedOptions,
   patchApiV1CommunityMemberByCommunityIdMembershipMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import {
-  ChevronRight,
-  Compass,
-  Home,
-  Plus,
-  ShieldCheck,
-  Star,
-  TrendingUp,
-} from "lucide-react"
+import { ChevronRight, Compass, Home, Plus, ShieldCheck, Star, TrendingUp } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 import { CreateCommunityWizard } from "@frontends/dashboard/components/CreateCommunityWizard"
@@ -54,13 +46,7 @@ function useFavoriteToggle() {
   })
 }
 
-function FavoriteStar({
-  communityId,
-  isFavorite,
-}: {
-  communityId: string
-  isFavorite: boolean
-}) {
+function FavoriteStar({ communityId, isFavorite }: { communityId: string; isFavorite: boolean }) {
   const toggle = useFavoriteToggle()
   return (
     <SidebarMenuAction
