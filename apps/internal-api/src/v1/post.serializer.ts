@@ -51,6 +51,7 @@ export const postCardSchema = Type.Object({
   id: UUID7String,
   type: Type.String(),
   title: Type.String(),
+  slug: Nullable(Type.String()),
   bodyMd: Nullable(Type.String()),
   linkUrl: Nullable(Type.String()),
   linkImageUrl: Nullable(Type.String()),
@@ -63,7 +64,7 @@ export const postCardSchema = Type.Object({
   downs: Type.Number(),
   score: Type.Number(),
   commentCount: Type.Number(),
-  viewCount: Type.Number(),
+  viewCount: Nullable(Type.Number()),
   shareCount: Type.Number(),
   createdAt: Type.String({ format: "date-time" }),
   editedAt: Nullable(Type.String({ format: "date-time" })),
@@ -78,6 +79,29 @@ export const postCardSchema = Type.Object({
       username: Type.String(),
       displayName: Nullable(Type.String()),
       avatarImageKey: Nullable(Type.String()),
+      isAdmin: Type.Boolean(),
+    }),
+  ),
+  crosspostOf: Nullable(
+    Type.Object({
+      id: UUID7String,
+      title: Type.String(),
+      score: Type.Number(),
+      commentCount: Type.Number(),
+      linkImageUrl: Nullable(Type.String()),
+      community: Nullable(
+        Type.Object({
+          id: UUID7String,
+          name: Type.String(),
+        }),
+      ),
+      author: Nullable(
+        Type.Object({
+          id: UUID7String,
+          username: Type.String(),
+          displayName: Nullable(Type.String()),
+        }),
+      ),
     }),
   ),
   community: Nullable(

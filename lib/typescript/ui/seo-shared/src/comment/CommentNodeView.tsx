@@ -17,6 +17,7 @@ import { Markdown } from "@ui/seo-shared/Markdown"
 import { RelativeTime } from "@ui/seo-shared/RelativeTime"
 import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
 import { VoteCluster } from "@ui/seo-shared/post/VoteCluster"
+import { AdminBadge, AuthorInsightsRow } from "@ui/seo-shared/post/PostRow"
 import type { CommentNode } from "@ui/seo-shared/comment/types"
 
 export type CommentNodeViewProps = {
@@ -105,6 +106,7 @@ export function CommentNodeView({
         </button>
         <span className="font-medium text-foreground/80">{authorLabel(node)}</span>
         {isOp ? <OpBadge /> : null}
+        {node.author?.isAdmin ? <AdminBadge /> : null}
         <span aria-hidden>·</span>
         <span>{formatCompactNumber(node.score)} points</span>
         <span aria-hidden>·</span>
@@ -182,6 +184,7 @@ export function CommentNodeView({
             <span className="font-medium text-foreground">{authorLabel(node)}</span>
           )}
           {isOp ? <OpBadge /> : null}
+          {node.author?.isAdmin ? <AdminBadge /> : null}
           {node.isSticky ? (
             <Badge variant="secondary" className="gap-1 px-1.5 py-0 text-[10px] font-medium">
               Stickied comment
@@ -271,6 +274,10 @@ export function CommentNodeView({
             ) : null}
           </div>
         )}
+
+        {!editor && node.viewCount != null ? (
+          <AuthorInsightsRow viewCount={node.viewCount} />
+        ) : null}
       </div>
     </div>
   )

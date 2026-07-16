@@ -18,6 +18,8 @@ export type ProfileHeaderUser = {
 export type ProfileHeaderProps = {
   user: ProfileHeaderUser
   action?: ReactNode
+  /** Extra right-sidebar cards rendered below the Karma card (moderating, social, settings). */
+  sidebarExtra?: ReactNode
   /** Main-column content (tabs + feed) rendered beside the profile info card. */
   children?: ReactNode
 }
@@ -30,7 +32,7 @@ function formatCakeDay(value: string | Date): string {
   })
 }
 
-export function ProfileHeader({ user, action, children }: ProfileHeaderProps) {
+export function ProfileHeader({ user, action, sidebarExtra, children }: ProfileHeaderProps) {
   const name = user.displayName ?? user.username
   const initial = name.charAt(0).toUpperCase()
   const totalKarma = user.postKarma + user.commentKarma
@@ -61,7 +63,7 @@ export function ProfileHeader({ user, action, children }: ProfileHeaderProps) {
       {user.about ? <p className="mt-3 px-2 text-sm text-foreground/90">{user.about}</p> : null}
 
       <div className="mt-6 flex flex-col gap-6 lg:flex-row-reverse">
-        <aside className={`w-full shrink-0${children ? " lg:w-72" : ""}`}>
+        <aside className={`flex w-full shrink-0 flex-col gap-4${children ? " lg:w-72" : ""}`}>
           <Card>
             <CardContent className="flex flex-col gap-4 pt-6">
               <div>
@@ -94,6 +96,7 @@ export function ProfileHeader({ user, action, children }: ProfileHeaderProps) {
               </div>
             </CardContent>
           </Card>
+          {sidebarExtra}
         </aside>
 
         {children ? <div className="min-w-0 flex-1">{children}</div> : null}

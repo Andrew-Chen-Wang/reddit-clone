@@ -31,6 +31,7 @@ export const commentWithPostSchema = Type.Object({
       username: Type.String(),
       displayName: Nullable(Type.String()),
       avatarImageKey: Nullable(Type.String()),
+      isAdmin: Type.Boolean(),
     }),
   ),
   post: Type.Object({

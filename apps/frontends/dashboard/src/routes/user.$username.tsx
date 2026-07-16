@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
-import { buttonVariants } from "@ui/base/ui/button"
+import { Button, buttonVariants } from "@ui/base/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/base/ui/tabs"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { ProfileHeader } from "@ui/seo-shared/profile/ProfileHeader"
+import { ProfileSidebarSections } from "@frontends/dashboard/components/profile/ProfileSidebarSections"
 import { PostFeed, type FeedPost } from "@frontends/dashboard/components/PostFeed"
 import { CommentWithPostList } from "@frontends/dashboard/components/CommentWithPostList"
 import { EngagementPostList } from "@frontends/dashboard/components/EngagementPostList"
@@ -21,7 +24,9 @@ import {
   getApiV1UserMeUpvoted,
 } from "@lib/api-client/generated/sdk.gen"
 import {
+  getApiV1UserByUsernameByUsernameModeratingOptions,
   getApiV1UserByUsernameByUsernameOptions,
+  getApiV1UserByUsernameByUsernameSocialLinksOptions,
   getApiV1UserMeOptions,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
 const PROFILE_TABS = [
@@ -51,6 +56,81 @@ function postPermalink(post: FeedPost): string {
   return post.community
     ? `/r/${post.community.name}/comments/${post.id}`
     : `/user/${post.author?.username ?? ""}`
+}
+
+/**
+ * Single-row, horizontally-scrollable profile tab strip. The tabs never wrap;
+ * chevron buttons appear at each edge only while there is more to scroll toward
+ * and nudge the strip in that direction (matching reddit's overflowing tab bar).
+ */
+function ScrollableTabsList({ tabs }: { tabs: readonly ProfileTab[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [canLeft, setCanLeft] = useState(false)
+  const [canRight, setCanRight] = useState(false)
+
+  const update = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    setCanLeft(el.scrollLeft > 1)
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1)
+  }, [])
+
+  useEffect(() => {
+    update()
+    const el = scrollRef.current
+    if (!el) return
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+    }
+  }, [update])
+
+  const nudge = (direction: 1 | -1) => {
+    scrollRef.current?.scrollBy({ left: direction * 200, behavior: "smooth" })
+  }
+
+  return (
+    <div className="relative mb-4">
+      {canLeft ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Scroll tabs left"
+          onClick={() => {
+            nudge(-1)
+          }}
+          className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-background shadow-sm"
+        >
+          <ChevronLeft className="size-4" />
+        </Button>
+      ) : null}
+      <div ref={scrollRef} onScroll={update} className="no-scrollbar overflow-x-auto">
+        <TabsList className="w-max flex-nowrap">
+          {tabs.map((t) => (
+            <TabsTrigger key={t} value={t} className="flex-none capitalize">
+              {t}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </div>
+      {canRight ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Scroll tabs right"
+          onClick={() => {
+            nudge(1)
+          }}
+          className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-background shadow-sm"
+        >
+          <ChevronRight className="size-4" />
+        </Button>
+      ) : null}
+    </div>
+  )
 }
 
 /** A right-aligned toolbar carrying just the card/compact view toggle. */
@@ -215,6 +295,12 @@ function ProfilePage() {
   const { data, isLoading, isError } = useQuery(
     getApiV1UserByUsernameByUsernameOptions({ path: { username } }),
   )
+  const { data: moderatingData } = useQuery(
+    getApiV1UserByUsernameByUsernameModeratingOptions({ path: { username } }),
+  )
+  const { data: socialLinksData } = useQuery(
+    getApiV1UserByUsernameByUsernameSocialLinksOptions({ path: { username } }),
+  )
 
   if (isLoading) {
     return (
@@ -259,6 +345,13 @@ function ProfilePage() {
             <ProfileActions username={data.username} />
           )
         }
+        sidebarExtra={
+          <ProfileSidebarSections
+            moderating={moderatingData?.data ?? []}
+            socialLinks={socialLinksData?.data ?? []}
+            isOwnProfile={isOwnProfile}
+          />
+        }
       >
         <Tabs
           value={activeTab}
@@ -266,13 +359,7 @@ function ProfilePage() {
             void navigate({ search: { tab: next as ProfileTab }, replace: true })
           }}
         >
-          <TabsList className="mb-4 flex-wrap">
-            {visibleTabs.map((t) => (
-              <TabsTrigger key={t} value={t} className="capitalize">
-                {t}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          <ScrollableTabsList tabs={visibleTabs} />
 
           <TabsContent value="overview">
             <OverviewFeed username={data.username} />

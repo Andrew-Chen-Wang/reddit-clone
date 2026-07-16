@@ -73,6 +73,7 @@ export const commentNodeSchema = Type.Object({
       username: Type.String(),
       displayName: Nullable(Type.String()),
       avatarImageKey: Nullable(Type.String()),
+      isAdmin: Type.Boolean(),
     }),
   ),
 })

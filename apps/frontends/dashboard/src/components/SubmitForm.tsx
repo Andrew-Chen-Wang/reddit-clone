@@ -368,8 +368,8 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
       clearLoadedDraft()
       if (community) {
         void navigate({
-          to: "/r/$name/comments/$postId",
-          params: { name: community.name, postId: result.id },
+          to: "/r/$name/comments/$",
+          params: { name: community.name, _splat: result.id },
         })
       }
     },
@@ -433,8 +433,8 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
       await postApiV1MediaConfirm({ body: { postId: data.id }, throwOnError: true })
       clearLoadedDraft()
       void navigate({
-        to: "/r/$name/comments/$postId",
-        params: { name: community.name, postId: data.id },
+        to: "/r/$name/comments/$",
+        params: { name: community.name, _splat: data.id },
       })
     } catch {
       toast.error("Could not upload media", {

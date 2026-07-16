@@ -56,8 +56,8 @@ export function CommentCard({
           <span>commented on</span>
           {community ? (
             <Link
-              to="/r/$name/comments/$postId"
-              params={{ name: community.name, postId: comment.post.id }}
+              to="/r/$name/comments/$"
+              params={{ name: community.name, _splat: comment.post.id }}
               search={{ comment: comment.id }}
               className="font-medium text-foreground hover:underline"
             >

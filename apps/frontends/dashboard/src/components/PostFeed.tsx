@@ -90,7 +90,7 @@ export type FeedPost = PostRowPost & {
     iconImageKey: string | null
     isMember?: boolean
   } | null
-  author: { username: string; displayName: string | null } | null
+  author: { username: string; displayName: string | null; isAdmin?: boolean } | null
   flair: { id: string; text: string; bgColor: string | null; textColor: string | null } | null
 }
 export type FeedPage = { data: FeedPost[]; nextCursor: string | null }

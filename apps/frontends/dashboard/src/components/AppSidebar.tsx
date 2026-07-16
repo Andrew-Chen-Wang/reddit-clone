@@ -485,30 +485,40 @@ export function AppSidebar() {
         ) : null}
 
         {/* Recent */}
-        <SidebarGroup>
-          <SidebarGroupLabel className={SECTION_LABEL_CLASS}>Recent</SidebarGroupLabel>
-          <SidebarGroupContent>
-            {recentCommunities.length > 0 ? (
-              <SidebarMenu>
-                {recentCommunities.map((community) => (
-                  <CommunityLink
-                    key={community.communityId}
-                    community={{
-                      id: community.communityId,
-                      name: community.name,
-                      displayName: null,
-                      iconImageKey: community.iconImageKey,
-                    }}
-                  />
-                ))}
-              </SidebarMenu>
-            ) : (
-              <p className="px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-                Communities you visit will show up here.
-              </p>
-            )}
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <Collapsible defaultOpen className="group/recent">
+          <SidebarGroup>
+            <SidebarGroupLabel
+              render={<CollapsibleTrigger />}
+              className={cn("group/label cursor-pointer", SECTION_LABEL_CLASS)}
+            >
+              Recent
+              <ChevronRight className="ml-auto transition-transform group-data-[panel-open]/label:rotate-90" />
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                {recentCommunities.length > 0 ? (
+                  <SidebarMenu>
+                    {recentCommunities.map((community) => (
+                      <CommunityLink
+                        key={community.communityId}
+                        community={{
+                          id: community.communityId,
+                          name: community.name,
+                          displayName: null,
+                          iconImageKey: community.iconImageKey,
+                        }}
+                      />
+                    ))}
+                  </SidebarMenu>
+                ) : (
+                  <p className="px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+                    Communities you visit will show up here.
+                  </p>
+                )}
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
 
         {/* Communities */}
         <Collapsible defaultOpen className="group/communities">

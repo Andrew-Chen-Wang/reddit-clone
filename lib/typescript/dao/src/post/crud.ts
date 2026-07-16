@@ -2,6 +2,16 @@ import type { DB } from "@template-nextjs/db"
 import { type Kysely, type Selectable, sql } from "kysely"
 import { v7 } from "uuid"
 
+export function slugifyTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 50)
+    .replace(/-$/g, "")
+}
+
 interface CreatePostInput {
   id?: string
   authorUserId: string
@@ -44,6 +54,7 @@ export function crudPost(db: Kysely<DB>) {
           profileUserId: input.profileUserId ?? null,
           type: input.type,
           title: input.title,
+          slug: slugifyTitle(input.title),
           bodyMd: input.bodyMd ?? null,
           linkUrl: input.linkUrl ?? null,
           isNsfw: input.isNsfw ?? false,

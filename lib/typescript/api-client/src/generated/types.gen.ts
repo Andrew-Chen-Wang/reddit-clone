@@ -176,6 +176,7 @@ export type GetApiV1UserByUsernameByUsernameCommentsResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
       } | null
       post: {
         id: string
@@ -226,6 +227,7 @@ export type GetApiV1UserByUsernameByUsernameOverviewResponses = {
             id: string
             type: string
             title: string
+            slug: string | null
             bodyMd: string | null
             linkUrl: string | null
             linkImageUrl: string | null
@@ -238,7 +240,7 @@ export type GetApiV1UserByUsernameByUsernameOverviewResponses = {
             downs: number
             score: number
             commentCount: number
-            viewCount: number
+            viewCount: number | null
             shareCount: number
             createdAt: Date
             editedAt: Date | null
@@ -252,6 +254,23 @@ export type GetApiV1UserByUsernameByUsernameOverviewResponses = {
               username: string
               displayName: string | null
               avatarImageKey: string | null
+              isAdmin: boolean
+            } | null
+            crosspostOf: {
+              id: string
+              title: string
+              score: number
+              commentCount: number
+              linkImageUrl: string | null
+              community: {
+                id: string
+                name: string
+              } | null
+              author: {
+                id: string
+                username: string
+                displayName: string | null
+              } | null
             } | null
             community: {
               id: string
@@ -296,6 +315,7 @@ export type GetApiV1UserByUsernameByUsernameOverviewResponses = {
               username: string
               displayName: string | null
               avatarImageKey: string | null
+              isAdmin: boolean
             } | null
             post: {
               id: string
@@ -314,6 +334,79 @@ export type GetApiV1UserByUsernameByUsernameOverviewResponses = {
 
 export type GetApiV1UserByUsernameByUsernameOverviewResponse =
   GetApiV1UserByUsernameByUsernameOverviewResponses[keyof GetApiV1UserByUsernameByUsernameOverviewResponses]
+
+export type GetApiV1UserByUsernameByUsernameSocialLinksData = {
+  body?: never
+  path: {
+    username: string
+  }
+  query?: never
+  url: "/api/v1/user/by-username/{username}/social-links"
+}
+
+export type GetApiV1UserByUsernameByUsernameSocialLinksErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1UserByUsernameByUsernameSocialLinksError =
+  GetApiV1UserByUsernameByUsernameSocialLinksErrors[keyof GetApiV1UserByUsernameByUsernameSocialLinksErrors]
+
+export type GetApiV1UserByUsernameByUsernameSocialLinksResponses = {
+  /**
+   * Social links
+   */
+  200: {
+    data: Array<{
+      id: string
+      platform: string
+      url: string
+      label: string | null
+      position: number
+    }>
+  }
+}
+
+export type GetApiV1UserByUsernameByUsernameSocialLinksResponse =
+  GetApiV1UserByUsernameByUsernameSocialLinksResponses[keyof GetApiV1UserByUsernameByUsernameSocialLinksResponses]
+
+export type GetApiV1UserByUsernameByUsernameModeratingData = {
+  body?: never
+  path: {
+    username: string
+  }
+  query?: never
+  url: "/api/v1/user/by-username/{username}/moderating"
+}
+
+export type GetApiV1UserByUsernameByUsernameModeratingErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1UserByUsernameByUsernameModeratingError =
+  GetApiV1UserByUsernameByUsernameModeratingErrors[keyof GetApiV1UserByUsernameByUsernameModeratingErrors]
+
+export type GetApiV1UserByUsernameByUsernameModeratingResponses = {
+  /**
+   * Moderated communities
+   */
+  200: {
+    data: Array<{
+      id: string
+      name: string
+      iconImageKey: string | null
+      memberCount: number
+    }>
+  }
+}
+
+export type GetApiV1UserByUsernameByUsernameModeratingResponse =
+  GetApiV1UserByUsernameByUsernameModeratingResponses[keyof GetApiV1UserByUsernameByUsernameModeratingResponses]
 
 export type GetApiV1UserMeSavedData = {
   body?: never
@@ -334,6 +427,7 @@ export type GetApiV1UserMeSavedResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -346,7 +440,7 @@ export type GetApiV1UserMeSavedResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -360,6 +454,23 @@ export type GetApiV1UserMeSavedResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -401,6 +512,7 @@ export type GetApiV1UserMeSavedResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
       } | null
       post: {
         id: string
@@ -436,6 +548,7 @@ export type GetApiV1UserMeHiddenResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -448,7 +561,7 @@ export type GetApiV1UserMeHiddenResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -462,6 +575,23 @@ export type GetApiV1UserMeHiddenResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -509,6 +639,7 @@ export type GetApiV1UserMeUpvotedResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -521,7 +652,7 @@ export type GetApiV1UserMeUpvotedResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -535,6 +666,23 @@ export type GetApiV1UserMeUpvotedResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -582,6 +730,7 @@ export type GetApiV1UserMeDownvotedResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -594,7 +743,7 @@ export type GetApiV1UserMeDownvotedResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -608,6 +757,23 @@ export type GetApiV1UserMeDownvotedResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -636,6 +802,71 @@ export type GetApiV1UserMeDownvotedResponses = {
 
 export type GetApiV1UserMeDownvotedResponse =
   GetApiV1UserMeDownvotedResponses[keyof GetApiV1UserMeDownvotedResponses]
+
+export type PostApiV1UserMeSocialLinksData = {
+  body?: {
+    platform: string
+    url: string
+    label?: string | null
+    position?: number
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/user/me/social-links"
+}
+
+export type PostApiV1UserMeSocialLinksErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+}
+
+export type PostApiV1UserMeSocialLinksError =
+  PostApiV1UserMeSocialLinksErrors[keyof PostApiV1UserMeSocialLinksErrors]
+
+export type PostApiV1UserMeSocialLinksResponses = {
+  /**
+   * Social link created
+   */
+  201: {
+    id: string
+  }
+}
+
+export type PostApiV1UserMeSocialLinksResponse =
+  PostApiV1UserMeSocialLinksResponses[keyof PostApiV1UserMeSocialLinksResponses]
+
+export type DeleteApiV1UserMeSocialLinksByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/user/me/social-links/{id}"
+}
+
+export type DeleteApiV1UserMeSocialLinksByIdErrors = {
+  /**
+   * Social link not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1UserMeSocialLinksByIdError =
+  DeleteApiV1UserMeSocialLinksByIdErrors[keyof DeleteApiV1UserMeSocialLinksByIdErrors]
+
+export type DeleteApiV1UserMeSocialLinksByIdResponses = {
+  /**
+   * Social link deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1UserMeSocialLinksByIdResponse =
+  DeleteApiV1UserMeSocialLinksByIdResponses[keyof DeleteApiV1UserMeSocialLinksByIdResponses]
 
 export type GetApiV1UserMeData = {
   body?: never
@@ -2000,6 +2231,7 @@ export type GetApiV1CustomFeedByUsernameBySlugPostsResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -2012,7 +2244,7 @@ export type GetApiV1CustomFeedByUsernameBySlugPostsResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -2026,6 +2258,23 @@ export type GetApiV1CustomFeedByUsernameBySlugPostsResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -2944,6 +3193,7 @@ export type GetApiV1CommentPostByPostIdResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
       } | null
     }>
     ancestors: Array<{
@@ -2970,6 +3220,7 @@ export type GetApiV1CommentPostByPostIdResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
       } | null
     }>
     nextCursor: string | null
@@ -3190,6 +3441,7 @@ export type GetApiV1PostByIdResponses = {
     id: string
     type: string
     title: string
+    slug: string | null
     bodyMd: string | null
     linkUrl: string | null
     linkImageUrl: string | null
@@ -3202,7 +3454,7 @@ export type GetApiV1PostByIdResponses = {
     downs: number
     score: number
     commentCount: number
-    viewCount: number
+    viewCount: number | null
     shareCount: number
     createdAt: Date
     editedAt: Date | null
@@ -3216,6 +3468,23 @@ export type GetApiV1PostByIdResponses = {
       username: string
       displayName: string | null
       avatarImageKey: string | null
+      isAdmin: boolean
+    } | null
+    crosspostOf: {
+      id: string
+      title: string
+      score: number
+      commentCount: number
+      linkImageUrl: string | null
+      community: {
+        id: string
+        name: string
+      } | null
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+      } | null
     } | null
     community: {
       id: string
@@ -3479,6 +3748,7 @@ export type GetApiV1FeedCommunityByNameResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -3491,7 +3761,7 @@ export type GetApiV1FeedCommunityByNameResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -3505,6 +3775,23 @@ export type GetApiV1FeedCommunityByNameResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -3555,6 +3842,7 @@ export type GetApiV1FeedPopularResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -3567,7 +3855,7 @@ export type GetApiV1FeedPopularResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -3581,6 +3869,23 @@ export type GetApiV1FeedPopularResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -3630,6 +3935,7 @@ export type GetApiV1FeedHomeResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -3642,7 +3948,7 @@ export type GetApiV1FeedHomeResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -3656,6 +3962,23 @@ export type GetApiV1FeedHomeResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -3705,6 +4028,7 @@ export type GetApiV1FeedModResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -3717,7 +4041,7 @@ export type GetApiV1FeedModResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -3731,6 +4055,23 @@ export type GetApiV1FeedModResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -3792,6 +4133,7 @@ export type GetApiV1FeedProfileByUsernameResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -3804,7 +4146,7 @@ export type GetApiV1FeedProfileByUsernameResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -3818,6 +4160,23 @@ export type GetApiV1FeedProfileByUsernameResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -3913,6 +4272,7 @@ export type GetApiV1HistoryPostsResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -3925,7 +4285,7 @@ export type GetApiV1HistoryPostsResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -3939,6 +4299,23 @@ export type GetApiV1HistoryPostsResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -5308,6 +5685,7 @@ export type GetApiV1SearchResponses = {
       id: string
       type: string
       title: string
+      slug: string | null
       bodyMd: string | null
       linkUrl: string | null
       linkImageUrl: string | null
@@ -5320,7 +5698,7 @@ export type GetApiV1SearchResponses = {
       downs: number
       score: number
       commentCount: number
-      viewCount: number
+      viewCount: number | null
       shareCount: number
       createdAt: Date
       editedAt: Date | null
@@ -5334,6 +5712,23 @@ export type GetApiV1SearchResponses = {
         username: string
         displayName: string | null
         avatarImageKey: string | null
+        isAdmin: boolean
+      } | null
+      crosspostOf: {
+        id: string
+        title: string
+        score: number
+        commentCount: number
+        linkImageUrl: string | null
+        community: {
+          id: string
+          name: string
+        } | null
+        author: {
+          id: string
+          username: string
+          displayName: string | null
+        } | null
       } | null
       community: {
         id: string
@@ -5381,6 +5776,7 @@ export type GetApiV1SearchResponses = {
           username: string
           displayName: string | null
           avatarImageKey: string | null
+          isAdmin: boolean
         } | null
       }
       postTitle: string
@@ -5544,6 +5940,7 @@ export type GetApiV1ModQueueByCommunityIdResponses = {
         id: string
         type: string
         title: string
+        slug: string | null
         bodyMd: string | null
         linkUrl: string | null
         linkImageUrl: string | null
@@ -5556,7 +5953,7 @@ export type GetApiV1ModQueueByCommunityIdResponses = {
         downs: number
         score: number
         commentCount: number
-        viewCount: number
+        viewCount: number | null
         shareCount: number
         createdAt: Date
         editedAt: Date | null
@@ -5570,6 +5967,23 @@ export type GetApiV1ModQueueByCommunityIdResponses = {
           username: string
           displayName: string | null
           avatarImageKey: string | null
+          isAdmin: boolean
+        } | null
+        crosspostOf: {
+          id: string
+          title: string
+          score: number
+          commentCount: number
+          linkImageUrl: string | null
+          community: {
+            id: string
+            name: string
+          } | null
+          author: {
+            id: string
+            username: string
+            displayName: string | null
+          } | null
         } | null
         community: {
           id: string
@@ -5616,6 +6030,7 @@ export type GetApiV1ModQueueByCommunityIdResponses = {
           username: string
           displayName: string | null
           avatarImageKey: string | null
+          isAdmin: boolean
         } | null
       } | null
       reportCount: number

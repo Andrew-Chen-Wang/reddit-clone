@@ -7,6 +7,7 @@ export interface ProcessedCommentAuthor {
   username: string
   displayName: string | null
   avatarImageKey: string | null
+  isAdmin: boolean
 }
 
 export interface ProcessedComment {
@@ -58,7 +59,7 @@ export async function processComments(
     authorIds.length
       ? db
           .selectFrom("user")
-          .select(["id", "username", "displayName", "avatarImageKey"])
+          .select(["id", "username", "displayName", "avatarImageKey", "isAdmin"])
           .where("id", "in", authorIds)
           .execute()
       : Promise.resolve([] as ProcessedCommentAuthor[]),
@@ -102,6 +103,7 @@ export async function processComments(
             username: author.username,
             displayName: author.displayName,
             avatarImageKey: author.avatarImageKey,
+            isAdmin: author.isAdmin,
           }
         : null,
     }
