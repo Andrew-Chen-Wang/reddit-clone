@@ -141,5 +141,42 @@ export function crudComment(db: Kysely<DB>) {
     })
   }
 
-  return { create, update, deleteOwn, setSticky }
+  async function modRemove(
+    id: string,
+    removedByUserId: string,
+    removalReasonId: string | null,
+    asSpam: boolean,
+  ): Promise<boolean> {
+    const result = await db
+      .updateTable("comment")
+      .set({
+        removedAt: new Date(),
+        removedByUserId,
+        removalReasonId,
+        isSpam: asSpam,
+        approvedAt: null,
+        approvedByUserId: null,
+      })
+      .where("id", "=", id)
+      .executeTakeFirst()
+    return (result.numUpdatedRows ?? 0n) > 0n
+  }
+
+  async function modApprove(id: string, approvedByUserId: string): Promise<boolean> {
+    const result = await db
+      .updateTable("comment")
+      .set({
+        removedAt: null,
+        removedByUserId: null,
+        removalReasonId: null,
+        isSpam: false,
+        approvedAt: new Date(),
+        approvedByUserId,
+      })
+      .where("id", "=", id)
+      .executeTakeFirst()
+    return (result.numUpdatedRows ?? 0n) > 0n
+  }
+
+  return { create, update, deleteOwn, setSticky, modRemove, modApprove }
 }

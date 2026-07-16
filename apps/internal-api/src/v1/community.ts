@@ -1,3 +1,4 @@
+import { enqueueEsSyncCommunity } from "@utils/queues"
 import { getCommunityAuthz } from "@lib/dao/authz/community/get"
 import { crudCommunity } from "@lib/dao/community/crud"
 import { fetchCommunity } from "@lib/dao/community/fetch"
@@ -222,6 +223,8 @@ const app = new Hono()
         createdByUserId: user.id,
       })
 
+      await enqueueEsSyncCommunity(community.id)
+
       return c.json({ id: community.id, name: community.name }, 201)
     },
   )
@@ -266,8 +269,19 @@ const app = new Hono()
       const moderate = await getCommunityAuthz(db).canModerate(id, user.id, "config")
       if (!moderate.ok) return throwForbidden(c, "You cannot edit this community")
 
+      if (body.titleRegex) {
+        try {
+          new RegExp(body.titleRegex)
+        } catch {
+          return throwBadRequest(c, "Invalid title regex", ErrorCode.ValidationFailed, {
+            target: "titleRegex",
+          })
+        }
+      }
+
       const updated = await crudCommunity(db).update(id, body)
       if (!updated) return throwNotFound(c, "Community not found")
+      await enqueueEsSyncCommunity(updated.id)
 
       return c.json({ id: updated.id, name: updated.name })
     },

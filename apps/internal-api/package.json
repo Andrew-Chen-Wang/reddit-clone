@@ -23,6 +23,7 @@
     "@oslojs/encoding": "catalog:",
     "@scalar/hono-api-reference": "^0.11.9",
     "@template-nextjs/db": "workspace:*",
+    "@template-nextjs/search": "workspace:*",
     "@utils/aws": "workspace:*",
     "@utils/numbers": "workspace:*",
     "@utils/queues": "workspace:*",

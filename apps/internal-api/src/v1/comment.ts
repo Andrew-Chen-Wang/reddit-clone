@@ -2,9 +2,11 @@ import { getCommunityAuthz } from "@lib/dao/authz/community/get"
 import { crudComment } from "@lib/dao/comment/crud"
 import { CHILD_PAGE_SIZE, fetchComment, ROOT_PAGE_SIZE } from "@lib/dao/comment/fetch"
 import { processComments } from "@lib/dao/comment/processComment"
+import { fetchCommunity } from "@lib/dao/community/fetch"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { fetchUserBlock } from "@lib/dao/userBlock/fetch"
 import { db } from "@template-nextjs/db"
+import { enqueueEsSyncComment } from "@utils/queues"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
 import { resolver, validator } from "hono-typebox-openapi/typebox"
@@ -28,6 +30,7 @@ import {
 
 const DAY_MS = 24 * 60 * 60 * 1000
 const COMMENTS_PER_DAY = 100
+const ARCHIVE_AGE_MS = 180 * DAY_MS
 
 function readOffset(cursor: string | null): number {
   if (!cursor) return 0
@@ -77,7 +80,18 @@ const app = new Hono()
         const view = await getCommunityAuthz(db).canView(meta.communityId, user?.id ?? null)
         if (!view.ok) return throwNotFound(c, "Post not found")
       }
-      if (meta.removedAt && meta.authorUserId !== (user?.id ?? null)) {
+
+      const isAuthor = meta.authorUserId === (user?.id ?? null)
+      let isMod = false
+      if (meta.communityId && user) {
+        const mod = await getCommunityAuthz(db).canModerate(
+          meta.communityId,
+          user.id,
+          "posts_comments",
+        )
+        isMod = mod.ok
+      }
+      if (meta.removedAt && !isAuthor && !isMod) {
         return throwNotFound(c, "Post not found")
       }
 
@@ -96,17 +110,17 @@ const app = new Hono()
           return throwNotFound(c, "Comment not found")
         }
         const data = (
-          await processComments(db, [subtree.focus, ...subtree.rows], user?.id ?? null)
+          await processComments(db, [subtree.focus, ...subtree.rows], user?.id ?? null, isMod)
         ).filter(notBlocked)
-        const ancestors = (await processComments(db, subtree.ancestors, user?.id ?? null)).filter(
-          notBlocked,
-        )
+        const ancestors = (
+          await processComments(db, subtree.ancestors, user?.id ?? null, isMod)
+        ).filter(notBlocked)
         const nextCursor = subtree.hasMore ? encodeOffset(offset + CHILD_PAGE_SIZE) : null
         return c.json({ data, ancestors, nextCursor })
       }
 
       const { rows, hasMore } = await fetchComment(db).getTreePage({ postId, sort, offset })
-      const data = (await processComments(db, rows, user?.id ?? null)).filter(notBlocked)
+      const data = (await processComments(db, rows, user?.id ?? null, isMod)).filter(notBlocked)
       const nextCursor = hasMore ? encodeOffset(offset + ROOT_PAGE_SIZE) : null
       return c.json({ data, ancestors: [], nextCursor })
     },
@@ -144,11 +158,25 @@ const app = new Hono()
       const user = c.var.user
       const body = c.req.valid("json")
 
-      const meta = await fetchPost(db).getOne(body.postId, ["communityId", "isLocked", "removedAt"])
+      const meta = await fetchPost(db).getOne(body.postId, [
+        "communityId",
+        "isLocked",
+        "removedAt",
+        "createdAt",
+      ])
       if (!meta || meta.removedAt) return throwNotFound(c, "Post not found")
       if (meta.communityId) {
-        const view = await getCommunityAuthz(db).canView(meta.communityId, user.id)
-        if (!view.ok) return throwNotFound(c, "Post not found")
+        const canComment = await getCommunityAuthz(db).canComment(meta.communityId, user.id)
+        if (!canComment.ok) {
+          if (canComment.reason === "BANNED") {
+            return throwForbidden(c, "You are banned from this community")
+          }
+          return throwNotFound(c, "Post not found")
+        }
+        const community = await fetchCommunity(db).getOne(meta.communityId, ["archiveOldPosts"])
+        if (community?.archiveOldPosts && meta.createdAt.getTime() < Date.now() - ARCHIVE_AGE_MS) {
+          return throwForbidden(c, "This post has been archived and can no longer be commented on")
+        }
       }
       if (meta.isLocked) return throwForbidden(c, "This post is locked")
 
@@ -173,6 +201,8 @@ const app = new Hono()
         }
         return throwBadRequest(c, "Comment is nested too deeply")
       }
+
+      await enqueueEsSyncComment(result.comment.id)
 
       return c.json({ id: result.comment.id }, 201)
     },
@@ -210,6 +240,8 @@ const app = new Hono()
       const updated = await crudComment(db).update(id, user.id, body.bodyMd)
       if (!updated) return throwNotFound(c, "Comment not found")
 
+      await enqueueEsSyncComment(updated.id)
+
       return c.json({ id: updated.id })
     },
   )
@@ -242,6 +274,8 @@ const app = new Hono()
         if (result.error === "NOT_FOUND") return throwNotFound(c, "Comment not found")
         return throwForbidden(c, "You cannot delete this comment")
       }
+
+      await enqueueEsSyncComment(id)
 
       return c.json({})
     },

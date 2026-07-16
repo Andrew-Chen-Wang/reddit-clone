@@ -152,6 +152,73 @@ export function crudPost(db: Kysely<DB>) {
       .execute()
   }
 
+  async function modRemove(
+    id: string,
+    removedByUserId: string,
+    removalReasonId: string | null,
+    asSpam: boolean,
+  ): Promise<boolean> {
+    const result = await db
+      .updateTable("post")
+      .set({
+        removedAt: new Date(),
+        removedByUserId,
+        removalReasonId,
+        isSpam: asSpam,
+        approvedAt: null,
+        approvedByUserId: null,
+      })
+      .where("id", "=", id)
+      .executeTakeFirst()
+    return (result.numUpdatedRows ?? 0n) > 0n
+  }
+
+  async function hold(id: string): Promise<void> {
+    await db
+      .updateTable("post")
+      .set({ removedAt: new Date(), removedByUserId: null, isSpam: false })
+      .where("id", "=", id)
+      .execute()
+  }
+
+  async function modApprove(id: string, approvedByUserId: string): Promise<boolean> {
+    const result = await db
+      .updateTable("post")
+      .set({
+        removedAt: null,
+        removedByUserId: null,
+        removalReasonId: null,
+        isSpam: false,
+        approvedAt: new Date(),
+        approvedByUserId,
+      })
+      .where("id", "=", id)
+      .executeTakeFirst()
+    return (result.numUpdatedRows ?? 0n) > 0n
+  }
+
+  async function setLocked(id: string, isLocked: boolean): Promise<void> {
+    await db.updateTable("post").set({ isLocked }).where("id", "=", id).execute()
+  }
+
+  async function setSticky(
+    id: string,
+    communityId: string,
+    position: number | null,
+  ): Promise<void> {
+    await db.transaction().execute(async (trx) => {
+      if (position !== null) {
+        await trx
+          .updateTable("post")
+          .set({ stickyPosition: null })
+          .where("communityId", "=", communityId)
+          .where("stickyPosition", "=", position)
+          .execute()
+      }
+      await trx.updateTable("post").set({ stickyPosition: position }).where("id", "=", id).execute()
+    })
+  }
+
   return {
     create,
     update,
@@ -160,5 +227,10 @@ export function crudPost(db: Kysely<DB>) {
     setFlair,
     incrementShareCount,
     incrementViewCount,
+    modRemove,
+    hold,
+    modApprove,
+    setLocked,
+    setSticky,
   }
 }

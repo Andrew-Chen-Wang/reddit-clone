@@ -14,8 +14,15 @@ import flair from "./flair"
 import history from "./history"
 import draft from "./draft"
 import media from "./media"
+import modLog from "./mod-log"
+import modQueue from "./mod-queue"
+import modSavedResponse from "./mod-saved-response"
+import modTeam from "./mod-team"
+import modUsers from "./mod-users"
 import mutedCommunity from "./muted-community"
 import postAction from "./post-action"
+import removalReason from "./removal-reason"
+import report from "./report"
 import scheduledPost from "./scheduled-post"
 import search from "./search"
 import userBlock from "./user-block"
@@ -55,5 +62,12 @@ const app = new Hono({
   .route("/draft", draft)
   .route("/scheduled-post", scheduledPost)
   .route("/search", search)
+  .route("/report", report)
+  .route("/mod-queue", modQueue)
+  .route("/mod-team", modTeam)
+  .route("/mod-users", modUsers)
+  .route("/mod-log", modLog)
+  .route("/mod-saved-response", modSavedResponse)
+  .route("/removal-reason", removalReason)
 
 export default app

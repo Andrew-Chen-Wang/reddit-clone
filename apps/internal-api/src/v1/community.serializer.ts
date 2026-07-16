@@ -30,12 +30,41 @@ export const communityCreateSchemaRequest = Type.Object({
   topicId: Type.Optional(Nullable(UUID7String)),
 })
 
+const allowedPostTypes = Type.Union([
+  Type.Literal("all"),
+  Type.Literal("text_only"),
+  Type.Literal("links_only"),
+])
+
+const bodyPolicy = Type.Union([
+  Type.Literal("optional"),
+  Type.Literal("required"),
+  Type.Literal("none"),
+])
+
 export const communityUpdateSchemaRequest = Type.Object({
   displayName: Type.Optional(Nullable(Type.String({ maxLength: 100 }))),
   description: Type.Optional(Type.String({ minLength: 1, maxLength: 500 })),
   defaultCommentSort: Type.Optional(commentSort),
   topicId: Type.Optional(Nullable(UUID7String)),
   isNsfw: Type.Optional(Type.Boolean()),
+  welcomeMessage: Type.Optional(Nullable(Type.String({ maxLength: 5000 }))),
+  postGuidelines: Type.Optional(Nullable(Type.String({ maxLength: 10000 }))),
+  allowedPostTypes: Type.Optional(allowedPostTypes),
+  bodyPolicy: Type.Optional(bodyPolicy),
+  titleRegex: Type.Optional(Nullable(Type.String({ maxLength: 500 }))),
+  linkDomainWhitelist: Type.Optional(Nullable(Type.Array(Type.String({ maxLength: 253 })))),
+  linkDomainBlacklist: Type.Optional(Nullable(Type.Array(Type.String({ maxLength: 253 })))),
+  mediaInComments: Type.Optional(Type.Boolean()),
+  requirePostFlair: Type.Optional(Type.Boolean()),
+  holdForReview: Type.Optional(Type.Boolean()),
+  spoilerEnabled: Type.Optional(Type.Boolean()),
+  archiveOldPosts: Type.Optional(Type.Boolean()),
+  appearInFeeds: Type.Optional(Type.Boolean()),
+  appearInRecommendations: Type.Optional(Type.Boolean()),
+  notifyActivity: Type.Optional(Type.Boolean()),
+  notifyReports: Type.Optional(Type.Boolean()),
+  notifyMilestones: Type.Optional(Type.Boolean()),
 })
 
 export const communityNameSchemaParam = Type.Object({

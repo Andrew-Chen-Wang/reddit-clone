@@ -1,3 +1,4 @@
+import { enqueueEsSyncCommunity } from "@utils/queues"
 import { crudCommunityJoinRequest } from "@lib/dao/communityJoinRequest/crud"
 import { crudCommunityMember } from "@lib/dao/communityMember/crud"
 import { fetchCommunityMember } from "@lib/dao/communityMember/fetch"
@@ -114,6 +115,7 @@ const app = new Hono()
 
       if (community.visibility === "public") {
         await crudCommunityMember(db).join(communityId, user.id)
+        await enqueueEsSyncCommunity(communityId)
         return c.json({ joined: true, requested: false })
       }
 
@@ -141,6 +143,7 @@ const app = new Hono()
       const user = c.var.user
       const { communityId } = c.req.valid("param")
       await crudCommunityMember(db).leave(communityId, user.id)
+      await enqueueEsSyncCommunity(communityId)
       return c.json({})
     },
   )

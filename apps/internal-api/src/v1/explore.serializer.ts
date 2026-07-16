@@ -33,4 +33,11 @@ export const exploreSchemaResponse = Type.Object({
       hasMore: Type.Boolean(),
     }),
   ),
+  recommended: Type.Array(communityCard),
+  moreLike: Type.Array(
+    Type.Object({
+      basedOn: Type.String(),
+      communities: Type.Array(communityCard),
+    }),
+  ),
 })

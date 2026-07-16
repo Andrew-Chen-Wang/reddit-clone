@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto"
 import { getCommunityAuthz } from "@lib/dao/authz/community/get"
+import { fetchCommunity } from "@lib/dao/community/fetch"
 import { crudCommunityVisit } from "@lib/dao/communityVisit/crud"
 import { crudPost } from "@lib/dao/post/crud"
 import { fetchPost } from "@lib/dao/post/fetch"
@@ -9,7 +10,7 @@ import { fetchPostFlairTemplate } from "@lib/dao/postFlairTemplate/fetch"
 import { crudPostView } from "@lib/dao/postView/crud"
 import { db } from "@template-nextjs/db"
 import { createMediaUploadPost, getExtensionForMediaContentType } from "@utils/aws"
-import { enqueueMediaCleanup } from "@utils/queues"
+import { enqueueEsSyncPost, enqueueMediaCleanup } from "@utils/queues"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
 import { resolver, validator } from "hono-typebox-openapi/typebox"
@@ -29,6 +30,31 @@ function isValidHttpUrl(value: string): boolean {
     return url.protocol === "http:" || url.protocol === "https:"
   } catch {
     return false
+  }
+}
+
+function hostnameOf(value: string): string | null {
+  try {
+    return new URL(value).hostname.toLowerCase().replace(/^www\./, "")
+  } catch {
+    return null
+  }
+}
+
+function domainMatches(host: string, entry: string): boolean {
+  const normalized = entry
+    .toLowerCase()
+    .replace(/^www\./, "")
+    .trim()
+  if (normalized.length === 0) return false
+  return host === normalized || host.endsWith(`.${normalized}`)
+}
+
+function titleMatchesRegex(title: string, pattern: string): boolean {
+  try {
+    return new RegExp(pattern).test(title)
+  } catch {
+    return true
   }
 }
 
@@ -85,6 +111,8 @@ const app = new Hono()
         "communityId",
         "profileUserId",
         "removedAt",
+        "removedByUserId",
+        "removalReasonId",
         "authorUserId",
       ])
       if (!meta) return throwNotFound(c, "Post not found")
@@ -93,8 +121,16 @@ const app = new Hono()
         const view = await getCommunityAuthz(db).canView(meta.communityId, user?.id ?? null)
         if (!view.ok) return throwNotFound(c, "Post not found")
       }
-      if (meta.removedAt && meta.authorUserId !== (user?.id ?? null)) {
-        return throwNotFound(c, "Post not found")
+
+      const isAuthor = meta.authorUserId === (user?.id ?? null)
+      let isMod = false
+      if (meta.removedAt && meta.communityId && user) {
+        const mod = await getCommunityAuthz(db).canModerate(
+          meta.communityId,
+          user.id,
+          "posts_comments",
+        )
+        isMod = mod.ok
       }
 
       const raw = await fetchPost(db).getRawById(id)
@@ -107,6 +143,29 @@ const app = new Hono()
         if (meta.communityId) await crudCommunityVisit(db).recordVisit(meta.communityId, user.id)
       } else {
         await crudPost(db).incrementViewCount(id)
+      }
+
+      if (meta.removedAt) {
+        const removedByMod = meta.removedByUserId !== null
+        if (isMod) {
+          return c.json({
+            ...processed,
+            removed: true,
+            removedByMod,
+            removalReasonId: meta.removalReasonId,
+          })
+        }
+        if (isAuthor) {
+          return c.json({ ...processed, removed: true, removedByMod })
+        }
+        return c.json({
+          ...processed,
+          bodyMd: null,
+          linkUrl: null,
+          media: [],
+          removed: true,
+          removedByMod,
+        })
       }
 
       return c.json(processed)
@@ -160,9 +219,82 @@ const app = new Hono()
         }
       }
 
+      let holdForReview = false
       if (body.communityId) {
         const canPost = await getCommunityAuthz(db).canPost(body.communityId, user.id)
-        if (!canPost.ok) return throwForbidden(c, "You cannot post in this community")
+        if (!canPost.ok) {
+          if (canPost.reason === "BANNED") {
+            return throwForbidden(c, "You are banned from this community")
+          }
+          return throwForbidden(c, "You cannot post in this community")
+        }
+
+        const settings = await fetchCommunity(db).getOne(body.communityId, [
+          "allowedPostTypes",
+          "bodyPolicy",
+          "titleRegex",
+          "linkDomainWhitelist",
+          "linkDomainBlacklist",
+          "requirePostFlair",
+          "spoilerEnabled",
+          "holdForReview",
+        ])
+        if (settings) {
+          holdForReview = settings.holdForReview
+          if (settings.allowedPostTypes === "text_only" && body.type !== "text") {
+            return throwBadRequest(c, "This community only allows text posts", undefined, {
+              target: "type",
+            })
+          }
+          if (settings.allowedPostTypes === "links_only" && body.type === "text") {
+            return throwBadRequest(c, "This community does not allow text posts", undefined, {
+              target: "type",
+            })
+          }
+          if (settings.bodyPolicy === "required" && body.type === "text") {
+            const trimmed = (body.bodyMd ?? "").trim()
+            if (trimmed.length === 0) {
+              return throwBadRequest(c, "This community requires a post body", undefined, {
+                target: "bodyMd",
+              })
+            }
+          }
+          if (settings.titleRegex && !titleMatchesRegex(body.title, settings.titleRegex)) {
+            return throwBadRequest(
+              c,
+              "Your title does not meet this community's rules",
+              undefined,
+              {
+                target: "title",
+              },
+            )
+          }
+          if (body.type === "link" && body.linkUrl) {
+            const host = hostnameOf(body.linkUrl)
+            const whitelist = settings.linkDomainWhitelist ?? []
+            const blacklist = settings.linkDomainBlacklist ?? []
+            if (host && whitelist.length > 0 && !whitelist.some((d) => domainMatches(host, d))) {
+              return throwBadRequest(c, "Links from this domain are not allowed", undefined, {
+                target: "linkUrl",
+              })
+            }
+            if (host && blacklist.some((d) => domainMatches(host, d))) {
+              return throwBadRequest(c, "Links from this domain are not allowed", undefined, {
+                target: "linkUrl",
+              })
+            }
+          }
+          if (!settings.spoilerEnabled && body.isSpoiler) {
+            return throwBadRequest(c, "Spoiler tags are disabled in this community", undefined, {
+              target: "isSpoiler",
+            })
+          }
+          if (settings.requirePostFlair && !body.flairTemplateId) {
+            return throwBadRequest(c, "This community requires post flair", undefined, {
+              target: "flairTemplateId",
+            })
+          }
+        }
 
         if (body.flairTemplateId) {
           const flair = await fetchPostFlairTemplate(db).getOne(body.flairTemplateId, [
@@ -198,6 +330,10 @@ const app = new Hono()
         isOc: body.isOc ?? false,
         flairTemplateId: body.communityId ? (body.flairTemplateId ?? null) : null,
       })
+
+      if (holdForReview) await crudPost(db).hold(created.id)
+
+      await enqueueEsSyncPost(created.id)
 
       if (body.type === "media" && body.media) {
         const items = body.media.map((file, i) => {
@@ -298,6 +434,8 @@ const app = new Hono()
       const updated = await crudPost(db).update(id, user.id, body)
       if (!updated) return throwNotFound(c, "Post not found")
 
+      await enqueueEsSyncPost(updated.id)
+
       return c.json({ id: updated.id })
     },
   )
@@ -323,6 +461,8 @@ const app = new Hono()
 
       const deleted = await crudPost(db).deleteOwn(id, user.id)
       if (!deleted) return throwNotFound(c, "Post not found")
+
+      await enqueueEsSyncPost(id)
 
       return c.json({})
     },

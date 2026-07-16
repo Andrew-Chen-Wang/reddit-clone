@@ -52,5 +52,33 @@ export function fetchCommunityModerator(db: Kysely<DB>) {
       .execute()
   }
 
-  return { getOne, getManyForCommunity, getManyForUser }
+  async function getModeratedCommunityIds(
+    userId: string,
+    permColumn: "permPostsComments" | "permUsers" | "permConfig" | "permFlair" | "permWiki",
+  ): Promise<string[]> {
+    const rows = await db
+      .selectFrom("communityModerator")
+      .where("userId", "=", userId)
+      .where((eb) => eb.or([eb("permEverything", "=", true), eb(permColumn, "=", true)]))
+      .select("communityId")
+      .execute()
+    return rows.map((r) => r.communityId)
+  }
+
+  async function countForCommunity(communityId: string): Promise<number> {
+    const row = await db
+      .selectFrom("communityModerator")
+      .where("communityId", "=", communityId)
+      .select((eb) => eb.fn.count<string>("id").as("count"))
+      .executeTakeFirstOrThrow()
+    return Number(row.count)
+  }
+
+  return {
+    getOne,
+    getManyForCommunity,
+    getManyForUser,
+    getModeratedCommunityIds,
+    countForCommunity,
+  }
 }
