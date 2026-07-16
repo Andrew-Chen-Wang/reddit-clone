@@ -1,3 +1,4 @@
+import { enqueueEsSyncUser } from "@utils/queues"
 import { crudUserSettings } from "@lib/dao/userSettings/crud"
 import { fetchUserSettings } from "@lib/dao/userSettings/fetch"
 import { db } from "@template-nextjs/db"
@@ -111,6 +112,9 @@ const app = new Hono()
       }
 
       const settings = await crudUserSettings(db).upsert(user.id, body)
+      if (body.showInSearch !== undefined) {
+        await enqueueEsSyncUser(user.id)
+      }
 
       return c.json(toResponse(settings))
     },
