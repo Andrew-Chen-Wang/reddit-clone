@@ -11,7 +11,7 @@ function AdminSettingsPage() {
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">Admin Settings</h1>
-      <div className="max-w-md space-y-6 rounded-lg border bg-card p-6">
+      <div className="max-w-md flex flex-col gap-6 rounded-lg border bg-card p-6">
         <div className="flex items-center gap-3">
           <Checkbox id="maintenance" />
           <Label htmlFor="maintenance">Maintenance mode</Label>
