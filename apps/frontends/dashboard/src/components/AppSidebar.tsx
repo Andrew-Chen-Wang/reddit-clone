@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
 } from "@ui/base/ui/sidebar"
 import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
+import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1CommunityMemberMineOptions,
   getApiV1CommunityMemberModeratedOptions,
@@ -79,7 +80,7 @@ function CommunityLink({
         render={<Link to="/r/$name" params={{ name: community.name }} />}
         tooltip={`r/${community.name}`}
       >
-        <CommunityIcon name={community.name} iconUrl={community.iconImageKey} size="sm" />
+        <CommunityIcon name={community.name} iconUrl={mediaUrl(community.iconImageKey)} size="sm" />
         <span>r/{community.name}</span>
       </SidebarMenuButton>
       {withStar ? (

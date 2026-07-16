@@ -23,6 +23,7 @@ import { Input } from "@ui/base/ui/input"
 import { Label } from "@ui/base/ui/label"
 import { RadioGroup, RadioGroupItem } from "@ui/base/ui/radio-group"
 import { useTheme, type Theme } from "@ui/spa-shared/theme"
+import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1UserMeOptions,
   getApiV1UserMeSettingsOptions,
@@ -147,7 +148,9 @@ export function TopNav() {
               className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "rounded-full")}
             >
               <Avatar className="size-8">
-                {user?.avatarImageKey ? <AvatarImage src={user.avatarImageKey} alt="" /> : null}
+                {user?.avatarImageKey ? (
+                  <AvatarImage src={mediaUrl(user.avatarImageKey) ?? undefined} alt="" />
+                ) : null}
                 <AvatarFallback>{initial}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>

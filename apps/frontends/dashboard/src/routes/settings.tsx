@@ -11,7 +11,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@ui/base/ui/alert-dialog"
-import { buttonVariants } from "@ui/base/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@ui/base/ui/avatar"
+import { Button, buttonVariants } from "@ui/base/ui/button"
 import { cn } from "@ui/base/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/base/ui/card"
 import { Input } from "@ui/base/ui/input"
@@ -32,8 +33,18 @@ import {
   patchApiV1UserMeMutation,
   patchApiV1UserMeSettingsMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
+import {
+  postApiV1MediaAvatarConfirm,
+  postApiV1MediaAvatarUpload,
+  postApiV1MediaBannerConfirm,
+  postApiV1MediaBannerUpload,
+} from "@lib/api-client/generated/sdk.gen"
 import type { PatchApiV1UserMeSettingsData } from "@lib/api-client/generated/types.gen"
-import { useEffect, useState } from "react"
+import { ImageCropDialog } from "@frontends/dashboard/components/ImageCropDialog"
+import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
+import { uploadToPresigned } from "@frontends/dashboard/lib/mediaUpload"
+import { ImagePlus } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 
 export const Route = createFileRoute("/settings")({
@@ -192,11 +203,19 @@ function AccountTab() {
   )
 }
 
+type ImageTarget = "avatar" | "banner"
+
 function ProfileTab() {
   const queryClient = useQueryClient()
   const { data: user } = useQuery(getApiV1UserMeOptions())
   const [displayName, setDisplayName] = useState("")
   const [about, setAbout] = useState("")
+
+  const avatarInputRef = useRef<HTMLInputElement | null>(null)
+  const bannerInputRef = useRef<HTMLInputElement | null>(null)
+  const [cropTarget, setCropTarget] = useState<ImageTarget | null>(null)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -204,6 +223,43 @@ function ProfileTab() {
       setAbout(user.about ?? "")
     }
   }, [user])
+
+  function pickFile(target: ImageTarget, files: FileList | null) {
+    const file = files?.[0]
+    if (!file) return
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file")
+      return
+    }
+    setPendingFile(file)
+    setCropTarget(target)
+  }
+
+  async function uploadCropped(blob: Blob) {
+    if (!cropTarget) return
+    setUploading(true)
+    try {
+      const body = { mimeType: "image/png" as const, byteSize: blob.size }
+      const { data } =
+        cropTarget === "avatar"
+          ? await postApiV1MediaAvatarUpload({ body, throwOnError: true })
+          : await postApiV1MediaBannerUpload({ body, throwOnError: true })
+      await uploadToPresigned({ url: data.url, fields: data.fields }, blob)
+      if (cropTarget === "avatar") {
+        await postApiV1MediaAvatarConfirm({ body: { key: data.key }, throwOnError: true })
+      } else {
+        await postApiV1MediaBannerConfirm({ body: { key: data.key }, throwOnError: true })
+      }
+      await queryClient.invalidateQueries({ queryKey: getApiV1UserMeOptions().queryKey })
+      toast.success(cropTarget === "avatar" ? "Avatar updated" : "Banner updated")
+      setCropTarget(null)
+      setPendingFile(null)
+    } catch {
+      toast.error("Could not upload image")
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const mutation = useMutation({
     ...patchApiV1UserMeMutation(),
@@ -217,11 +273,84 @@ function ProfileTab() {
   })
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle>Profile</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <Label>Banner</Label>
+          <div className="relative h-28 w-full overflow-hidden rounded-md border bg-gradient-to-r from-primary/30 to-primary/10">
+            {user?.bannerImageKey ? (
+              // oxlint-disable-next-line no-img-element
+              <img
+                src={mediaUrl(user.bannerImageKey) ?? undefined}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            ) : null}
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              className="absolute bottom-2 right-2"
+              disabled={uploading}
+              onClick={() => bannerInputRef.current?.click()}
+            >
+              <ImagePlus className="size-4" />
+              Change
+            </Button>
+          </div>
+          <input
+            ref={bannerInputRef}
+            type="file"
+            aria-label="Upload banner image"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            className="hidden"
+            onChange={(e) => {
+              pickFile("banner", e.target.files)
+              e.target.value = ""
+            }}
+          />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Avatar className="size-16">
+            {user?.avatarImageKey ? (
+              <AvatarImage src={mediaUrl(user.avatarImageKey) ?? undefined} alt="" />
+            ) : null}
+            <AvatarFallback className="text-xl">
+              {(user?.displayName ?? user?.username ?? "?").charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col gap-1">
+            <Label>Avatar</Label>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="w-fit"
+              disabled={uploading}
+              onClick={() => avatarInputRef.current?.click()}
+            >
+              <ImagePlus className="size-4" />
+              Change avatar
+            </Button>
+          </div>
+          <input
+            ref={avatarInputRef}
+            type="file"
+            aria-label="Upload avatar image"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            className="hidden"
+            onChange={(e) => {
+              pickFile("avatar", e.target.files)
+              e.target.value = ""
+            }}
+          />
+        </div>
+
         <div className="flex flex-col gap-2">
           <Label htmlFor="display-name">Display name</Label>
           <Input
@@ -262,6 +391,30 @@ function ProfileTab() {
         </LoadingButton>
       </CardContent>
     </Card>
+
+    <ImageCropDialog
+      open={cropTarget !== null}
+      onOpenChange={(open) => {
+        if (!open && !uploading) {
+          setCropTarget(null)
+          setPendingFile(null)
+        }
+      }}
+      file={pendingFile}
+      aspect={cropTarget === "banner" ? 4 : 1}
+      circular={cropTarget === "avatar"}
+      title={cropTarget === "banner" ? "Crop banner" : "Crop avatar"}
+      description={
+        cropTarget === "banner"
+          ? "Drag to frame your banner (4:1)."
+          : "Drag to frame your avatar."
+      }
+      busy={uploading}
+      onComplete={(blob) => {
+        void uploadCropped(blob)
+      }}
+    />
+    </>
   )
 }
 

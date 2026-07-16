@@ -15,6 +15,7 @@ import {
 } from "@ui/base/ui/dropdown-menu"
 import { PostRow, type PostRowPost } from "@ui/seo-shared/post/PostRow"
 import { PostFeedSkeleton } from "@ui/seo-shared/post/PostRowSkeleton"
+import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1FeedCommunityByName,
   getApiV1FeedHome,
@@ -218,6 +219,13 @@ export function PostFeed({
   const posts = feed.data?.pages.flatMap((p) => p.data) ?? []
   const activeSort = sorts.find((s) => s.value === sort) ?? sorts[0]
 
+  // Community icon keys arrive as raw storage keys; resolve them to public URLs
+  // for display. Idempotent, so post media (already absolute) is untouched.
+  const toDisplayPost = (post: FeedPost): FeedPost =>
+    post.community
+      ? { ...post, community: { ...post.community, iconImageKey: mediaUrl(post.community.iconImageKey) } }
+      : post
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
@@ -322,7 +330,7 @@ export function PostFeed({
           {posts.map((post) => (
             <PostRow
               key={post.id}
-              post={post}
+              post={toDisplayPost(post)}
               variant={view}
               href={permalinkFor(post)}
               communityHref={post.community ? `/r/${post.community.name}` : undefined}

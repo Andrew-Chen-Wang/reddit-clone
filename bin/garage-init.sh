@@ -37,4 +37,5 @@ else
 fi
 
 garage bucket allow --read --write --owner "$BUCKET" --key "$ACCESS_KEY"
+garage bucket website --allow "$BUCKET"
 echo "Garage ready: bucket=$BUCKET key=$ACCESS_KEY"

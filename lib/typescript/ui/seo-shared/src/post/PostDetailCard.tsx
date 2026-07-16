@@ -10,6 +10,7 @@ import { Markdown } from "@ui/seo-shared/Markdown"
 import { RelativeTime } from "@ui/seo-shared/RelativeTime"
 import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
 import { VoteCluster } from "@ui/seo-shared/post/VoteCluster"
+import { MediaGallery } from "@ui/seo-shared/post/MediaGallery"
 import type { PostRowPost } from "@ui/seo-shared/post/PostRow"
 
 export type PostDetailCardProps = {
@@ -119,6 +120,10 @@ export function PostDetailCard({
           </Badge>
         ) : null}
       </div>
+
+      {post.type === "media" && post.media && post.media.length > 0 ? (
+        <MediaGallery media={post.media} isNsfw={post.isNsfw} isSpoiler={post.isSpoiler} />
+      ) : null}
 
       {post.type === "text" && post.bodyMd ? <Markdown content={post.bodyMd} /> : null}
 
