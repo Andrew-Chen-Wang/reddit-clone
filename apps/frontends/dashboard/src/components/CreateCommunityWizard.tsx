@@ -31,8 +31,12 @@ type WizardProps = {
 function useDebounced<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value)
   useEffect(() => {
-    const id = setTimeout(() => setDebounced(value), delay)
-    return () => clearTimeout(id)
+    const id = setTimeout(() => {
+      setDebounced(value)
+    }, delay)
+    return () => {
+      clearTimeout(id)
+    }
   }, [value, delay])
   return debounced
 }
@@ -171,9 +175,12 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
                 <span className="pl-3 text-sm text-muted-foreground">r/</span>
                 <input
                   id="community-name"
+                  aria-label="Community name"
                   value={name}
                   maxLength={NAME_MAX}
-                  onChange={(e) => setName(e.target.value.replace(/\s/g, ""))}
+                  onChange={(e) => {
+                    setName(e.target.value.replace(/\s/g, ""))
+                  }}
                   className="flex-1 bg-transparent px-1 py-2 text-sm outline-none"
                   placeholder="community_name"
                   autoComplete="off"
@@ -190,7 +197,9 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
               <Textarea
                 id="community-description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => {
+                  setDescription(e.target.value)
+                }}
                 placeholder="What is your community about?"
                 rows={4}
               />
@@ -218,7 +227,9 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
               <button
                 key={topic.id}
                 type="button"
-                onClick={() => setTopicId(topic.id)}
+                onClick={() => {
+                  setTopicId(topic.id)
+                }}
                 className={cn(
                   "rounded-full border px-3 py-1.5 text-sm transition-colors",
                   topicId === topic.id
@@ -236,7 +247,9 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
           <div className="flex flex-col gap-4">
             <RadioGroup
               value={visibility}
-              onValueChange={(v) => setVisibility(v as CommunityVisibility)}
+              onValueChange={(v) => {
+                setVisibility(v as CommunityVisibility)
+              }}
               className="gap-2"
             >
               {VISIBILITIES.map((v) => {
@@ -297,13 +310,21 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
         <div className="mt-2 flex items-center justify-between">
           <Button
             variant="ghost"
-            onClick={() => (step === 0 ? handleOpenChange(false) : setStep((s) => s - 1))}
+            onClick={() => {
+              if (step === 0) handleOpenChange(false)
+              else setStep((s) => s - 1)
+            }}
             disabled={createMutation.isPending}
           >
             {step === 0 ? "Cancel" : "Back"}
           </Button>
           {step < 3 ? (
-            <Button onClick={() => setStep((s) => s + 1)} disabled={!canProceed}>
+            <Button
+              onClick={() => {
+                setStep((s) => s + 1)
+              }}
+              disabled={!canProceed}
+            >
               Next
             </Button>
           ) : (

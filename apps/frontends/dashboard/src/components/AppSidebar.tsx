@@ -113,7 +113,7 @@ export function AppSidebar() {
   const { data: mine } = useQuery(getApiV1CommunityMemberMineOptions())
   const { data: moderated } = useQuery(getApiV1CommunityMemberModeratedOptions())
 
-  const joined = [...((mine?.data ?? []) as JoinedCommunity[])].sort((a, b) => {
+  const joined = ((mine?.data ?? []) as JoinedCommunity[]).toSorted((a, b) => {
     if (a.isFavorite !== b.isFavorite) return a.isFavorite ? -1 : 1
     return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
   })
@@ -199,7 +199,9 @@ export function AppSidebar() {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton
-                      onClick={() => setWizardOpen(true)}
+                      onClick={() => {
+                        setWizardOpen(true)
+                      }}
                       tooltip="Create Community"
                     >
                       <Plus />
@@ -225,19 +227,34 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<a href="/about" />}>
-                  <span>About ReadIt</span>
-                </SidebarMenuButton>
+                <SidebarMenuButton
+                  render={
+                    // oxlint-disable-next-line no-html-link-for-pages -- /about is a Next.js page outside the SPA router
+                    <a href="/about">
+                      <span>About ReadIt</span>
+                    </a>
+                  }
+                />
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<a href="/legal" />}>
-                  <span>ReadIt Rules</span>
-                </SidebarMenuButton>
+                <SidebarMenuButton
+                  render={
+                    // oxlint-disable-next-line no-html-link-for-pages -- /legal is a Next.js page outside the SPA router
+                    <a href="/legal">
+                      <span>ReadIt Rules</span>
+                    </a>
+                  }
+                />
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<a href="/legal" />}>
-                  <span>Privacy Policy</span>
-                </SidebarMenuButton>
+                <SidebarMenuButton
+                  render={
+                    // oxlint-disable-next-line no-html-link-for-pages -- /legal is a Next.js page outside the SPA router
+                    <a href="/legal">
+                      <span>Privacy Policy</span>
+                    </a>
+                  }
+                />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
