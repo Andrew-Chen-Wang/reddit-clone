@@ -11,21 +11,27 @@ import { Checkbox } from "@ui/base/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@ui/base/ui/dropdown-menu"
 import { Label } from "@ui/base/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/base/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/base/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/base/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/base/ui/avatar"
 import { Markdown } from "@ui/seo-shared/Markdown"
 import { RelativeTime } from "@ui/seo-shared/RelativeTime"
 import { PostRow, type PostRowPost } from "@ui/seo-shared/post/PostRow"
+import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
 import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
+import {
+  ModInsightsRail,
+  type ModCommunity,
+} from "@frontends/dashboard/components/mod/ModInsightsRail"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
-  getApiV1ModLogByCommunityId,
   getApiV1ModQueueByCommunityId,
   putApiV1PostVoteByPostId,
 } from "@lib/api-client/generated/sdk.gen"
@@ -37,13 +43,33 @@ import {
   postApiV1ModQueueStickyMutation,
   postApiV1ModQueueUnlockMutation,
   getApiV1RemovalReasonByCommunityIdOptions,
+  getApiV1CommunityMemberModeratedOptions,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import type { GetApiV1ModQueueByCommunityIdResponse } from "@lib/api-client/generated/types.gen"
-import { Check, Lock, LockOpen, Pin, ShieldCheck, Trash2 } from "lucide-react"
+import {
+  ArrowDownUp,
+  Cat,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  HelpCircle,
+  LayoutList,
+  Lock,
+  LockOpen,
+  MoreHorizontal,
+  Pin,
+  Rows3,
+  ShieldCheck,
+  Trash2,
+} from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
 type QueueTab = "needs_review" | "reported" | "removed" | "edited" | "unmoderated"
+type ContentType = "all" | "posts" | "comments"
+type SortOrder = "newest" | "oldest"
+type ViewMode = "card" | "compact"
 type QueuePage = GetApiV1ModQueueByCommunityIdResponse
 type QueueItem = QueuePage["data"][number]
 
@@ -53,6 +79,17 @@ const TABS: { value: QueueTab; label: string }[] = [
   { value: "removed", label: "Removed" },
   { value: "edited", label: "Edited" },
   { value: "unmoderated", label: "Unmoderated" },
+]
+
+const CONTENT_TYPES: { value: ContentType; label: string }[] = [
+  { value: "all", label: "All content" },
+  { value: "posts", label: "Posts" },
+  { value: "comments", label: "Comments" },
+]
+
+const SORTS: { value: SortOrder; label: string }[] = [
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
 ]
 
 function itemKey(item: QueueItem): string {
@@ -248,6 +285,7 @@ function QueueRow({
   item,
   name,
   reasons,
+  view,
   onVote,
   onApprove,
   onRemove,
@@ -259,6 +297,7 @@ function QueueRow({
   item: QueueItem
   name: string
   reasons: RemovalReason[]
+  view: ViewMode
   onVote: (postId: string, direction: 1 | -1) => void
   onApprove: () => void
   onRemove: (args: { removalReasonId: string | null; asSpam: boolean }) => void
@@ -277,7 +316,7 @@ function QueueRow({
       {isPost && post ? (
         <PostRow
           post={toPostRowPost(post)}
-          variant="compact"
+          variant={view}
           href={`/r/${communityName}/comments/${post.id}`}
           communityHref={`/r/${communityName}`}
           authorHref={post.author ? `/user/${post.author.username}` : undefined}
@@ -298,127 +337,87 @@ function QueueRow({
           Approve
         </Button>
         <RemovePopover reasons={reasons} disabled={pending} onRemove={onRemove} />
-        {isPost && post ? (
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={pending}
-              onClick={() => {
-                onToggleLock(!post.isLocked)
-              }}
-            >
-              {post.isLocked ? <LockOpen className="size-4" /> : <Lock className="size-4" />}
-              {post.isLocked ? "Unlock" : "Lock"}
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button variant="outline" size="sm" disabled={pending}>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={pending}
+          onClick={() => {
+            onRemove({ removalReasonId: null, asSpam: true })
+          }}
+        >
+          <Trash2 className="size-4" />
+          Spam
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="outline" size="icon-sm" disabled={pending} aria-label="More actions">
+                <MoreHorizontal className="size-4" />
+              </Button>
+            }
+          />
+          <DropdownMenuContent align="end">
+            {isPost && post ? (
+              <>
+                <DropdownMenuItem
+                  onClick={() => {
+                    onToggleLock(!post.isLocked)
+                  }}
+                >
+                  {post.isLocked ? <LockOpen className="size-4" /> : <Lock className="size-4" />}
+                  {post.isLocked ? "Unlock comments" : "Lock comments"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Sticky</DropdownMenuLabel>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      onSticky(1)
+                    }}
+                  >
+                    {post.stickyPosition === 1 ? (
+                      <Check className="size-4" />
+                    ) : (
+                      <Pin className="size-4" />
+                    )}
+                    Slot 1
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      onSticky(2)
+                    }}
+                  >
+                    {post.stickyPosition === 2 ? (
+                      <Check className="size-4" />
+                    ) : (
+                      <Pin className="size-4" />
+                    )}
+                    Slot 2
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      onSticky(null)
+                    }}
+                  >
                     <Pin className="size-4" />
-                    Sticky
-                  </Button>
-                }
-              />
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => {
-                    onSticky(1)
-                  }}
-                >
-                  {post.stickyPosition === 1 ? (
-                    <Check className="size-4" />
-                  ) : (
-                    <span className="size-4" />
-                  )}
-                  Slot 1
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    onSticky(2)
-                  }}
-                >
-                  {post.stickyPosition === 2 ? (
-                    <Check className="size-4" />
-                  ) : (
-                    <span className="size-4" />
-                  )}
-                  Slot 2
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    onSticky(null)
-                  }}
-                >
-                  <span className="size-4" />
-                  Unsticky
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
-        ) : item.comment ? (
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={pending}
-            onClick={() => {
-              onPinComment(!item.comment!.isSticky)
-            }}
-          >
-            <Pin className="size-4" />
-            {item.comment.isSticky ? "Unpin" : "Pin"}
-          </Button>
-        ) : null}
+                    Unsticky
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </>
+            ) : item.comment ? (
+              <DropdownMenuItem
+                onClick={() => {
+                  onPinComment(!item.comment!.isSticky)
+                }}
+              >
+                <Pin className="size-4" />
+                {item.comment.isSticky ? "Unpin comment" : "Pin comment"}
+              </DropdownMenuItem>
+            ) : null}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
-  )
-}
-
-/** Right rail: rough last-7-days activity computed from mod-log page 1. */
-function InsightsRail({ communityId }: { communityId: string }) {
-  const { data } = useQuery({
-    queryKey: ["mod-log-insights", communityId],
-    queryFn: async () => {
-      const res = await getApiV1ModLogByCommunityId({
-        path: { communityId },
-        throwOnError: true,
-      })
-      return res.data
-    },
-  })
-
-  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000
-  const recent = (data?.data ?? []).filter((e) => new Date(e.createdAt).getTime() >= cutoff)
-  const mods = new Set(recent.map((e) => e.modUserId).filter(Boolean))
-  const byAction = new Map<string, number>()
-  for (const e of recent) byAction.set(e.action, (byAction.get(e.action) ?? 0) + 1)
-  const topActions = [...byAction.entries()].toSorted((a, b) => b[1] - a[1]).slice(0, 5)
-
-  return (
-    <aside className="w-full shrink-0 lg:w-64">
-      <div className="rounded-lg border bg-card p-4">
-        <h2 className="text-sm font-semibold">Insights and activity</h2>
-        <p className="mb-3 text-xs text-muted-foreground">
-          Last 7 days (from mod log, approximate)
-        </p>
-        <div className="flex flex-col gap-2 text-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Mod actions</span>
-            <span className="font-medium">{recent.length}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Active mods</span>
-            <span className="font-medium">{mods.size}</span>
-          </div>
-          {topActions.map(([action, count]) => (
-            <div key={action} className="flex items-center justify-between">
-              <span className="truncate text-muted-foreground">{action.replaceAll("_", " ")}</span>
-              <span className="font-medium">{count}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </aside>
   )
 }
 
@@ -427,11 +426,19 @@ function QueueTabPanel({
   name,
   tab,
   reasons,
+  view,
+  communityFilter,
+  contentType,
+  sort,
 }: {
   communityId: string
   name: string
   tab: QueueTab
   reasons: RemovalReason[]
+  view: ViewMode
+  communityFilter: string
+  contentType: ContentType
+  sort: SortOrder
 }) {
   const queryClient = useQueryClient()
   const queryKey = ["mod-queue", communityId, tab]
@@ -442,6 +449,9 @@ function QueueTabPanel({
     queryFn: async ({ pageParam }) => {
       const { data } = await getApiV1ModQueueByCommunityId({
         path: { communityId },
+        // TODO(backend): add `community`, `contentType`, and `sort` query params
+        // to /api/v1/mod-queue/{communityId} so these filters page correctly on
+        // the server. They are currently applied client-side over loaded pages.
         query: { tab, cursor: pageParam },
         throwOnError: true,
       })
@@ -528,7 +538,20 @@ function QueueTabPanel({
     })
   }
 
-  const items = query.data?.pages.flatMap((p) => p.data) ?? []
+  const allItems = query.data?.pages.flatMap((p) => p.data) ?? []
+  // Client-side filter/sort until the backend supports these params (see TODO above).
+  const items = allItems
+    .filter((it) => {
+      if (contentType === "posts" && it.targetType !== "post") return false
+      if (contentType === "comments" && it.targetType !== "comment") return false
+      if (communityFilter !== "all" && it.communityId !== communityFilter) return false
+      return true
+    })
+    .toSorted((a, b) => {
+      const at = new Date(a.createdAt).getTime()
+      const bt = new Date(b.createdAt).getTime()
+      return sort === "oldest" ? at - bt : bt - at
+    })
 
   if (query.isLoading) {
     return <p className="py-10 text-center text-sm text-muted-foreground">Loading...</p>
@@ -536,10 +559,12 @@ function QueueTabPanel({
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-2 py-16 text-center">
-        <ShieldCheck className="size-8 text-muted-foreground/60" />
-        <p className="text-sm font-medium">Queue is clean.</p>
-        <p className="text-xs text-muted-foreground">Nothing here needs your attention.</p>
+      <div className="flex flex-col items-center gap-2 py-20 text-center">
+        <Cat className="size-12 text-muted-foreground/50" strokeWidth={1.5} />
+        <p className="text-base font-bold">Queue is clean.</p>
+        <p className="text-sm text-muted-foreground">
+          There's nothing in this queue that needs your attention right now.
+        </p>
       </div>
     )
   }
@@ -554,6 +579,7 @@ function QueueTabPanel({
             item={item}
             name={name}
             reasons={reasons}
+            view={view}
             pending={pending}
             onVote={vote}
             onApprove={() => {
@@ -584,7 +610,7 @@ function QueueTabPanel({
                 {
                   onSuccess: () => {
                     dropItem(key)
-                    toast.success("Removed")
+                    toast.success(asSpam ? "Removed as spam" : "Removed")
                   },
                   onError: () => {
                     toast.error("Could not remove")
@@ -662,13 +688,64 @@ function QueueTabPanel({
   )
 }
 
+/** A labelled dropdown trigger used for the toolbar filter/sort controls. */
+function ToolbarDropdown({
+  label,
+  icon,
+  options,
+  value,
+  onChange,
+  align = "start",
+}: {
+  label: string
+  icon?: React.ReactNode
+  options: { value: string; label: string; icon?: React.ReactNode }[]
+  value: string
+  onChange: (value: string) => void
+  align?: "start" | "end"
+}) {
+  const current = options.find((o) => o.value === value)
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="outline" size="sm">
+            {icon}
+            {current?.label ?? label}
+            <ChevronDown className="size-4 text-muted-foreground" />
+          </Button>
+        }
+      />
+      <DropdownMenuContent align={align} className="max-h-72 overflow-y-auto">
+        {options.map((o) => (
+          <DropdownMenuItem
+            key={o.value}
+            onClick={() => {
+              onChange(o.value)
+            }}
+          >
+            {o.icon ??
+              (o.value === value ? <Check className="size-4" /> : <span className="size-4" />)}
+            {o.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 /**
  * Moderation queue. `communityId` may be a community UUID or the literal "mod"
- * for the cross-community aggregate view (in which the per-community removal
- * reasons and insights rail are omitted).
+ * for the cross-community aggregate view. Matches reddit's /mod/queue layout:
+ * a "Queue" heading with help + nav arrows, a toolbar of pill tabs and
+ * filter/sort dropdowns plus a card/compact view toggle, and an insights rail.
  */
 export function ModQueue({ communityId, name }: { communityId: string; name: string }) {
   const [tab, setTab] = useState<QueueTab>("needs_review")
+  const [view, setView] = useState<ViewMode>("card")
+  const [communityFilter, setCommunityFilter] = useState<string>("all")
+  const [contentType, setContentType] = useState<ContentType>("all")
+  const [sort, setSort] = useState<SortOrder>("newest")
   const aggregate = communityId === "mod"
 
   const { data: reasonData } = useQuery({
@@ -677,37 +754,153 @@ export function ModQueue({ communityId, name }: { communityId: string; name: str
   })
   const reasons: RemovalReason[] = reasonData?.data ?? []
 
+  const { data: moderatedData } = useQuery(getApiV1CommunityMemberModeratedOptions())
+  const moderated: ModCommunity[] = moderatedData?.data ?? []
+  // The aggregate view lets you pick any moderated community; the single view
+  // scopes both the toolbar and the insights rail to the current community.
+  const railCommunities = aggregate ? moderated : moderated.filter((c) => c.name === name)
+
+  const tabIndex = TABS.findIndex((t) => t.value === tab)
+  function stepTab(delta: number) {
+    const next = (tabIndex + delta + TABS.length) % TABS.length
+    setTab(TABS[next].value)
+  }
+
   return (
     <div className="flex flex-col gap-6 lg:flex-row">
       <div className="min-w-0 flex-1">
-        <Tabs
-          value={tab}
-          onValueChange={(v) => {
-            setTab(v as QueueTab)
-          }}
-        >
-          <TabsList className="flex-wrap">
+        {/* Heading row */}
+        <div className="mb-4 flex items-center gap-2">
+          <h1 className="text-2xl font-bold">Queue</h1>
+          <Popover>
+            <PopoverTrigger
+              render={
+                <Button variant="ghost" size="icon-sm" aria-label="About the mod queue">
+                  <HelpCircle className="size-4" />
+                </Button>
+              }
+            />
+            <PopoverContent align="start" className="w-72 text-sm">
+              <p className="font-semibold">About the queue</p>
+              <p className="mt-1 text-muted-foreground">
+                Review reported, removed, and unmoderated posts and comments across the communities
+                you moderate. Approve to keep content up, or remove it.
+              </p>
+            </PopoverContent>
+          </Popover>
+          <div className="ml-auto flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Previous queue"
+              onClick={() => {
+                stepTab(-1)
+              }}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Next queue"
+              onClick={() => {
+                stepTab(1)
+              }}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Toolbar row */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
             {TABS.map((t) => (
-              <TabsTrigger key={t.value} value={t.value}>
+              <Button
+                key={t.value}
+                variant={tab === t.value ? "default" : "ghost"}
+                size="sm"
+                className="rounded-full"
+                onClick={() => {
+                  setTab(t.value)
+                }}
+              >
                 {t.label}
-              </TabsTrigger>
+              </Button>
             ))}
-          </TabsList>
-          {TABS.map((t) => (
-            <TabsContent key={t.value} value={t.value} className="mt-4">
-              {tab === t.value ? (
-                <QueueTabPanel
-                  communityId={communityId}
-                  name={name}
-                  tab={t.value}
-                  reasons={reasons}
-                />
-              ) : null}
-            </TabsContent>
-          ))}
-        </Tabs>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 sm:ml-2">
+            {aggregate ? (
+              <ToolbarDropdown
+                label="Communities"
+                options={[
+                  { value: "all", label: "Communities" },
+                  ...moderated.map((c) => ({
+                    value: c.id,
+                    label: `r/${c.name}`,
+                    icon: (
+                      <CommunityIcon name={c.name} iconUrl={mediaUrl(c.iconImageKey)} size="sm" />
+                    ),
+                  })),
+                ]}
+                value={communityFilter}
+                onChange={setCommunityFilter}
+              />
+            ) : null}
+            <ToolbarDropdown
+              label="All content"
+              options={CONTENT_TYPES}
+              value={contentType}
+              onChange={(v) => {
+                setContentType(v as ContentType)
+              }}
+            />
+            <ToolbarDropdown
+              label="Sort"
+              icon={<ArrowDownUp className="size-4" />}
+              options={SORTS}
+              value={sort}
+              onChange={(v) => {
+                setSort(v as SortOrder)
+              }}
+            />
+          </div>
+
+          <div className="ml-auto">
+            <Button
+              variant="outline"
+              size="icon-sm"
+              aria-label={view === "card" ? "Switch to compact view" : "Switch to card view"}
+              aria-pressed={view === "compact"}
+              onClick={() => {
+                setView((v) => (v === "card" ? "compact" : "card"))
+              }}
+            >
+              {view === "card" ? <LayoutList className="size-4" /> : <Rows3 className="size-4" />}
+            </Button>
+          </div>
+        </div>
+
+        <QueueTabPanel
+          key={tab}
+          communityId={communityId}
+          name={name}
+          tab={tab}
+          reasons={reasons}
+          view={view}
+          communityFilter={communityFilter}
+          contentType={contentType}
+          sort={sort}
+        />
       </div>
-      {aggregate ? null : <InsightsRail communityId={communityId} />}
+
+      {railCommunities.length > 0 ? (
+        <ModInsightsRail
+          communities={railCommunities}
+          initialCommunityId={railCommunities[0]?.id}
+        />
+      ) : null}
     </div>
   )
 }

@@ -6,7 +6,7 @@ import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
 import { ModToolsNav } from "@frontends/dashboard/components/mod/ModToolsNav"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import { getApiV1CommunityByNameOptions } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { ArrowLeft, ShieldHalf } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { useEffect } from "react"
 import { toast } from "sonner"
 
@@ -14,21 +14,16 @@ export const Route = createFileRoute("/mod/$name")({
   component: ModLayout,
 })
 
-/** The r/Mod aggregate view uses the literal community id "mod". */
+/**
+ * The r/Mod aggregate view uses the literal community id "mod". Unlike the
+ * single-community mod tools, the aggregate queue has no left ModToolsNav — it
+ * is full-width and the queue itself renders the heading, toolbar, and the
+ * insights rail (via ModQueue).
+ */
 function AggregateLayout() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-6">
-      <div className="mb-4 flex items-center gap-2">
-        <ShieldHalf className="size-5 text-primary" />
-        <h1 className="text-xl font-bold">Mod Queue</h1>
-        <span className="text-sm text-muted-foreground">All communities you moderate</span>
-      </div>
-      <div className="flex flex-col gap-6 lg:flex-row">
-        <ModToolsNav name="mod" aggregate />
-        <div className="min-w-0 flex-1">
-          <Outlet />
-        </div>
-      </div>
+    <div className="mx-auto w-full max-w-7xl px-4 py-6">
+      <Outlet />
     </div>
   )
 }
