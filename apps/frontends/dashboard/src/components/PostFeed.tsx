@@ -19,6 +19,7 @@ import { PostActionsMenu } from "@frontends/dashboard/components/PostActionsMenu
 import { PostShareMenu } from "@frontends/dashboard/components/PostShareMenu"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
+  getApiV1CustomFeedByUsernameBySlugPosts,
   getApiV1FeedCommunityByName,
   getApiV1FeedHome,
   getApiV1FeedPopular,
@@ -97,6 +98,7 @@ export type FeedSource =
   | { kind: "popular" }
   | { kind: "home" }
   | { kind: "profile"; username: string }
+  | { kind: "customFeed"; username: string; slug: string }
 
 type ViewMode = "card" | "compact"
 
@@ -132,6 +134,14 @@ async function fetchFeedPage(
     })
     return data
   }
+  if (source.kind === "customFeed") {
+    const { data } = await getApiV1CustomFeedByUsernameBySlugPosts({
+      path: { username: source.username, slug: source.slug },
+      query: query as never,
+      throwOnError: true,
+    })
+    return data
+  }
   if (source.kind === "home") {
     const { data } = await getApiV1FeedHome({ query: query as never, throwOnError: true })
     return data
@@ -146,7 +156,9 @@ function feedQueryKey(source: FeedSource, sort: string, t: TopWindow): unknown[]
       ? ["feed", "community", source.name]
       : source.kind === "profile"
         ? ["feed", "profile", source.username]
-        : ["feed", source.kind]
+        : source.kind === "customFeed"
+          ? ["feed", "customFeed", source.username, source.slug]
+          : ["feed", source.kind]
   return [...base, sort, t]
 }
 

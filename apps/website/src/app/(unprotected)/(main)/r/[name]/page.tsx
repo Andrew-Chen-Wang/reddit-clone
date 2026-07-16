@@ -6,8 +6,11 @@ import { buttonVariants } from "@ui/base/ui/button"
 import { CommunityHeader } from "@ui/seo-shared/community/CommunityHeader"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
 import { fetchCommunity } from "@lib/dao/community/fetch"
+import { fetchCommunityBookmark } from "@lib/dao/communityBookmark/fetch"
 import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
+import { fetchCommunityRelated } from "@lib/dao/communityRelated/fetch"
 import { fetchCommunityRule } from "@lib/dao/communityRule/fetch"
+import { fetchCommunityWidget } from "@lib/dao/communityWidget/fetch"
 import { db } from "@template-nextjs/db"
 import { mediaUrl } from "@website/lib/mediaUrl"
 import Link from "next/link"
@@ -52,7 +55,7 @@ export default async function CommunityPage({
   const sort = normalizeSort(sortParam, ALLOWED)
   const session = await getCurrentSession()
 
-  const [rules, moderators, feed] = await Promise.all([
+  const [rules, moderators, feed, bookmarks, widgets, related] = await Promise.all([
     fetchCommunityRule(db).getManyForCommunity(community.id, [
       "id",
       "name",
@@ -61,6 +64,9 @@ export default async function CommunityPage({
     ]),
     fetchCommunityModerator(db).getManyForCommunity(community.id),
     loadCommunityFeed(community.id, sort, t, session?.user.id ?? null),
+    fetchCommunityBookmark(db).listForCommunity(community.id, ["id", "label", "url", "position"]),
+    fetchCommunityWidget(db).listForCommunity(community.id, ["id", "title", "bodyMd", "position"]),
+    fetchCommunityRelated(db).listForCommunity(community.id),
   ])
 
   return (
@@ -129,6 +135,15 @@ export default async function CommunityPage({
               userId: m.userId,
               username: m.username,
               avatarImageKey: m.avatarImageKey,
+            }))}
+            bookmarks={bookmarks}
+            widgets={widgets}
+            related={related.map((r) => ({
+              id: r.id,
+              name: r.name,
+              displayName: r.displayName,
+              iconUrl: mediaUrl(r.iconImageKey),
+              memberCount: r.memberCount,
             }))}
           />
         </aside>
