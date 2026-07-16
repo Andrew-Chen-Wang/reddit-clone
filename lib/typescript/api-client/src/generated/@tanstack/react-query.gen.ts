@@ -61,6 +61,7 @@ import {
   getApiV1Explore,
   getApiV1FeedCommunityByName,
   getApiV1FeedHome,
+  getApiV1FeedMod,
   getApiV1FeedPopular,
   getApiV1FeedProfileByUsername,
   getApiV1FlairByCommunityIdPostTemplates,
@@ -343,6 +344,8 @@ import type {
   GetApiV1FeedCommunityByNameResponse,
   GetApiV1FeedHomeData,
   GetApiV1FeedHomeResponse,
+  GetApiV1FeedModData,
+  GetApiV1FeedModResponse,
   GetApiV1FeedPopularData,
   GetApiV1FeedPopularResponse,
   GetApiV1FeedProfileByUsernameData,
@@ -3521,6 +3524,76 @@ export const getApiV1FeedHomeInfiniteOptions = (options?: Options<GetApiV1FeedHo
         return data
       },
       queryKey: getApiV1FeedHomeInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1FeedModQueryKey = (options?: Options<GetApiV1FeedModData>) =>
+  createQueryKey("getApiV1FeedMod", options)
+
+/**
+ * Aggregate feed of posts across every community the viewer moderates
+ */
+export const getApiV1FeedModOptions = (options?: Options<GetApiV1FeedModData>) =>
+  queryOptions<
+    GetApiV1FeedModResponse,
+    DefaultError,
+    GetApiV1FeedModResponse,
+    ReturnType<typeof getApiV1FeedModQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1FeedMod({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1FeedModQueryKey(options),
+  })
+
+export const getApiV1FeedModInfiniteQueryKey = (
+  options?: Options<GetApiV1FeedModData>,
+): QueryKey<Options<GetApiV1FeedModData>> => createQueryKey("getApiV1FeedMod", options, true)
+
+/**
+ * Aggregate feed of posts across every community the viewer moderates
+ */
+export const getApiV1FeedModInfiniteOptions = (options?: Options<GetApiV1FeedModData>) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1FeedModResponse,
+    DefaultError,
+    InfiniteData<GetApiV1FeedModResponse>,
+    QueryKey<Options<GetApiV1FeedModData>>,
+    string | Pick<QueryKey<Options<GetApiV1FeedModData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1FeedModData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1FeedMod({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1FeedModInfiniteQueryKey(options),
     },
   )
   return opts as Omit<typeof opts, "initialData">

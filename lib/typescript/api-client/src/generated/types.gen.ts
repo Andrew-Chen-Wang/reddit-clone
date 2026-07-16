@@ -3545,6 +3545,79 @@ export type GetApiV1FeedHomeResponses = {
 
 export type GetApiV1FeedHomeResponse = GetApiV1FeedHomeResponses[keyof GetApiV1FeedHomeResponses]
 
+export type GetApiV1FeedModData = {
+  body?: never
+  path?: never
+  query?: {
+    sort?: "hot" | "new" | "top" | "controversial" | "rising"
+    t?: "hour" | "day" | "week" | "month" | "year" | "all"
+    cursor?: string
+  }
+  url: "/api/v1/feed/mod"
+}
+
+export type GetApiV1FeedModResponses = {
+  /**
+   * Moderated communities feed
+   */
+  200: {
+    data: Array<{
+      id: string
+      type: string
+      title: string
+      bodyMd: string | null
+      linkUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      isLocked: boolean
+      stickyPosition: number | null
+      ups: number
+      downs: number
+      score: number
+      commentCount: number
+      viewCount: number
+      shareCount: number
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      removed?: boolean
+      removedByMod?: boolean
+      removalReasonId?: string | null
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+      community: {
+        id: string
+        name: string
+        displayName: string | null
+        iconImageKey: string | null
+        isNsfw: boolean
+        isMember: boolean
+      } | null
+      flair: {
+        id: string
+        text: string
+        bgColor: string | null
+        textColor: string | null
+      } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1FeedModResponse = GetApiV1FeedModResponses[keyof GetApiV1FeedModResponses]
+
 export type GetApiV1FeedProfileByUsernameData = {
   body?: never
   path: {
