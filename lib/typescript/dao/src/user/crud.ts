@@ -36,5 +36,23 @@ export function crudUser(db: Kysely<DB>) {
     }
   }
 
-  return { createUser, updateUser, deleteUser }
+  async function suspend(id: string, reason: string | null): Promise<boolean> {
+    const result = await db
+      .updateTable("user")
+      .set({ suspendedAt: new Date(), suspensionReason: reason })
+      .where("id", "=", id)
+      .executeTakeFirst()
+    return (result.numUpdatedRows ?? 0n) > 0n
+  }
+
+  async function unsuspend(id: string): Promise<boolean> {
+    const result = await db
+      .updateTable("user")
+      .set({ suspendedAt: null, suspensionReason: null })
+      .where("id", "=", id)
+      .executeTakeFirst()
+    return (result.numUpdatedRows ?? 0n) > 0n
+  }
+
+  return { createUser, updateUser, deleteUser, suspend, unsuspend }
 }

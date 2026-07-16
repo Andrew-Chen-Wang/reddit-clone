@@ -1,7 +1,10 @@
 import type { DB } from "@template-nextjs/db"
 import type { Kysely, Selectable } from "kysely"
 
-export type SessionUser = Pick<Selectable<DB["user"]>, "id" | "isAdmin" | "name" | "email">
+export type SessionUser = Pick<
+  Selectable<DB["user"]>,
+  "id" | "isAdmin" | "name" | "email" | "suspendedAt"
+>
 
 type SessionValidationResult = {
   session: Selectable<DB["session"]>
@@ -22,6 +25,7 @@ export function authUser(db: Kysely<DB>) {
         "user.isAdmin",
         "user.name",
         "user.email",
+        "user.suspendedAt",
       ])
       .executeTakeFirst()
 
@@ -38,6 +42,7 @@ export function authUser(db: Kysely<DB>) {
       isAdmin: row.isAdmin,
       name: row.name,
       email: row.email,
+      suspendedAt: row.suspendedAt,
     }
     if (Date.now() >= session.expires.getTime()) {
       await db.deleteFrom("session").where("sessionKey", "=", session.sessionKey).execute()

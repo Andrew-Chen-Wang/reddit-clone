@@ -11,7 +11,7 @@ import type { Selectable } from "kysely"
 import { ErrorCode } from "./utils/errors.enum"
 import { throwHTTPException } from "./utils/http-exception"
 
-type SessionUser = Pick<Selectable<DB["user"]>, "id" | "isAdmin" | "name" | "email">
+type SessionUser = Pick<Selectable<DB["user"]>, "id" | "isAdmin" | "name" | "email" | "suspendedAt">
 
 export async function getSession(
   c:
@@ -27,14 +27,18 @@ export async function getSession(
   }
 
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionToken)))
+  let session: Awaited<ReturnType<ReturnType<typeof authUser>["validateSessionToken"]>>
   try {
-    const session = await authUser(db).validateSessionToken(sessionId)
-    if (!session) throwHTTPException(401, ErrorCode.Unauthenticated, "Unauthenticated")
-    return session
+    session = await authUser(db).validateSessionToken(sessionId)
   } catch {
     // Typically this means we're unable to connect to the database
     return throwHTTPException(503, ErrorCode.ServiceUnavailable, "Service unavailable")
   }
+  if (!session) throwHTTPException(401, ErrorCode.Unauthenticated, "Unauthenticated")
+  if (session.user.suspendedAt) {
+    throwHTTPException(403, ErrorCode.Suspended, "Account suspended")
+  }
+  return session
 }
 
 export const authMiddleware = createMiddleware<{

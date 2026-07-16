@@ -4,6 +4,8 @@ import { Card, CardContent } from "@ui/base/ui/card"
 import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
 import { formatCompactNumber } from "@ui/seo-shared/format-number"
 import { visibilityMeta } from "@ui/seo-shared/community/visibility"
+import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
+import { Markdown } from "@ui/seo-shared/Markdown"
 
 export type CommunityRightRailRule = {
   id: string
@@ -18,6 +20,26 @@ export type CommunityRightRailModerator = {
   avatarImageKey: string | null
 }
 
+export type CommunityRightRailBookmark = {
+  id: string
+  label: string
+  url: string
+}
+
+export type CommunityRightRailWidget = {
+  id: string
+  title: string
+  bodyMd: string
+}
+
+export type CommunityRightRailRelated = {
+  id: string
+  name: string
+  displayName: string | null
+  iconUrl: string | null
+  memberCount: number
+}
+
 export type CommunityRightRailProps = {
   displayName: string | null
   name: string
@@ -27,6 +49,9 @@ export type CommunityRightRailProps = {
   createdAt: string | Date
   rules: CommunityRightRailRule[]
   moderators: CommunityRightRailModerator[]
+  bookmarks?: CommunityRightRailBookmark[]
+  widgets?: CommunityRightRailWidget[]
+  related?: CommunityRightRailRelated[]
 }
 
 function formatCreated(value: string | Date): string {
@@ -47,6 +72,9 @@ export function CommunityRightRail({
   createdAt,
   rules,
   moderators,
+  bookmarks = [],
+  widgets = [],
+  related = [],
 }: CommunityRightRailProps) {
   const meta = visibilityMeta(visibility)
   const VisibilityIcon = meta.icon
@@ -82,6 +110,24 @@ export function CommunityRightRail({
           </dl>
         </CardContent>
       </Card>
+
+      {bookmarks.length > 0 ? (
+        <Card>
+          <CardContent className="flex flex-wrap gap-2 pt-6">
+            {bookmarks.map((bookmark) => (
+              <a
+                key={bookmark.id}
+                href={bookmark.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-full border bg-muted/40 px-3 py-1.5 text-sm font-medium hover:bg-muted"
+              >
+                {bookmark.label}
+              </a>
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
 
       {rules.length > 0 ? (
         <Card>
@@ -145,6 +191,43 @@ export function CommunityRightRail({
                 View all moderators
               </SeoLink>
             ) : null}
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {widgets.map((widget) => (
+        <Card key={widget.id}>
+          <CardContent className="flex flex-col gap-2 pt-6">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {widget.title}
+            </h2>
+            <Markdown content={widget.bodyMd} />
+          </CardContent>
+        </Card>
+      ))}
+
+      {related.length > 0 ? (
+        <Card>
+          <CardContent className="flex flex-col gap-3 pt-6">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Related Communities
+            </h2>
+            <ul className="flex flex-col gap-2">
+              {related.map((community) => (
+                <li key={community.id}>
+                  <SeoLink
+                    href={`/r/${community.name}`}
+                    className="flex items-center gap-2 text-sm hover:underline"
+                  >
+                    <CommunityIcon name={community.name} iconUrl={community.iconUrl} size="sm" />
+                    <span className="min-w-0 flex-1 truncate">r/{community.name}</span>
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {formatCompactNumber(community.memberCount)}
+                    </span>
+                  </SeoLink>
+                </li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       ) : null}

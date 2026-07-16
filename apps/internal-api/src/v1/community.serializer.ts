@@ -123,6 +123,7 @@ export const communityDetailSchemaResponse = Type.Object({
   bannerImageKey: Nullable(Type.String()),
   memberCount: Type.Number(),
   defaultCommentSort: Type.String(),
+  welcomeMessage: Nullable(Type.String()),
   createdAt: Type.String({ format: "date-time" }),
   rules: Type.Array(
     Type.Object({

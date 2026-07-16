@@ -18,6 +18,7 @@ export enum ErrorCode {
 
   // Authentication/Authorization errors
   InsufficientPermissions = "InsufficientPermissions",
+  Suspended = "Suspended",
 
   // Validation errors
   ValidationFailed = "ValidationFailed",
