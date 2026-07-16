@@ -24,6 +24,7 @@ function PopularPage() {
     <div className="mx-auto mt-4 w-full max-w-3xl px-4">
       <h1 className="mb-3 text-xl font-bold">Popular posts</h1>
       <PostFeed
+        showJoin
         source={{ kind: "popular" }}
         sorts={POPULAR_SORTS}
         defaultSort="hot"

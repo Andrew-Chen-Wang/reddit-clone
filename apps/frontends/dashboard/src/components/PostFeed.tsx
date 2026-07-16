@@ -26,12 +26,52 @@ import {
   putApiV1PostVoteByPostId,
 } from "@lib/api-client/generated/sdk.gen"
 import {
+  getApiV1CommunityMemberMineOptions,
   getApiV1UserMeSettingsOptions,
   patchApiV1UserMeSettingsMutation,
+  postApiV1CommunityMemberByCommunityIdJoinMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import { ArrowUpDown, LayoutList, Rows3, Check } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
+
+function FeedJoinButton({ communityId }: { communityId: string }) {
+  const queryClient = useQueryClient()
+  const [joined, setJoined] = useState(false)
+  const join = useMutation({
+    ...postApiV1CommunityMemberByCommunityIdJoinMutation(),
+    onSuccess: () => {
+      setJoined(true)
+      void queryClient.invalidateQueries({
+        queryKey: getApiV1CommunityMemberMineOptions().queryKey,
+      })
+    },
+    onError: () => {
+      toast.error("Could not join community")
+    },
+  })
+  if (joined) {
+    return (
+      <Button size="sm" variant="outline" className="h-7 rounded-full px-3" disabled>
+        Joined
+      </Button>
+    )
+  }
+  return (
+    <Button
+      size="sm"
+      className="h-7 rounded-full px-3"
+      disabled={join.isPending}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        join.mutate({ path: { communityId } })
+      }}
+    >
+      Join
+    </Button>
+  )
+}
 
 export type FeedPost = PostRowPost & {
   isAuthor: boolean
@@ -40,6 +80,7 @@ export type FeedPost = PostRowPost & {
     name: string
     displayName: string | null
     iconImageKey: string | null
+    isMember?: boolean
   } | null
   author: { username: string; displayName: string | null } | null
   flair: { id: string; text: string; bgColor: string | null; textColor: string | null } | null
@@ -157,6 +198,7 @@ export type PostFeedProps = {
   permalinkFor: (post: FeedPost) => string
   /** Show the community identity line on each row. Defaults to true. */
   showCommunity?: boolean
+  showJoin?: boolean
   emptyTitle?: string
   emptyDescription?: string
 }
@@ -167,6 +209,7 @@ export function PostFeed({
   defaultSort,
   permalinkFor,
   showCommunity = true,
+  showJoin = false,
   emptyTitle = "No posts yet",
   emptyDescription = "There's nothing here yet. Check back later.",
 }: PostFeedProps) {
@@ -355,11 +398,7 @@ export function PostFeed({
           <p className="mt-1 text-xs text-muted-foreground">{emptyDescription}</p>
         </div>
       ) : (
-        <div
-          className={
-            view === "compact" ? "overflow-hidden rounded-lg border" : "flex flex-col gap-3"
-          }
-        >
+        <div className={view === "compact" ? "overflow-hidden rounded-lg border" : "flex flex-col"}>
           {posts.map((post) => (
             <PostRow
               key={post.id}
@@ -376,6 +415,11 @@ export function PostFeed({
                 vote(post, -1)
               }}
               voteDisabled={post.isLocked}
+              joinSlot={
+                showJoin && post.community && post.community.isMember === false ? (
+                  <FeedJoinButton communityId={post.community.id} />
+                ) : undefined
+              }
               shareSlot={
                 <PostShareMenu
                   post={{

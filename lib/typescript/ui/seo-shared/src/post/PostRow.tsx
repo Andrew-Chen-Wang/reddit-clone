@@ -76,6 +76,8 @@ export type PostRowProps = {
   showCommunity?: boolean
   /** Right-aligned action menu (e.g. overflow dropdown). */
   menuSlot?: ReactNode
+  /** Right-aligned Join control in the header (shown on multi-community feeds). */
+  joinSlot?: ReactNode
 }
 
 function domainFromUrl(url: string): string {
@@ -236,6 +238,7 @@ export function PostRow({
   shareSlot,
   showCommunity = true,
   menuSlot,
+  joinSlot,
 }: PostRowProps) {
   const media = post.media ?? []
   const hasMedia = post.type === "media" && media.length > 0
@@ -290,15 +293,18 @@ export function PostRow({
   const preview = post.type === "text" && post.bodyMd ? markdownToText(post.bodyMd, 280) : null
 
   return (
-    <article className="flex flex-col gap-2 rounded-lg border bg-card p-3 transition-colors hover:border-muted-foreground/30">
-      <div className="flex items-start justify-between gap-2">
+    <article className="flex flex-col gap-2 rounded-lg border-b px-3 py-3 transition-colors last:border-b-0 hover:bg-muted/40">
+      <div className="flex items-center gap-2">
         <MetaLine
           post={post}
           communityHref={communityHref}
           authorHref={authorHref}
           showCommunity={showCommunity}
         />
-        {menuSlot}
+        <div className="ml-auto flex shrink-0 items-center gap-1">
+          {joinSlot}
+          {menuSlot}
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">

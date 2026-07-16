@@ -1,4 +1,5 @@
 import type { DB } from "@template-nextjs/db"
+import { fetchCommunityMember } from "../communityMember/fetch"
 import type { Kysely } from "kysely"
 import { fetchPostMedia } from "../postMedia/fetch"
 import type { RawPostRow } from "./fetch"
@@ -63,7 +64,7 @@ export interface ProcessedPost {
   userVote: number
   isAuthor: boolean
   author: ProcessedPostAuthor | null
-  community: ProcessedPostCommunity | null
+  community: (ProcessedPostCommunity & { isMember: boolean }) | null
   flair: ProcessedPostFlair | null
   media: ProcessedPostMedia[]
 }
@@ -126,6 +127,10 @@ export async function processPosts(
 
   const voteByPost = new Map(voteRows.map((v) => [v.postId, v.value]))
   const authorById = new Map(authorRows.map((a) => [a.id, a]))
+  const membershipMap =
+    viewerId && communityIds.length
+      ? await fetchCommunityMember(db).getMembershipMap(viewerId, communityIds)
+      : new Map<string, unknown>()
   const communityById = new Map(communityRows.map((c) => [c.id, c]))
   const flairById = new Map(flairRows.map((f) => [f.id, f]))
 
@@ -181,6 +186,7 @@ export async function processPosts(
             displayName: community.displayName,
             iconImageKey: community.iconImageKey,
             isNsfw: community.isNsfw,
+            isMember: membershipMap.has(community.id),
           }
         : null,
       flair: flair

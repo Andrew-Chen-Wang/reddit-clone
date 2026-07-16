@@ -26,6 +26,7 @@ function DashboardHome() {
     <div className="mx-auto mt-4 flex w-full max-w-5xl flex-col gap-6 px-4 lg:flex-row">
       <div className="min-w-0 flex-1">
         <PostFeed
+          showJoin
           source={{ kind: "home" }}
           sorts={HOME_SORTS}
           defaultSort="best"

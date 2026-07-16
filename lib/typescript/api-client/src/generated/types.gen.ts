@@ -243,6 +243,7 @@ export type GetApiV1UserMeSavedResponses = {
         displayName: string | null
         iconImageKey: string | null
         isNsfw: boolean
+        isMember: boolean
       } | null
       flair: {
         id: string
@@ -343,6 +344,7 @@ export type GetApiV1UserMeHiddenResponses = {
         displayName: string | null
         iconImageKey: string | null
         isNsfw: boolean
+        isMember: boolean
       } | null
       flair: {
         id: string
@@ -414,6 +416,7 @@ export type GetApiV1UserMeUpvotedResponses = {
         displayName: string | null
         iconImageKey: string | null
         isNsfw: boolean
+        isMember: boolean
       } | null
       flair: {
         id: string
@@ -485,6 +488,7 @@ export type GetApiV1UserMeDownvotedResponses = {
         displayName: string | null
         iconImageKey: string | null
         isNsfw: boolean
+        isMember: boolean
       } | null
       flair: {
         id: string
@@ -2134,6 +2138,7 @@ export type GetApiV1PostByIdResponses = {
       displayName: string | null
       iconImageKey: string | null
       isNsfw: boolean
+      isMember: boolean
     } | null
     flair: {
       id: string
@@ -2222,6 +2227,7 @@ export type PostApiV1PostData = {
     isSpoiler?: boolean
     isOc?: boolean
     flairTemplateId?: string | null
+    crosspostOfPostId?: string | null
   }
   path?: never
   query?: never
@@ -2364,6 +2370,7 @@ export type GetApiV1FeedCommunityByNameResponses = {
         displayName: string | null
         iconImageKey: string | null
         isNsfw: boolean
+        isMember: boolean
       } | null
       flair: {
         id: string
@@ -2437,6 +2444,7 @@ export type GetApiV1FeedPopularResponses = {
         displayName: string | null
         iconImageKey: string | null
         isNsfw: boolean
+        isMember: boolean
       } | null
       flair: {
         id: string
@@ -2510,6 +2518,7 @@ export type GetApiV1FeedHomeResponses = {
         displayName: string | null
         iconImageKey: string | null
         isNsfw: boolean
+        isMember: boolean
       } | null
       flair: {
         id: string
@@ -2594,6 +2603,7 @@ export type GetApiV1FeedProfileByUsernameResponses = {
         displayName: string | null
         iconImageKey: string | null
         isNsfw: boolean
+        isMember: boolean
       } | null
       flair: {
         id: string
@@ -4034,6 +4044,7 @@ export type GetApiV1SearchResponses = {
         displayName: string | null
         iconImageKey: string | null
         isNsfw: boolean
+        isMember: boolean
       } | null
       flair: {
         id: string
@@ -4268,6 +4279,7 @@ export type GetApiV1ModQueueByCommunityIdResponses = {
           displayName: string | null
           iconImageKey: string | null
           isNsfw: boolean
+          isMember: boolean
         } | null
         flair: {
           id: string
@@ -5680,3 +5692,811 @@ export type PatchApiV1RemovalReasonReasonByIdResponses = {
 
 export type PatchApiV1RemovalReasonReasonByIdResponse =
   PatchApiV1RemovalReasonReasonByIdResponses[keyof PatchApiV1RemovalReasonReasonByIdResponses]
+
+export type GetApiV1ChatData = {
+  body?: never
+  path?: never
+  query?: {
+    filter?: "all" | "groups" | "dms" | "requests" | "unread"
+  }
+  url: "/api/v1/chat"
+}
+
+export type GetApiV1ChatResponses = {
+  /**
+   * Conversations
+   */
+  200: {
+    data: Array<{
+      id: string
+      isGroup: boolean
+      name: string | null
+      createdByUserId: string | null
+      lastMessageAt: Date
+      createdAt: Date
+      myStatus: string
+      myRole: string
+      unreadCount: number
+      lastMessage: {
+        id: string
+        body: string | null
+        senderUserId: string | null
+        isDeleted: boolean
+        createdAt: Date
+      } | null
+      participants: Array<{
+        userId: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+        role: string
+        status: string
+      }>
+    }>
+  }
+}
+
+export type GetApiV1ChatResponse = GetApiV1ChatResponses[keyof GetApiV1ChatResponses]
+
+export type GetApiV1ChatUnreadCountData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/chat/unread-count"
+}
+
+export type GetApiV1ChatUnreadCountResponses = {
+  /**
+   * Unread conversation count
+   */
+  200: {
+    count: number
+  }
+}
+
+export type GetApiV1ChatUnreadCountResponse =
+  GetApiV1ChatUnreadCountResponses[keyof GetApiV1ChatUnreadCountResponses]
+
+export type PostApiV1ChatDmData = {
+  body?: {
+    username: string
+    body: string
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/chat/dm"
+}
+
+export type PostApiV1ChatDmErrors = {
+  /**
+   * Not allowed to message this user
+   */
+  403: ErrorResponseT
+  /**
+   * Recipient not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1ChatDmError = PostApiV1ChatDmErrors[keyof PostApiV1ChatDmErrors]
+
+export type PostApiV1ChatDmResponses = {
+  /**
+   * Conversation
+   */
+  201: {
+    conversationId: string
+  }
+}
+
+export type PostApiV1ChatDmResponse = PostApiV1ChatDmResponses[keyof PostApiV1ChatDmResponses]
+
+export type PostApiV1ChatGroupData = {
+  body?: {
+    name: string
+    usernames: Array<string>
+    body: string
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/chat/group"
+}
+
+export type PostApiV1ChatGroupErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+}
+
+export type PostApiV1ChatGroupError = PostApiV1ChatGroupErrors[keyof PostApiV1ChatGroupErrors]
+
+export type PostApiV1ChatGroupResponses = {
+  /**
+   * Conversation
+   */
+  201: {
+    conversationId: string
+  }
+}
+
+export type PostApiV1ChatGroupResponse =
+  PostApiV1ChatGroupResponses[keyof PostApiV1ChatGroupResponses]
+
+export type GetApiV1ChatByConversationIdMessagesData = {
+  body?: never
+  path: {
+    conversationId: string
+  }
+  query?: {
+    after?: string
+    cursor?: string
+    limit?: number
+  }
+  url: "/api/v1/chat/{conversationId}/messages"
+}
+
+export type GetApiV1ChatByConversationIdMessagesErrors = {
+  /**
+   * Not a participant
+   */
+  403: ErrorResponseT
+}
+
+export type GetApiV1ChatByConversationIdMessagesError =
+  GetApiV1ChatByConversationIdMessagesErrors[keyof GetApiV1ChatByConversationIdMessagesErrors]
+
+export type GetApiV1ChatByConversationIdMessagesResponses = {
+  /**
+   * Messages
+   */
+  200: {
+    data: Array<{
+      id: string
+      conversationId: string
+      senderUserId: string | null
+      body: string | null
+      isDeleted: boolean
+      createdAt: Date
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1ChatByConversationIdMessagesResponse =
+  GetApiV1ChatByConversationIdMessagesResponses[keyof GetApiV1ChatByConversationIdMessagesResponses]
+
+export type PostApiV1ChatByConversationIdMessagesData = {
+  body?: {
+    body: string
+  }
+  path: {
+    conversationId: string
+  }
+  query?: never
+  url: "/api/v1/chat/{conversationId}/messages"
+}
+
+export type PostApiV1ChatByConversationIdMessagesErrors = {
+  /**
+   * Not allowed to send
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1ChatByConversationIdMessagesError =
+  PostApiV1ChatByConversationIdMessagesErrors[keyof PostApiV1ChatByConversationIdMessagesErrors]
+
+export type PostApiV1ChatByConversationIdMessagesResponses = {
+  /**
+   * Message created
+   */
+  201: {
+    id: string
+    conversationId: string
+    senderUserId: string | null
+    body: string | null
+    isDeleted: boolean
+    createdAt: Date
+  }
+}
+
+export type PostApiV1ChatByConversationIdMessagesResponse =
+  PostApiV1ChatByConversationIdMessagesResponses[keyof PostApiV1ChatByConversationIdMessagesResponses]
+
+export type PostApiV1ChatByConversationIdReadData = {
+  body?: never
+  path: {
+    conversationId: string
+  }
+  query?: never
+  url: "/api/v1/chat/{conversationId}/read"
+}
+
+export type PostApiV1ChatByConversationIdReadErrors = {
+  /**
+   * Not a participant
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1ChatByConversationIdReadError =
+  PostApiV1ChatByConversationIdReadErrors[keyof PostApiV1ChatByConversationIdReadErrors]
+
+export type PostApiV1ChatByConversationIdReadResponses = {
+  /**
+   * Marked read
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1ChatByConversationIdReadResponse =
+  PostApiV1ChatByConversationIdReadResponses[keyof PostApiV1ChatByConversationIdReadResponses]
+
+export type PostApiV1ChatByConversationIdAcceptData = {
+  body?: never
+  path: {
+    conversationId: string
+  }
+  query?: never
+  url: "/api/v1/chat/{conversationId}/accept"
+}
+
+export type PostApiV1ChatByConversationIdAcceptErrors = {
+  /**
+   * Not a participant
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1ChatByConversationIdAcceptError =
+  PostApiV1ChatByConversationIdAcceptErrors[keyof PostApiV1ChatByConversationIdAcceptErrors]
+
+export type PostApiV1ChatByConversationIdAcceptResponses = {
+  /**
+   * Accepted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1ChatByConversationIdAcceptResponse =
+  PostApiV1ChatByConversationIdAcceptResponses[keyof PostApiV1ChatByConversationIdAcceptResponses]
+
+export type PostApiV1ChatByConversationIdIgnoreData = {
+  body?: never
+  path: {
+    conversationId: string
+  }
+  query?: never
+  url: "/api/v1/chat/{conversationId}/ignore"
+}
+
+export type PostApiV1ChatByConversationIdIgnoreErrors = {
+  /**
+   * Not a participant
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1ChatByConversationIdIgnoreError =
+  PostApiV1ChatByConversationIdIgnoreErrors[keyof PostApiV1ChatByConversationIdIgnoreErrors]
+
+export type PostApiV1ChatByConversationIdIgnoreResponses = {
+  /**
+   * Ignored
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1ChatByConversationIdIgnoreResponse =
+  PostApiV1ChatByConversationIdIgnoreResponses[keyof PostApiV1ChatByConversationIdIgnoreResponses]
+
+export type PostApiV1ChatByConversationIdLeaveData = {
+  body?: never
+  path: {
+    conversationId: string
+  }
+  query?: never
+  url: "/api/v1/chat/{conversationId}/leave"
+}
+
+export type PostApiV1ChatByConversationIdLeaveErrors = {
+  /**
+   * Not a participant
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1ChatByConversationIdLeaveError =
+  PostApiV1ChatByConversationIdLeaveErrors[keyof PostApiV1ChatByConversationIdLeaveErrors]
+
+export type PostApiV1ChatByConversationIdLeaveResponses = {
+  /**
+   * Left
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1ChatByConversationIdLeaveResponse =
+  PostApiV1ChatByConversationIdLeaveResponses[keyof PostApiV1ChatByConversationIdLeaveResponses]
+
+export type PostApiV1ChatByConversationIdHideData = {
+  body?: never
+  path: {
+    conversationId: string
+  }
+  query?: never
+  url: "/api/v1/chat/{conversationId}/hide"
+}
+
+export type PostApiV1ChatByConversationIdHideErrors = {
+  /**
+   * Not a participant
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1ChatByConversationIdHideError =
+  PostApiV1ChatByConversationIdHideErrors[keyof PostApiV1ChatByConversationIdHideErrors]
+
+export type PostApiV1ChatByConversationIdHideResponses = {
+  /**
+   * Hidden
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1ChatByConversationIdHideResponse =
+  PostApiV1ChatByConversationIdHideResponses[keyof PostApiV1ChatByConversationIdHideResponses]
+
+export type PatchApiV1ChatByConversationIdData = {
+  body?: {
+    name: string
+  }
+  path: {
+    conversationId: string
+  }
+  query?: never
+  url: "/api/v1/chat/{conversationId}"
+}
+
+export type PatchApiV1ChatByConversationIdErrors = {
+  /**
+   * Not the host
+   */
+  403: ErrorResponseT
+  /**
+   * Conversation not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1ChatByConversationIdError =
+  PatchApiV1ChatByConversationIdErrors[keyof PatchApiV1ChatByConversationIdErrors]
+
+export type PatchApiV1ChatByConversationIdResponses = {
+  /**
+   * Renamed
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PatchApiV1ChatByConversationIdResponse =
+  PatchApiV1ChatByConversationIdResponses[keyof PatchApiV1ChatByConversationIdResponses]
+
+export type DeleteApiV1ChatByConversationIdParticipantsByUserIdData = {
+  body?: never
+  path: {
+    conversationId: string
+    userId: string
+  }
+  query?: never
+  url: "/api/v1/chat/{conversationId}/participants/{userId}"
+}
+
+export type DeleteApiV1ChatByConversationIdParticipantsByUserIdErrors = {
+  /**
+   * Not the host
+   */
+  403: ErrorResponseT
+}
+
+export type DeleteApiV1ChatByConversationIdParticipantsByUserIdError =
+  DeleteApiV1ChatByConversationIdParticipantsByUserIdErrors[keyof DeleteApiV1ChatByConversationIdParticipantsByUserIdErrors]
+
+export type DeleteApiV1ChatByConversationIdParticipantsByUserIdResponses = {
+  /**
+   * Removed
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1ChatByConversationIdParticipantsByUserIdResponse =
+  DeleteApiV1ChatByConversationIdParticipantsByUserIdResponses[keyof DeleteApiV1ChatByConversationIdParticipantsByUserIdResponses]
+
+export type DeleteApiV1ChatMessageByMessageIdData = {
+  body?: never
+  path: {
+    messageId: string
+  }
+  query?: never
+  url: "/api/v1/chat/message/{messageId}"
+}
+
+export type DeleteApiV1ChatMessageByMessageIdErrors = {
+  /**
+   * Not your message
+   */
+  403: ErrorResponseT
+  /**
+   * Message not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1ChatMessageByMessageIdError =
+  DeleteApiV1ChatMessageByMessageIdErrors[keyof DeleteApiV1ChatMessageByMessageIdErrors]
+
+export type DeleteApiV1ChatMessageByMessageIdResponses = {
+  /**
+   * Deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1ChatMessageByMessageIdResponse =
+  DeleteApiV1ChatMessageByMessageIdResponses[keyof DeleteApiV1ChatMessageByMessageIdResponses]
+
+export type PostApiV1ModmailData = {
+  body?: {
+    communityName: string
+    subject: string
+    body: string
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/modmail"
+}
+
+export type PostApiV1ModmailErrors = {
+  /**
+   * Not allowed to message these mods
+   */
+  403: ErrorResponseT
+  /**
+   * Community not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1ModmailError = PostApiV1ModmailErrors[keyof PostApiV1ModmailErrors]
+
+export type PostApiV1ModmailResponses = {
+  /**
+   * Conversation created
+   */
+  201: {
+    conversationId: string
+  }
+}
+
+export type PostApiV1ModmailResponse = PostApiV1ModmailResponses[keyof PostApiV1ModmailResponses]
+
+export type GetApiV1ModmailMineData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/modmail/mine"
+}
+
+export type GetApiV1ModmailMineResponses = {
+  /**
+   * Conversations
+   */
+  200: {
+    data: Array<{
+      id: string
+      subject: string
+      folder: string
+      isHighlighted: boolean
+      communityId: string
+      communityName: string
+      communityIconImageKey: string | null
+      participantUserId: string
+      participantUsername: string | null
+      participantAvatarImageKey: string | null
+      lastMessageAt: Date
+      createdAt: Date
+    }>
+  }
+}
+
+export type GetApiV1ModmailMineResponse =
+  GetApiV1ModmailMineResponses[keyof GetApiV1ModmailMineResponses]
+
+export type GetApiV1ModmailMineAsModData = {
+  body?: never
+  path?: never
+  query?: {
+    folder?: "new" | "in_progress" | "archived"
+  }
+  url: "/api/v1/modmail/mine-as-mod"
+}
+
+export type GetApiV1ModmailMineAsModResponses = {
+  /**
+   * Conversations
+   */
+  200: {
+    data: Array<{
+      id: string
+      subject: string
+      folder: string
+      isHighlighted: boolean
+      communityId: string
+      communityName: string
+      communityIconImageKey: string | null
+      participantUserId: string
+      participantUsername: string | null
+      participantAvatarImageKey: string | null
+      lastMessageAt: Date
+      createdAt: Date
+    }>
+  }
+}
+
+export type GetApiV1ModmailMineAsModResponse =
+  GetApiV1ModmailMineAsModResponses[keyof GetApiV1ModmailMineAsModResponses]
+
+export type GetApiV1ModmailCommunityByCommunityIdData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: {
+    folder?: "new" | "in_progress" | "archived"
+  }
+  url: "/api/v1/modmail/community/{communityId}"
+}
+
+export type GetApiV1ModmailCommunityByCommunityIdErrors = {
+  /**
+   * Not a mod with mail permission
+   */
+  403: ErrorResponseT
+}
+
+export type GetApiV1ModmailCommunityByCommunityIdError =
+  GetApiV1ModmailCommunityByCommunityIdErrors[keyof GetApiV1ModmailCommunityByCommunityIdErrors]
+
+export type GetApiV1ModmailCommunityByCommunityIdResponses = {
+  /**
+   * Conversations
+   */
+  200: {
+    data: Array<{
+      id: string
+      subject: string
+      folder: string
+      isHighlighted: boolean
+      communityId: string
+      communityName: string
+      communityIconImageKey: string | null
+      participantUserId: string
+      participantUsername: string | null
+      participantAvatarImageKey: string | null
+      lastMessageAt: Date
+      createdAt: Date
+    }>
+  }
+}
+
+export type GetApiV1ModmailCommunityByCommunityIdResponse =
+  GetApiV1ModmailCommunityByCommunityIdResponses[keyof GetApiV1ModmailCommunityByCommunityIdResponses]
+
+export type GetApiV1ModmailByIdMessagesData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/modmail/{id}/messages"
+}
+
+export type GetApiV1ModmailByIdMessagesErrors = {
+  /**
+   * Not allowed to view this conversation
+   */
+  403: ErrorResponseT
+  /**
+   * Conversation not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1ModmailByIdMessagesError =
+  GetApiV1ModmailByIdMessagesErrors[keyof GetApiV1ModmailByIdMessagesErrors]
+
+export type GetApiV1ModmailByIdMessagesResponses = {
+  /**
+   * Messages
+   */
+  200: {
+    isMod: boolean
+    subject: string
+    folder: string
+    isHighlighted: boolean
+    data: Array<{
+      id: string
+      conversationId: string
+      authorUserId: string | null
+      bodyMd: string
+      isInternalNote: boolean
+      createdAt: Date
+      authorUsername: string | null
+      authorAvatarImageKey: string | null
+    }>
+  }
+}
+
+export type GetApiV1ModmailByIdMessagesResponse =
+  GetApiV1ModmailByIdMessagesResponses[keyof GetApiV1ModmailByIdMessagesResponses]
+
+export type PostApiV1ModmailByIdMessagesData = {
+  body?: {
+    body: string
+    isInternalNote?: boolean
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/modmail/{id}/messages"
+}
+
+export type PostApiV1ModmailByIdMessagesErrors = {
+  /**
+   * Not allowed to reply
+   */
+  403: ErrorResponseT
+  /**
+   * Conversation not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1ModmailByIdMessagesError =
+  PostApiV1ModmailByIdMessagesErrors[keyof PostApiV1ModmailByIdMessagesErrors]
+
+export type PostApiV1ModmailByIdMessagesResponses = {
+  /**
+   * Message created
+   */
+  201: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1ModmailByIdMessagesResponse =
+  PostApiV1ModmailByIdMessagesResponses[keyof PostApiV1ModmailByIdMessagesResponses]
+
+export type PostApiV1ModmailByIdArchiveData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/modmail/{id}/archive"
+}
+
+export type PostApiV1ModmailByIdArchiveErrors = {
+  /**
+   * Not a mod with mail permission
+   */
+  403: ErrorResponseT
+  /**
+   * Conversation not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1ModmailByIdArchiveError =
+  PostApiV1ModmailByIdArchiveErrors[keyof PostApiV1ModmailByIdArchiveErrors]
+
+export type PostApiV1ModmailByIdArchiveResponses = {
+  /**
+   * Archived
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1ModmailByIdArchiveResponse =
+  PostApiV1ModmailByIdArchiveResponses[keyof PostApiV1ModmailByIdArchiveResponses]
+
+export type PostApiV1ModmailByIdUnarchiveData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/modmail/{id}/unarchive"
+}
+
+export type PostApiV1ModmailByIdUnarchiveErrors = {
+  /**
+   * Not a mod with mail permission
+   */
+  403: ErrorResponseT
+  /**
+   * Conversation not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1ModmailByIdUnarchiveError =
+  PostApiV1ModmailByIdUnarchiveErrors[keyof PostApiV1ModmailByIdUnarchiveErrors]
+
+export type PostApiV1ModmailByIdUnarchiveResponses = {
+  /**
+   * Unarchived
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1ModmailByIdUnarchiveResponse =
+  PostApiV1ModmailByIdUnarchiveResponses[keyof PostApiV1ModmailByIdUnarchiveResponses]
+
+export type PostApiV1ModmailByIdHighlightData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/modmail/{id}/highlight"
+}
+
+export type PostApiV1ModmailByIdHighlightErrors = {
+  /**
+   * Not a mod with mail permission
+   */
+  403: ErrorResponseT
+  /**
+   * Conversation not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1ModmailByIdHighlightError =
+  PostApiV1ModmailByIdHighlightErrors[keyof PostApiV1ModmailByIdHighlightErrors]
+
+export type PostApiV1ModmailByIdHighlightResponses = {
+  /**
+   * Toggled
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1ModmailByIdHighlightResponse =
+  PostApiV1ModmailByIdHighlightResponses[keyof PostApiV1ModmailByIdHighlightResponses]

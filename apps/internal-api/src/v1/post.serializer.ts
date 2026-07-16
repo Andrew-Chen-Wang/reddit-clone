@@ -86,6 +86,7 @@ export const postCardSchema = Type.Object({
       displayName: Nullable(Type.String()),
       iconImageKey: Nullable(Type.String()),
       isNsfw: Type.Boolean(),
+      isMember: Type.Boolean(),
     }),
   ),
   flair: Nullable(

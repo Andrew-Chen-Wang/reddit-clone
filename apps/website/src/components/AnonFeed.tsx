@@ -95,7 +95,7 @@ export function AnonFeed({
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col">
       {posts.map((post) => (
         <PostRow
           key={post.id}
