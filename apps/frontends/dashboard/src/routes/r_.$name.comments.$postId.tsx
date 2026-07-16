@@ -10,7 +10,7 @@ import {
 import { putApiV1PostVoteByPostId } from "@lib/api-client/generated/sdk.gen"
 import { toast } from "sonner"
 
-export const Route = createFileRoute("/r/$name/comments/$postId")({
+export const Route = createFileRoute("/r_/$name/comments/$postId")({
   component: PostDetailPage,
 })
 

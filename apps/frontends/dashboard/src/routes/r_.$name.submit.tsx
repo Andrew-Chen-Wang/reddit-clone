@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { getApiV1CommunityByNameOptions } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import { SubmitForm } from "@frontends/dashboard/components/SubmitForm"
 
-export const Route = createFileRoute("/r/$name/submit")({
+export const Route = createFileRoute("/r_/$name/submit")({
   component: SubmitPage,
 })
 
