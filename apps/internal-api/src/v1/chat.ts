@@ -342,7 +342,7 @@ const app = new Hono()
       const hasMore = rows.length > limit
       const page = rows.slice(0, limit)
       const nextCursor = hasMore ? encodeCursor(page[page.length - 1].createdAt) : null
-      return c.json({ data: page.reverse().map(toItem), nextCursor })
+      return c.json({ data: page.toReversed().map(toItem), nextCursor })
     },
   )
   .post(

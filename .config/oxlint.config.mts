@@ -119,5 +119,19 @@ export default defineConfig({
         "react/react-in-jsx-scope": "off",
       },
     },
+    {
+      // Seed scripts build queries against kysely's dynamically-typed
+      // onConflict/insert builders (legitimately `any`), so the strict
+      // type-safety rules are noise here — not app code.
+      files: ["**/apps/dbmigrator/src/seeds/**"],
+      rules: {
+        "typescript/no-unsafe-argument": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-call": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-return": "off",
+        "typescript/non-nullable-type-assertion-style": "off",
+      },
+    },
   ],
 })
