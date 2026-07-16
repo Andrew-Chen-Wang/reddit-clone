@@ -317,6 +317,17 @@ const app = new Hono()
         })
       }
 
+      if (body.crosspostOfPostId) {
+        const source = await fetchPost(db).getOne(body.crosspostOfPostId, [
+          "id",
+          "removedAt",
+          "communityId",
+        ])
+        if (!source || source.removedAt) {
+          return throwNotFound(c, "Original post not found")
+        }
+      }
+
       const created = await crudPost(db).create({
         authorUserId: user.id,
         communityId: body.communityId ?? null,
@@ -329,6 +340,7 @@ const app = new Hono()
         isSpoiler: body.isSpoiler ?? false,
         isOc: body.isOc ?? false,
         flairTemplateId: body.communityId ? (body.flairTemplateId ?? null) : null,
+        crosspostOfPostId: body.crosspostOfPostId ?? null,
       })
 
       if (holdForReview) await crudPost(db).hold(created.id)
