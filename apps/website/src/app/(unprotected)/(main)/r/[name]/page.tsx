@@ -15,8 +15,34 @@ import { fetchCommunityWidget } from "@lib/dao/communityWidget/fetch"
 import { fetchPostFlairTemplate } from "@lib/dao/postFlairTemplate/fetch"
 import { db } from "@template-nextjs/db"
 import { mediaUrl } from "@website/lib/mediaUrl"
+import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ name: string }>
+}): Promise<Metadata> {
+  const { name } = await params
+  const community = await fetchCommunity(db).getOneByName(name, [
+    "name",
+    "displayName",
+    "description",
+    "visibility",
+  ])
+  if (!community || community.visibility === "private") {
+    return { title: "Community not found" }
+  }
+  const title = community.displayName
+    ? `${community.displayName} (r/${community.name})`
+    : `r/${community.name}`
+  const description =
+    community.description.length > 0
+      ? community.description
+      : `The r/${community.name} community on ReadIt.`
+  return { title, description, openGraph: { title, description } }
+}
 
 const COMMUNITY_SORTS = [
   { value: "hot", label: "Hot" },

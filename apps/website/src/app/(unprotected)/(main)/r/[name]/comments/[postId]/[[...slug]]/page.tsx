@@ -11,7 +11,23 @@ import { fetchCommunityRule } from "@lib/dao/communityRule/fetch"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { processPosts } from "@lib/dao/post/processPost"
 import { db } from "@template-nextjs/db"
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ name: string; postId: string }>
+}): Promise<Metadata> {
+  const { name, postId } = await params
+  const post = await fetchPost(db).getOne(postId, ["title", "bodyMd"])
+  if (!post) {
+    return { title: "Post not found" }
+  }
+  const title = `${post.title} : r/${name}`
+  const description = post.bodyMd?.slice(0, 200) ?? `Discussion in r/${name} on ReadIt.`
+  return { title, description, openGraph: { title, description } }
+}
 
 const COMMENT_SORTS: CommentSortValue[] = ["best", "top", "new", "old", "controversial"]
 

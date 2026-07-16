@@ -50,6 +50,8 @@ function chipClass(active: boolean): string {
   )
 }
 
+export const metadata = { title: "Search" }
+
 export default async function SearchPage({
   searchParams,
 }: {

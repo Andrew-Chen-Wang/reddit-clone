@@ -86,6 +86,8 @@ function CommunityGrid({ communities }: { communities: ExploreCommunity[] }) {
   )
 }
 
+export const metadata = { title: "Explore communities" }
+
 export default async function ExplorePage({
   searchParams,
 }: {

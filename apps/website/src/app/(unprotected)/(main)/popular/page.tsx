@@ -11,6 +11,8 @@ const POPULAR_SORTS = [
 ]
 const ALLOWED = ["hot", "new", "top", "rising", "controversial"] as const
 
+export const metadata = { title: "Popular" }
+
 export default async function PopularPage({
   searchParams,
 }: {
