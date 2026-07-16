@@ -9,6 +9,7 @@ import { fetchCommunity } from "@lib/dao/community/fetch"
 import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
 import { fetchCommunityRule } from "@lib/dao/communityRule/fetch"
 import { db } from "@template-nextjs/db"
+import { mediaUrl } from "@website/lib/mediaUrl"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
@@ -68,8 +69,8 @@ export default async function CommunityPage({
         community={{
           name: community.name,
           displayName: community.displayName,
-          iconUrl: null,
-          bannerUrl: null,
+          iconUrl: mediaUrl(community.iconImageKey),
+          bannerUrl: mediaUrl(community.bannerImageKey),
           memberCount: community.memberCount,
         }}
         joinSlot={

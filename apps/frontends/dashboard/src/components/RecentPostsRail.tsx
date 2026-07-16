@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router"
 import { Button } from "@ui/base/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/base/ui/card"
 import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
+import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import { formatCompactNumber } from "@ui/seo-shared/format-number"
 import {
   deleteApiV1HistoryRecentPostsMutation,
@@ -60,7 +61,7 @@ export function RecentPostsRail() {
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <CommunityIcon
                     name={post.communityName}
-                    iconUrl={post.communityIconImageKey}
+                    iconUrl={mediaUrl(post.communityIconImageKey)}
                     size="sm"
                   />
                   r/{post.communityName}

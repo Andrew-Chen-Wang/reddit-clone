@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { Button } from "@ui/base/ui/button"
 import { cn } from "@ui/base/lib/utils"
 import { CommunityCard } from "@ui/seo-shared/community/CommunityCard"
+import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1ExploreOptions,
   postApiV1CommunityMemberByCommunityIdJoinMutation,
@@ -103,7 +104,7 @@ function ExploreSection({ section }: { section: ExploreSectionData }) {
               name: community.name,
               displayName: community.displayName,
               description: community.description,
-              iconUrl: community.iconImageKey,
+              iconUrl: mediaUrl(community.iconImageKey),
               memberCount: community.memberCount,
             }}
             joinSlot={<JoinButton communityId={community.id} />}

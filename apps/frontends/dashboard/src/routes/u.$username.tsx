@@ -3,6 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router"
 import { buttonVariants } from "@ui/base/ui/button"
 import { ProfileHeader } from "@ui/seo-shared/profile/ProfileHeader"
 import { PostFeed } from "@frontends/dashboard/components/PostFeed"
+import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1UserByUsernameByUsernameOptions,
   getApiV1UserMeOptions,
@@ -45,8 +46,8 @@ function ProfilePage() {
           username: data.username,
           displayName: data.displayName,
           about: data.about,
-          avatarUrl: null,
-          bannerUrl: null,
+          avatarUrl: mediaUrl(data.avatarImageKey),
+          bannerUrl: mediaUrl(data.bannerImageKey),
           postKarma: data.postKarma,
           commentKarma: data.commentKarma,
           createdAt: data.createdAt,

@@ -105,6 +105,9 @@ catalogs:
     react-dom:
       specifier: ^19.2.7
       version: 19.2.7
+    react-image-crop:
+      specifier: ^11.0.10
+      version: 11.1.2
     tailwind-merge:
       specifier: ^3.6.0
       version: 3.6.0
@@ -183,6 +186,9 @@ importers:
       '@template-nextjs/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@template-nextjs/search':
+        specifier: workspace:*
+        version: link:../../packages/search
       '@utils/aws':
         specifier: workspace:*
         version: link:../../lib/typescript/utils/aws
@@ -312,6 +318,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.2.7(react@19.2.7)
+      react-image-crop:
+        specifier: 'catalog:'
+        version: 11.1.2(react@19.2.7)
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -370,6 +379,9 @@ importers:
       '@template-nextjs/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@template-nextjs/search':
+        specifier: workspace:*
+        version: link:../../packages/search
       '@utils/aws':
         specifier: workspace:*
         version: link:../../lib/typescript/utils/aws
@@ -3500,6 +3512,11 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
+  react-image-crop@11.1.2:
+    resolution: {integrity: sha512-+0Pc2fxpwKL4u4oLmdKBw8XSwUceFbXbKEHvFOlsl/MGB1OVNic4uBlAPmEHGXYgoJIq+b63xHbc/aJMG0AVkA==}
+    peerDependencies:
+      react: '>=16.13.1'
+
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
     engines: {node: '>=10'}
@@ -6427,6 +6444,10 @@ snapshots:
       scheduler: 0.27.0
 
   react-hook-form@7.81.0(react@19.2.7):
+    dependencies:
+      react: 19.2.7
+
+  react-image-crop@11.1.2(react@19.2.7):
     dependencies:
       react: 19.2.7
 

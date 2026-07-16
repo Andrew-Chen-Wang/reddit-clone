@@ -11,6 +11,8 @@ import {
 import { CommunityHeader } from "@ui/seo-shared/community/CommunityHeader"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
 import { PostFeed, type FeedPost } from "@frontends/dashboard/components/PostFeed"
+import { CommunityAppearanceDialog } from "@frontends/dashboard/components/CommunityAppearanceDialog"
+import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1CommunityByNameOptions,
   getApiV1CommunityMemberMineOptions,
@@ -18,7 +20,8 @@ import {
   postApiV1CommunityMemberByCommunityIdJoinMutation,
   postApiV1CommunityMemberByCommunityIdLeaveMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { Bell, Check, Plus, ShieldHalf, Star } from "lucide-react"
+import { Bell, Check, ImagePlus, Plus, ShieldHalf, Star } from "lucide-react"
+import { useState } from "react"
 import { toast } from "sonner"
 
 export const Route = createFileRoute("/r/$name")({
@@ -44,6 +47,7 @@ const COMMUNITY_SORTS = [
 function CommunityPage() {
   const { name } = Route.useParams()
   const queryClient = useQueryClient()
+  const [appearanceOpen, setAppearanceOpen] = useState(false)
   const communityQuery = useQuery(getApiV1CommunityByNameOptions({ path: { name } }))
 
   const invalidate = () => {
@@ -193,10 +197,22 @@ function CommunityPage() {
         </Button>
       ) : null}
       {viewer.isModerator ? (
-        <Button variant="outline" size="sm" disabled>
-          <ShieldHalf className="size-4" />
-          Mod Tools
-        </Button>
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setAppearanceOpen(true)
+            }}
+          >
+            <ImagePlus className="size-4" />
+            Edit appearance
+          </Button>
+          <Button variant="outline" size="sm" disabled>
+            <ShieldHalf className="size-4" />
+            Mod Tools
+          </Button>
+        </>
       ) : null}
     </>
   )
@@ -207,8 +223,8 @@ function CommunityPage() {
         community={{
           name: community.name,
           displayName: community.displayName,
-          iconUrl: community.iconImageKey,
-          bannerUrl: community.bannerImageKey,
+          iconUrl: mediaUrl(community.iconImageKey),
+          bannerUrl: mediaUrl(community.bannerImageKey),
           memberCount: community.memberCount,
         }}
         joinSlot={joinSlot}
@@ -216,6 +232,18 @@ function CommunityPage() {
         bellSlot={bellSlot}
         extraSlot={extraSlot}
       />
+
+      {viewer.isModerator ? (
+        <CommunityAppearanceDialog
+          open={appearanceOpen}
+          onOpenChange={setAppearanceOpen}
+          communityId={communityId}
+          communityName={community.name}
+          iconImageKey={community.iconImageKey}
+          bannerImageKey={community.bannerImageKey}
+          onUpdated={invalidate}
+        />
+      ) : null}
 
       <div className="mx-auto mt-4 flex w-full max-w-5xl flex-col gap-6 px-4 lg:flex-row">
         <div className="min-w-0 flex-1">

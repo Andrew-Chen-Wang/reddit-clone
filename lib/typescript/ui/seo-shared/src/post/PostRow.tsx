@@ -9,6 +9,8 @@ import { formatCompactNumber } from "@ui/seo-shared/format-number"
 import { markdownToText } from "@ui/seo-shared/markdown-to-text"
 import { RelativeTime } from "@ui/seo-shared/RelativeTime"
 import { VoteCluster } from "@ui/seo-shared/post/VoteCluster"
+import { MediaGallery, type MediaGalleryItem } from "@ui/seo-shared/post/MediaGallery"
+import { Film } from "lucide-react"
 
 export type PostRowPost = {
   id: string
@@ -29,6 +31,29 @@ export type PostRowPost = {
   author: { username: string; displayName: string | null } | null
   community: { name: string; displayName: string | null; iconImageKey: string | null } | null
   flair: { text: string; bgColor: string | null; textColor: string | null } | null
+  media?: MediaGalleryItem[]
+}
+
+/** Small square thumbnail of a post's first media item, used in compact rows. */
+function CompactMediaThumb({ media }: { media: MediaGalleryItem[] }) {
+  const first = media[0]
+  if (!first) return null
+  if (first.mediaType === "video") {
+    return (
+      <div className="flex size-12 shrink-0 items-center justify-center rounded-md border bg-muted text-muted-foreground">
+        <Film className="size-5" />
+      </div>
+    )
+  }
+  return (
+    // oxlint-disable-next-line no-img-element
+    <img
+      src={first.url}
+      alt=""
+      loading="lazy"
+      className="size-12 shrink-0 rounded-md border object-cover"
+    />
+  )
 }
 
 export type PostRowProps = {
@@ -206,6 +231,9 @@ export function PostRow({
   showCommunity = true,
   menuSlot,
 }: PostRowProps) {
+  const media = post.media ?? []
+  const hasMedia = post.type === "media" && media.length > 0
+
   if (variant === "compact") {
     return (
       <article className="flex items-center gap-3 border-b px-3 py-2 last:border-b-0 hover:bg-muted/40">
@@ -247,6 +275,7 @@ export function PostRow({
           <MessageSquare className="size-4" />
           {formatCompactNumber(post.commentCount)}
         </SeoLink>
+        {hasMedia ? <CompactMediaThumb media={media} /> : null}
         {menuSlot}
       </article>
     )
@@ -278,6 +307,10 @@ export function PostRow({
       <div className="flex flex-wrap items-center gap-1.5">
         <Badges post={post} />
       </div>
+
+      {hasMedia ? (
+        <MediaGallery media={media} isNsfw={post.isNsfw} isSpoiler={post.isSpoiler} />
+      ) : null}
 
       {preview ? <p className="line-clamp-3 text-sm text-muted-foreground">{preview}</p> : null}
 
