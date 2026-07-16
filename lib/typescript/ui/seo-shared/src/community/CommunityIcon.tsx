@@ -63,8 +63,7 @@ export function CommunityIcon({ name, iconUrl, size = "md", className }: Communi
       viewBox={`0 0 ${dimension} ${dimension}`}
       width={dimension}
       height={dimension}
-      role="img"
-      aria-label={`r/${name}`}
+      aria-hidden="true"
       className={cn("shrink-0 rounded-full", sizeClass, className)}
     >
       <circle cx={dimension / 2} cy={dimension / 2} r={dimension / 2} fill={bg} />
