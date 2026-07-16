@@ -3,6 +3,12 @@
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from "./client"
 import { client } from "./client.gen"
 import type {
+  DeleteApiV1ChatByConversationIdParticipantsByUserIdData,
+  DeleteApiV1ChatByConversationIdParticipantsByUserIdErrors,
+  DeleteApiV1ChatByConversationIdParticipantsByUserIdResponses,
+  DeleteApiV1ChatMessageByMessageIdData,
+  DeleteApiV1ChatMessageByMessageIdErrors,
+  DeleteApiV1ChatMessageByMessageIdResponses,
   DeleteApiV1CommentActionFollowByCommentIdData,
   DeleteApiV1CommentActionFollowByCommentIdResponses,
   DeleteApiV1CommentActionSaveByCommentIdData,
@@ -70,6 +76,13 @@ import type {
   DeleteApiV1UserMeDeleteResponses,
   GetApiV1AuthMeData,
   GetApiV1AuthMeResponses,
+  GetApiV1ChatByConversationIdMessagesData,
+  GetApiV1ChatByConversationIdMessagesErrors,
+  GetApiV1ChatByConversationIdMessagesResponses,
+  GetApiV1ChatData,
+  GetApiV1ChatResponses,
+  GetApiV1ChatUnreadCountData,
+  GetApiV1ChatUnreadCountResponses,
   GetApiV1CommentPostByPostIdData,
   GetApiV1CommentPostByPostIdErrors,
   GetApiV1CommentPostByPostIdResponses,
@@ -119,6 +132,16 @@ import type {
   GetApiV1ModLogByCommunityIdData,
   GetApiV1ModLogByCommunityIdErrors,
   GetApiV1ModLogByCommunityIdResponses,
+  GetApiV1ModmailByIdMessagesData,
+  GetApiV1ModmailByIdMessagesErrors,
+  GetApiV1ModmailByIdMessagesResponses,
+  GetApiV1ModmailCommunityByCommunityIdData,
+  GetApiV1ModmailCommunityByCommunityIdErrors,
+  GetApiV1ModmailCommunityByCommunityIdResponses,
+  GetApiV1ModmailMineAsModData,
+  GetApiV1ModmailMineAsModResponses,
+  GetApiV1ModmailMineData,
+  GetApiV1ModmailMineResponses,
   GetApiV1ModQueueByCommunityIdData,
   GetApiV1ModQueueByCommunityIdErrors,
   GetApiV1ModQueueByCommunityIdResponses,
@@ -191,6 +214,9 @@ import type {
   GetApiV1UserUsernameAvailableData,
   GetApiV1UserUsernameAvailableErrors,
   GetApiV1UserUsernameAvailableResponses,
+  PatchApiV1ChatByConversationIdData,
+  PatchApiV1ChatByConversationIdErrors,
+  PatchApiV1ChatByConversationIdResponses,
   PatchApiV1CommentByIdData,
   PatchApiV1CommentByIdErrors,
   PatchApiV1CommentByIdResponses,
@@ -236,6 +262,30 @@ import type {
   PostApiV1AuthLogoutData,
   PostApiV1AuthLogoutErrors,
   PostApiV1AuthLogoutResponses,
+  PostApiV1ChatByConversationIdAcceptData,
+  PostApiV1ChatByConversationIdAcceptErrors,
+  PostApiV1ChatByConversationIdAcceptResponses,
+  PostApiV1ChatByConversationIdHideData,
+  PostApiV1ChatByConversationIdHideErrors,
+  PostApiV1ChatByConversationIdHideResponses,
+  PostApiV1ChatByConversationIdIgnoreData,
+  PostApiV1ChatByConversationIdIgnoreErrors,
+  PostApiV1ChatByConversationIdIgnoreResponses,
+  PostApiV1ChatByConversationIdLeaveData,
+  PostApiV1ChatByConversationIdLeaveErrors,
+  PostApiV1ChatByConversationIdLeaveResponses,
+  PostApiV1ChatByConversationIdMessagesData,
+  PostApiV1ChatByConversationIdMessagesErrors,
+  PostApiV1ChatByConversationIdMessagesResponses,
+  PostApiV1ChatByConversationIdReadData,
+  PostApiV1ChatByConversationIdReadErrors,
+  PostApiV1ChatByConversationIdReadResponses,
+  PostApiV1ChatDmData,
+  PostApiV1ChatDmErrors,
+  PostApiV1ChatDmResponses,
+  PostApiV1ChatGroupData,
+  PostApiV1ChatGroupErrors,
+  PostApiV1ChatGroupResponses,
   PostApiV1CommentData,
   PostApiV1CommentErrors,
   PostApiV1CommentResponses,
@@ -292,6 +342,21 @@ import type {
   PostApiV1MediaConfirmData,
   PostApiV1MediaConfirmErrors,
   PostApiV1MediaConfirmResponses,
+  PostApiV1ModmailByIdArchiveData,
+  PostApiV1ModmailByIdArchiveErrors,
+  PostApiV1ModmailByIdArchiveResponses,
+  PostApiV1ModmailByIdHighlightData,
+  PostApiV1ModmailByIdHighlightErrors,
+  PostApiV1ModmailByIdHighlightResponses,
+  PostApiV1ModmailByIdMessagesData,
+  PostApiV1ModmailByIdMessagesErrors,
+  PostApiV1ModmailByIdMessagesResponses,
+  PostApiV1ModmailByIdUnarchiveData,
+  PostApiV1ModmailByIdUnarchiveErrors,
+  PostApiV1ModmailByIdUnarchiveResponses,
+  PostApiV1ModmailData,
+  PostApiV1ModmailErrors,
+  PostApiV1ModmailResponses,
   PostApiV1ModQueueApproveData,
   PostApiV1ModQueueApproveErrors,
   PostApiV1ModQueueApproveResponses,
@@ -2700,3 +2765,377 @@ export const patchApiV1RemovalReasonReasonById = <ThrowOnError extends boolean =
       ...options.headers,
     },
   })
+
+/**
+ * List the current user's chat conversations
+ */
+export const getApiV1Chat = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1ChatData, ThrowOnError>,
+): RequestResult<GetApiV1ChatResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1ChatResponses, unknown, ThrowOnError>({
+    url: "/api/v1/chat",
+    ...options,
+  })
+
+/**
+ * Total number of conversations with unread messages
+ */
+export const getApiV1ChatUnreadCount = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1ChatUnreadCountData, ThrowOnError>,
+): RequestResult<GetApiV1ChatUnreadCountResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1ChatUnreadCountResponses, unknown, ThrowOnError>({
+    url: "/api/v1/chat/unread-count",
+    ...options,
+  })
+
+/**
+ * Create or reuse a direct message conversation and send the first message
+ */
+export const postApiV1ChatDm = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ChatDmData, ThrowOnError>,
+): RequestResult<PostApiV1ChatDmResponses, PostApiV1ChatDmErrors, ThrowOnError> =>
+  (options?.client ?? client).post<PostApiV1ChatDmResponses, PostApiV1ChatDmErrors, ThrowOnError>({
+    url: "/api/v1/chat/dm",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Create a group chat and send the first message
+ */
+export const postApiV1ChatGroup = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ChatGroupData, ThrowOnError>,
+): RequestResult<PostApiV1ChatGroupResponses, PostApiV1ChatGroupErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1ChatGroupResponses,
+    PostApiV1ChatGroupErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/chat/group",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Fetch messages for a conversation (polling via ?after, backscroll via ?cursor)
+ */
+export const getApiV1ChatByConversationIdMessages = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ChatByConversationIdMessagesData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ChatByConversationIdMessagesResponses,
+  GetApiV1ChatByConversationIdMessagesErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ChatByConversationIdMessagesResponses,
+    GetApiV1ChatByConversationIdMessagesErrors,
+    ThrowOnError
+  >({ url: "/api/v1/chat/{conversationId}/messages", ...options })
+
+/**
+ * Send a message to a conversation
+ */
+export const postApiV1ChatByConversationIdMessages = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ChatByConversationIdMessagesData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ChatByConversationIdMessagesResponses,
+  PostApiV1ChatByConversationIdMessagesErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ChatByConversationIdMessagesResponses,
+    PostApiV1ChatByConversationIdMessagesErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/chat/{conversationId}/messages",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Mark a conversation as read
+ */
+export const postApiV1ChatByConversationIdRead = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ChatByConversationIdReadData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ChatByConversationIdReadResponses,
+  PostApiV1ChatByConversationIdReadErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ChatByConversationIdReadResponses,
+    PostApiV1ChatByConversationIdReadErrors,
+    ThrowOnError
+  >({ url: "/api/v1/chat/{conversationId}/read", ...options })
+
+/**
+ * Accept a chat request
+ */
+export const postApiV1ChatByConversationIdAccept = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ChatByConversationIdAcceptData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ChatByConversationIdAcceptResponses,
+  PostApiV1ChatByConversationIdAcceptErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ChatByConversationIdAcceptResponses,
+    PostApiV1ChatByConversationIdAcceptErrors,
+    ThrowOnError
+  >({ url: "/api/v1/chat/{conversationId}/accept", ...options })
+
+/**
+ * Ignore a chat request
+ */
+export const postApiV1ChatByConversationIdIgnore = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ChatByConversationIdIgnoreData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ChatByConversationIdIgnoreResponses,
+  PostApiV1ChatByConversationIdIgnoreErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ChatByConversationIdIgnoreResponses,
+    PostApiV1ChatByConversationIdIgnoreErrors,
+    ThrowOnError
+  >({ url: "/api/v1/chat/{conversationId}/ignore", ...options })
+
+/**
+ * Leave a conversation
+ */
+export const postApiV1ChatByConversationIdLeave = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ChatByConversationIdLeaveData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ChatByConversationIdLeaveResponses,
+  PostApiV1ChatByConversationIdLeaveErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ChatByConversationIdLeaveResponses,
+    PostApiV1ChatByConversationIdLeaveErrors,
+    ThrowOnError
+  >({ url: "/api/v1/chat/{conversationId}/leave", ...options })
+
+/**
+ * Hide a conversation until the next message
+ */
+export const postApiV1ChatByConversationIdHide = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ChatByConversationIdHideData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ChatByConversationIdHideResponses,
+  PostApiV1ChatByConversationIdHideErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ChatByConversationIdHideResponses,
+    PostApiV1ChatByConversationIdHideErrors,
+    ThrowOnError
+  >({ url: "/api/v1/chat/{conversationId}/hide", ...options })
+
+/**
+ * Rename a group conversation (host only)
+ */
+export const patchApiV1ChatByConversationId = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1ChatByConversationIdData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1ChatByConversationIdResponses,
+  PatchApiV1ChatByConversationIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1ChatByConversationIdResponses,
+    PatchApiV1ChatByConversationIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/chat/{conversationId}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Remove a participant from a group conversation (host only)
+ */
+export const deleteApiV1ChatByConversationIdParticipantsByUserId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteApiV1ChatByConversationIdParticipantsByUserIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1ChatByConversationIdParticipantsByUserIdResponses,
+  DeleteApiV1ChatByConversationIdParticipantsByUserIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1ChatByConversationIdParticipantsByUserIdResponses,
+    DeleteApiV1ChatByConversationIdParticipantsByUserIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/chat/{conversationId}/participants/{userId}", ...options })
+
+/**
+ * Delete one of your own messages
+ */
+export const deleteApiV1ChatMessageByMessageId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1ChatMessageByMessageIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1ChatMessageByMessageIdResponses,
+  DeleteApiV1ChatMessageByMessageIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1ChatMessageByMessageIdResponses,
+    DeleteApiV1ChatMessageByMessageIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/chat/message/{messageId}", ...options })
+
+/**
+ * Start a modmail conversation with a community's mods
+ */
+export const postApiV1Modmail = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ModmailData, ThrowOnError>,
+): RequestResult<PostApiV1ModmailResponses, PostApiV1ModmailErrors, ThrowOnError> =>
+  (options?.client ?? client).post<PostApiV1ModmailResponses, PostApiV1ModmailErrors, ThrowOnError>(
+    {
+      url: "/api/v1/modmail",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+    },
+  )
+
+/**
+ * The current user's modmail conversations
+ */
+export const getApiV1ModmailMine = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1ModmailMineData, ThrowOnError>,
+): RequestResult<GetApiV1ModmailMineResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1ModmailMineResponses, unknown, ThrowOnError>({
+    url: "/api/v1/modmail/mine",
+    ...options,
+  })
+
+/**
+ * Modmail across every community the user moderates with mail permission
+ */
+export const getApiV1ModmailMineAsMod = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1ModmailMineAsModData, ThrowOnError>,
+): RequestResult<GetApiV1ModmailMineAsModResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1ModmailMineAsModResponses, unknown, ThrowOnError>({
+    url: "/api/v1/modmail/mine-as-mod",
+    ...options,
+  })
+
+/**
+ * Modmail for a single community (mods with mail permission)
+ */
+export const getApiV1ModmailCommunityByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModmailCommunityByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModmailCommunityByCommunityIdResponses,
+  GetApiV1ModmailCommunityByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModmailCommunityByCommunityIdResponses,
+    GetApiV1ModmailCommunityByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/modmail/community/{communityId}", ...options })
+
+/**
+ * Messages in a modmail conversation (internal notes hidden from the participant)
+ */
+export const getApiV1ModmailByIdMessages = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModmailByIdMessagesData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModmailByIdMessagesResponses,
+  GetApiV1ModmailByIdMessagesErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModmailByIdMessagesResponses,
+    GetApiV1ModmailByIdMessagesErrors,
+    ThrowOnError
+  >({ url: "/api/v1/modmail/{id}/messages", ...options })
+
+/**
+ * Reply to a modmail conversation or add an internal note (notes are mods only)
+ */
+export const postApiV1ModmailByIdMessages = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModmailByIdMessagesData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModmailByIdMessagesResponses,
+  PostApiV1ModmailByIdMessagesErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModmailByIdMessagesResponses,
+    PostApiV1ModmailByIdMessagesErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/modmail/{id}/messages",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Archive a modmail conversation (mods)
+ */
+export const postApiV1ModmailByIdArchive = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModmailByIdArchiveData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModmailByIdArchiveResponses,
+  PostApiV1ModmailByIdArchiveErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModmailByIdArchiveResponses,
+    PostApiV1ModmailByIdArchiveErrors,
+    ThrowOnError
+  >({ url: "/api/v1/modmail/{id}/archive", ...options })
+
+/**
+ * Move an archived modmail conversation back to in progress (mods)
+ */
+export const postApiV1ModmailByIdUnarchive = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModmailByIdUnarchiveData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModmailByIdUnarchiveResponses,
+  PostApiV1ModmailByIdUnarchiveErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModmailByIdUnarchiveResponses,
+    PostApiV1ModmailByIdUnarchiveErrors,
+    ThrowOnError
+  >({ url: "/api/v1/modmail/{id}/unarchive", ...options })
+
+/**
+ * Toggle the highlight flag on a modmail conversation (mods)
+ */
+export const postApiV1ModmailByIdHighlight = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModmailByIdHighlightData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModmailByIdHighlightResponses,
+  PostApiV1ModmailByIdHighlightErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModmailByIdHighlightResponses,
+    PostApiV1ModmailByIdHighlightErrors,
+    ThrowOnError
+  >({ url: "/api/v1/modmail/{id}/highlight", ...options })

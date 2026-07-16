@@ -19,7 +19,7 @@ export function PostRowSkeleton({ variant = "card" }: PostRowSkeletonProps) {
     )
   }
   return (
-    <div className="flex flex-col gap-2 rounded-lg border bg-card p-3">
+    <div className="flex flex-col gap-2 border-b px-3 py-3 last:border-b-0">
       <Skeleton className="h-3 w-40" />
       <Skeleton className="h-5 w-3/4" />
       <Skeleton className="h-4 w-full" />
@@ -41,7 +41,7 @@ export function PostFeedSkeleton({
   variant?: "card" | "compact"
 }) {
   return (
-    <div className={variant === "compact" ? "rounded-lg border" : "flex flex-col gap-3"}>
+    <div className={variant === "compact" ? "rounded-lg border" : "flex flex-col"}>
       {Array.from({ length: count }, (_, i) => (
         <PostRowSkeleton key={i} variant={variant} />
       ))}

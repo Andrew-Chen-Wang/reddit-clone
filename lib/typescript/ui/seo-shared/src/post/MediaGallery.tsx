@@ -38,7 +38,7 @@ function MediaItem({
         controls
         preload="metadata"
         aria-label="Post video"
-        className="max-h-[512px] w-full rounded-md bg-black object-contain"
+        className="max-h-[512px] w-full bg-black object-contain"
       />
     )
   }
@@ -50,12 +50,7 @@ function MediaItem({
       aria-label="Open image"
     >
       {/* oxlint-disable-next-line no-img-element */}
-      <img
-        src={item.url}
-        alt=""
-        loading="lazy"
-        className="max-h-[512px] w-full rounded-md object-contain"
-      />
+      <img src={item.url} alt="" loading="lazy" className="max-h-[512px] w-full object-contain" />
     </button>
   )
 }
@@ -89,7 +84,7 @@ export function MediaGallery({ media, isNsfw, isSpoiler, className }: MediaGalle
   }
 
   return (
-    <div className={cn("relative overflow-hidden rounded-md border bg-muted/30", className)}>
+    <div className={cn("relative overflow-hidden rounded-2xl border bg-neutral-950", className)}>
       <div className={cn("relative", blurred && "pointer-events-none")}>
         <div className={cn(blurred && "scale-105 blur-2xl")}>
           {count === 1 ? (
