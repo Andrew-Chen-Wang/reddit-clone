@@ -19,10 +19,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@ui/base/ui/dropdown-menu"
-import { Input } from "@ui/base/ui/input"
 import { Label } from "@ui/base/ui/label"
 import { RadioGroup, RadioGroupItem } from "@ui/base/ui/radio-group"
 import { useTheme, type Theme } from "@ui/spa-shared/theme"
+import { SearchSuggest } from "@frontends/dashboard/components/SearchSuggest"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1UserMeOptions,
@@ -30,7 +30,7 @@ import {
   patchApiV1UserMeSettingsMutation,
   postApiV1AuthLogoutMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { LogOut, Monitor, Moon, Plus, Search, Settings, Sun, User } from "lucide-react"
+import { LogOut, Monitor, Moon, Plus, Settings, Sun, User } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -107,7 +107,6 @@ function DisplayModeDialog({
 export function TopNav() {
   const navigate = useNavigate()
   const [displayOpen, setDisplayOpen] = useState(false)
-  const [searchDraft, setSearchDraft] = useState("")
   const { data: user } = useQuery(getApiV1UserMeOptions())
 
   const logout = useMutation({
@@ -125,30 +124,7 @@ export function TopNav() {
         <Link to="/" className="text-lg font-bold text-primary">
           ReadIt
         </Link>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            const q = searchDraft.trim()
-            if (q.length === 0) return
-            void navigate({
-              to: "/search",
-              search: { q, type: "posts", sort: "relevance", t: "all" },
-            })
-          }}
-          className="relative flex-1 max-w-md"
-        >
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search ReadIt"
-            aria-label="Search"
-            className="pl-9"
-            value={searchDraft}
-            onChange={(e) => {
-              setSearchDraft(e.target.value)
-            }}
-          />
-        </form>
+        <SearchSuggest />
         <Link
           to="/submit"
           className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "ml-auto gap-1.5")}

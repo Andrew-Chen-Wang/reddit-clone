@@ -170,6 +170,12 @@ import type {
   GetApiV1ModUsersByCommunityIdRestrictedResponses,
   GetApiV1MutedCommunityMineData,
   GetApiV1MutedCommunityMineResponses,
+  GetApiV1NotificationData,
+  GetApiV1NotificationPreferencesData,
+  GetApiV1NotificationPreferencesResponses,
+  GetApiV1NotificationResponses,
+  GetApiV1NotificationUnreadCountData,
+  GetApiV1NotificationUnreadCountResponses,
   GetApiV1PostByIdData,
   GetApiV1PostByIdErrors,
   GetApiV1PostByIdResponses,
@@ -399,6 +405,12 @@ import type {
   PostApiV1ModUsersByCommunityIdNotesByUsernameData,
   PostApiV1ModUsersByCommunityIdNotesByUsernameErrors,
   PostApiV1ModUsersByCommunityIdNotesByUsernameResponses,
+  PostApiV1NotificationByIdArchiveData,
+  PostApiV1NotificationByIdArchiveResponses,
+  PostApiV1NotificationByIdReadData,
+  PostApiV1NotificationByIdReadResponses,
+  PostApiV1NotificationReadAllData,
+  PostApiV1NotificationReadAllResponses,
   PostApiV1PostActionShareByPostIdData,
   PostApiV1PostActionShareByPostIdErrors,
   PostApiV1PostActionShareByPostIdResponses,
@@ -435,6 +447,9 @@ import type {
   PutApiV1MutedCommunityByCommunityIdData,
   PutApiV1MutedCommunityByCommunityIdErrors,
   PutApiV1MutedCommunityByCommunityIdResponses,
+  PutApiV1NotificationPreferencesData,
+  PutApiV1NotificationPreferencesErrors,
+  PutApiV1NotificationPreferencesResponses,
   PutApiV1PostActionFollowByPostIdData,
   PutApiV1PostActionFollowByPostIdErrors,
   PutApiV1PostActionFollowByPostIdResponses,
@@ -3139,3 +3154,91 @@ export const postApiV1ModmailByIdHighlight = <ThrowOnError extends boolean = fal
     PostApiV1ModmailByIdHighlightErrors,
     ThrowOnError
   >({ url: "/api/v1/modmail/{id}/highlight", ...options })
+
+/**
+ * List the current user's notifications, newest first
+ */
+export const getApiV1Notification = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1NotificationData, ThrowOnError>,
+): RequestResult<GetApiV1NotificationResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1NotificationResponses, unknown, ThrowOnError>({
+    url: "/api/v1/notification",
+    ...options,
+  })
+
+/**
+ * Number of unread, unarchived notifications
+ */
+export const getApiV1NotificationUnreadCount = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1NotificationUnreadCountData, ThrowOnError>,
+): RequestResult<GetApiV1NotificationUnreadCountResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1NotificationUnreadCountResponses, unknown, ThrowOnError>({
+    url: "/api/v1/notification/unread-count",
+    ...options,
+  })
+
+/**
+ * List notification preferences for every type, with defaults merged in
+ */
+export const getApiV1NotificationPreferences = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1NotificationPreferencesData, ThrowOnError>,
+): RequestResult<GetApiV1NotificationPreferencesResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1NotificationPreferencesResponses, unknown, ThrowOnError>({
+    url: "/api/v1/notification/preferences",
+    ...options,
+  })
+
+/**
+ * Set the notification level for a type (all is stored but delivered as inbox)
+ */
+export const putApiV1NotificationPreferences = <ThrowOnError extends boolean = false>(
+  options?: Options<PutApiV1NotificationPreferencesData, ThrowOnError>,
+): RequestResult<
+  PutApiV1NotificationPreferencesResponses,
+  PutApiV1NotificationPreferencesErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).put<
+    PutApiV1NotificationPreferencesResponses,
+    PutApiV1NotificationPreferencesErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/notification/preferences",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Mark all of the current user's notifications as read
+ */
+export const postApiV1NotificationReadAll = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1NotificationReadAllData, ThrowOnError>,
+): RequestResult<PostApiV1NotificationReadAllResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).post<PostApiV1NotificationReadAllResponses, unknown, ThrowOnError>({
+    url: "/api/v1/notification/read-all",
+    ...options,
+  })
+
+/**
+ * Mark a single notification as read
+ */
+export const postApiV1NotificationByIdRead = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1NotificationByIdReadData, ThrowOnError>,
+): RequestResult<PostApiV1NotificationByIdReadResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).post<PostApiV1NotificationByIdReadResponses, unknown, ThrowOnError>({
+    url: "/api/v1/notification/{id}/read",
+    ...options,
+  })
+
+/**
+ * Archive a single notification
+ */
+export const postApiV1NotificationByIdArchive = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1NotificationByIdArchiveData, ThrowOnError>,
+): RequestResult<PostApiV1NotificationByIdArchiveResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).post<PostApiV1NotificationByIdArchiveResponses, unknown, ThrowOnError>(
+    { url: "/api/v1/notification/{id}/archive", ...options },
+  )

@@ -6,6 +6,7 @@ import { crudCommentReport } from "@lib/dao/commentReport/crud"
 import { fetchCommentReport } from "@lib/dao/commentReport/fetch"
 import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
 import { crudModAction } from "@lib/dao/modAction/crud"
+import { emitContentRemoved } from "@lib/dao/notification/emit-helpers"
 import { crudPost } from "@lib/dao/post/crud"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { processPosts } from "@lib/dao/post/processPost"
@@ -282,6 +283,13 @@ const app = new Hono()
           targetPostId: body.postId,
           details: { removalReasonId },
         })
+        await emitContentRemoved(db, {
+          targetType: "post",
+          targetId: body.postId,
+          actorUserId: user.id,
+          communityId,
+          removalReasonId,
+        })
         return c.json({})
       }
       if (body.commentId) {
@@ -295,6 +303,13 @@ const app = new Hono()
           action: asSpam ? "remove_comment_spam" : "remove_comment",
           targetCommentId: body.commentId,
           details: { removalReasonId },
+        })
+        await emitContentRemoved(db, {
+          targetType: "comment",
+          targetId: body.commentId,
+          actorUserId: user.id,
+          communityId: ctx.communityId,
+          removalReasonId,
         })
         return c.json({})
       }

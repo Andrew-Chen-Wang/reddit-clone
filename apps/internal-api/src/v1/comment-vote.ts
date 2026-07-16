@@ -2,6 +2,8 @@ import { getCommunityAuthz } from "@lib/dao/authz/community/get"
 import { fetchComment } from "@lib/dao/comment/fetch"
 import { fetchCommunity } from "@lib/dao/community/fetch"
 import { crudCommentVote } from "@lib/dao/commentVote/crud"
+import { emitCommentUpvoteMilestone } from "@lib/dao/notification/emit-helpers"
+import { isUpvoteMilestone } from "@lib/dao/notification/types"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
@@ -44,7 +46,7 @@ const app = new Hono().use(authMiddleware).put(
     const { commentId } = c.req.valid("param")
     const { value } = c.req.valid("json")
 
-    const comment = await fetchComment(db).getOne(commentId, ["postId"])
+    const comment = await fetchComment(db).getOne(commentId, ["postId", "authorUserId", "bodyMd"])
     if (!comment) return throwNotFound(c, "Comment not found")
 
     const post = await fetchPost(db).getOne(comment.postId, [
@@ -66,6 +68,18 @@ const app = new Hono().use(authMiddleware).put(
 
     const result = await crudCommentVote(db).setVote(commentId, user.id, value)
     if (!result) return throwNotFound(c, "Comment not found")
+
+    if (value === 1 && comment.authorUserId && isUpvoteMilestone(result.ups)) {
+      await emitCommentUpvoteMilestone(db, {
+        postId: comment.postId,
+        commentId,
+        authorUserId: comment.authorUserId,
+        actorUserId: user.id,
+        ups: result.ups,
+        bodyMd: comment.bodyMd,
+        communityId: post.communityId,
+      })
+    }
 
     return c.json(result)
   },

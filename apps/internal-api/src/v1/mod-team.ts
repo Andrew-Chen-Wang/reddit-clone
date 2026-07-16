@@ -4,6 +4,7 @@ import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
 import { crudCommunityModeratorInvite } from "@lib/dao/communityModeratorInvite/crud"
 import { fetchCommunityModeratorInvite } from "@lib/dao/communityModeratorInvite/fetch"
 import { crudModAction } from "@lib/dao/modAction/crud"
+import { emitModInvite } from "@lib/dao/notification/emit-helpers"
 import { fetchUser } from "@lib/dao/user/fetch"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
@@ -168,6 +169,11 @@ const app = new Hono()
         modUserId: user.id,
         action: "invite_moderator",
         targetUserId: invitee.id,
+      })
+      await emitModInvite(db, {
+        inviteeUserId: invitee.id,
+        actorUserId: user.id,
+        communityId,
       })
       return c.json({ id: invite.id }, 201)
     },

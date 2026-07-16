@@ -4,6 +4,7 @@ import { crudCommunityMember } from "@lib/dao/communityMember/crud"
 import { fetchCommunityMember } from "@lib/dao/communityMember/fetch"
 import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
 import { fetchCommunity } from "@lib/dao/community/fetch"
+import { emitWelcome } from "@lib/dao/notification/emit-helpers"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
@@ -107,7 +108,12 @@ const app = new Hono()
       const user = c.var.user
       const { communityId } = c.req.valid("param")
 
-      const community = await fetchCommunity(db).getOne(communityId, ["id", "visibility"])
+      const community = await fetchCommunity(db).getOne(communityId, [
+        "id",
+        "visibility",
+        "name",
+        "welcomeMessage",
+      ])
       if (!community) return throwNotFound(c, "Community not found")
 
       const existing = await fetchCommunityMember(db).getOne(communityId, user.id, ["id"])
@@ -116,6 +122,14 @@ const app = new Hono()
       if (community.visibility === "public") {
         await crudCommunityMember(db).join(communityId, user.id)
         await enqueueEsSyncCommunity(communityId)
+        if (community.welcomeMessage) {
+          await emitWelcome(db, {
+            userId: user.id,
+            communityId,
+            communityName: community.name,
+            welcomeMessage: community.welcomeMessage,
+          })
+        }
         return c.json({ joined: true, requested: false })
       }
 

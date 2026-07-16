@@ -1,6 +1,7 @@
 import { getCommunityAuthz } from "@lib/dao/authz/community/get"
 import { crudCommunityJoinRequest } from "@lib/dao/communityJoinRequest/crud"
 import { fetchCommunityJoinRequest } from "@lib/dao/communityJoinRequest/fetch"
+import { emitJoinRequestApproved } from "@lib/dao/notification/emit-helpers"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
@@ -96,7 +97,7 @@ const app = new Hono()
       const user = c.var.user
       const { id } = c.req.valid("param")
 
-      const request = await fetchCommunityJoinRequest(db).getOne(id, ["communityId"])
+      const request = await fetchCommunityJoinRequest(db).getOne(id, ["communityId", "userId"])
       if (!request) return throwNotFound(c, "Join request not found")
 
       const moderate = await getCommunityAuthz(db).canModerate(
@@ -108,6 +109,12 @@ const app = new Hono()
 
       const result = await crudCommunityJoinRequest(db).resolve(id, user.id, true)
       if (!result.ok) return throwBadRequest(c, "Join request is no longer pending")
+
+      await emitJoinRequestApproved(db, {
+        userId: request.userId,
+        actorUserId: user.id,
+        communityId: request.communityId,
+      })
 
       return c.json({})
     },

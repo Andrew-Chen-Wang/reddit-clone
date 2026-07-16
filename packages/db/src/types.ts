@@ -316,6 +316,21 @@ export interface ModSavedResponse {
   title: string
 }
 
+export interface Notification {
+  actorUserId: string | null
+  archivedAt: Timestamp | null
+  commentId: string | null
+  communityId: string | null
+  conversationId: string | null
+  createdAt: Generated<Timestamp>
+  id: string
+  postId: string | null
+  previewSnapshot: Json | null
+  readAt: Timestamp | null
+  type: string
+  userId: string
+}
+
 export interface Post {
   approvedAt: Timestamp | null
   approvedByUserId: string | null
@@ -540,6 +555,12 @@ export interface UserMutedCommunity {
   userId: string
 }
 
+export interface UserNotificationPreference {
+  level: Generated<string>
+  type: string
+  userId: string
+}
+
 export interface UserSettings {
   allowFollows: Generated<boolean>
   autoplayMedia: Generated<boolean>
@@ -585,6 +606,7 @@ export interface DB {
   modmailMessage: ModmailMessage
   modNote: ModNote
   modSavedResponse: ModSavedResponse
+  notification: Notification
   post: Post
   postDraft: PostDraft
   postFlairTemplate: PostFlairTemplate
@@ -606,5 +628,6 @@ export interface DB {
   userFlairTemplate: UserFlairTemplate
   userFollow: UserFollow
   userMutedCommunity: UserMutedCommunity
+  userNotificationPreference: UserNotificationPreference
   userSettings: UserSettings
 }

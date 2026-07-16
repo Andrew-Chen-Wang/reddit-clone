@@ -28,6 +28,7 @@ import type {
   GetApiV1ModUsersByCommunityIdNotesByUsernameResponse,
   GetApiV1ModUsersByCommunityIdRestrictedResponse,
   GetApiV1MutedCommunityMineResponse,
+  GetApiV1NotificationResponse,
   GetApiV1PostByIdResponse,
   GetApiV1ScheduledPostCommunityByCommunityIdResponse,
   GetApiV1ScheduledPostMineResponse,
@@ -540,6 +541,16 @@ export const getApiV1ModmailCommunityByCommunityIdResponseTransformer = async (
 export const getApiV1ModmailByIdMessagesResponseTransformer = async (
   data: any,
 ): Promise<GetApiV1ModmailByIdMessagesResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1NotificationResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1NotificationResponse> => {
   data.data = data.data.map((item: any) => {
     item.createdAt = new Date(item.createdAt)
     return item

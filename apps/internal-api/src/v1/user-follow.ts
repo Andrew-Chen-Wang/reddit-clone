@@ -1,3 +1,4 @@
+import { emitNewFollower } from "@lib/dao/notification/emit-helpers"
 import { fetchUser } from "@lib/dao/user/fetch"
 import { crudUserFollow } from "@lib/dao/userFollow/crud"
 import { fetchUserBlock } from "@lib/dao/userBlock/fetch"
@@ -84,6 +85,7 @@ const app = new Hono()
       }
 
       await crudUserFollow(db).follow(user.id, target.id)
+      await emitNewFollower(db, { followedUserId: target.id, actorUserId: user.id })
       return c.json({ following: true })
     },
   )
