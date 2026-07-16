@@ -3,6 +3,7 @@ import { crudComment } from "@lib/dao/comment/crud"
 import { CHILD_PAGE_SIZE, fetchComment, ROOT_PAGE_SIZE } from "@lib/dao/comment/fetch"
 import { processComments } from "@lib/dao/comment/processComment"
 import { fetchCommunity } from "@lib/dao/community/fetch"
+import { emitCommentReplyAndMentions } from "@lib/dao/notification/emit-helpers"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { fetchUserBlock } from "@lib/dao/userBlock/fetch"
 import { db } from "@template-nextjs/db"
@@ -203,6 +204,15 @@ const app = new Hono()
       }
 
       await enqueueEsSyncComment(result.comment.id)
+
+      await emitCommentReplyAndMentions(db, {
+        postId: body.postId,
+        commentId: result.comment.id,
+        parentCommentId: body.parentCommentId ?? null,
+        actorUserId: user.id,
+        bodyMd: body.bodyMd,
+        communityId: meta.communityId,
+      })
 
       return c.json({ id: result.comment.id }, 201)
     },

@@ -1,5 +1,7 @@
 import { getCommunityAuthz } from "@lib/dao/authz/community/get"
 import { fetchCommunity } from "@lib/dao/community/fetch"
+import { emitPostUpvoteMilestone } from "@lib/dao/notification/emit-helpers"
+import { isUpvoteMilestone } from "@lib/dao/notification/types"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { crudPostVote } from "@lib/dao/postVote/crud"
 import { db } from "@template-nextjs/db"
@@ -48,6 +50,8 @@ const app = new Hono().use(authMiddleware).put(
       "isLocked",
       "removedAt",
       "createdAt",
+      "authorUserId",
+      "title",
     ])
     if (!meta || meta.removedAt) return throwNotFound(c, "Post not found")
 
@@ -63,6 +67,17 @@ const app = new Hono().use(authMiddleware).put(
 
     const result = await crudPostVote(db).setVote(postId, user.id, value)
     if (!result) return throwNotFound(c, "Post not found")
+
+    if (value === 1 && isUpvoteMilestone(result.ups)) {
+      await emitPostUpvoteMilestone(db, {
+        postId,
+        authorUserId: meta.authorUserId,
+        actorUserId: user.id,
+        ups: result.ups,
+        title: meta.title,
+        communityId: meta.communityId,
+      })
+    }
 
     return c.json(result)
   },

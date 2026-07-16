@@ -48,6 +48,31 @@ export { crudModNote } from "./modNote/crud"
 export { fetchModNote } from "./modNote/fetch"
 export { crudModSavedResponse } from "./modSavedResponse/crud"
 export { fetchModSavedResponse } from "./modSavedResponse/fetch"
+export { crudNotification } from "./notification/crud"
+export { fetchNotification } from "./notification/fetch"
+export type { NotificationCursor } from "./notification/fetch"
+export {
+  emitChatRequest,
+  emitCommentReplyAndMentions,
+  emitCommentUpvoteMilestone,
+  emitContentRemoved,
+  emitJoinRequestApproved,
+  emitModActionOnYou,
+  emitModInvite,
+  emitNewFollower,
+  emitPostUpvoteMilestone,
+  emitUserBanned,
+  emitWelcome,
+  parseMentions,
+  preview,
+} from "./notification/emit-helpers"
+export {
+  DEFAULT_NOTIFICATION_LEVEL,
+  isUpvoteMilestone,
+  NOTIFICATION_LEVELS,
+  NOTIFICATION_TYPES,
+} from "./notification/types"
+export type { NotificationLevel, NotificationType, PreviewSnapshot } from "./notification/types"
 export { crudPost } from "./post/crud"
 export { fetchPost, POST_COLUMNS, MOD_POST_COLUMNS } from "./post/fetch"
 export type { PostSort, ModQueueTab, RawPostRow, ModPostRow } from "./post/fetch"
@@ -87,6 +112,8 @@ export { crudUserFollow } from "./userFollow/crud"
 export { fetchUserFollow } from "./userFollow/fetch"
 export { crudUserMutedCommunity } from "./userMutedCommunity/crud"
 export { fetchUserMutedCommunity } from "./userMutedCommunity/fetch"
+export { crudUserNotificationPreference } from "./userNotificationPreference/crud"
+export { fetchUserNotificationPreference } from "./userNotificationPreference/fetch"
 export { crudUserSettings } from "./userSettings/crud"
 export { fetchUserSettings } from "./userSettings/fetch"
 export { getCommunityAuthz } from "./authz/community/get"

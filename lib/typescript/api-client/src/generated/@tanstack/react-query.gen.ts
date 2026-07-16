@@ -74,6 +74,9 @@ import {
   getApiV1ModUsersByCommunityIdNotesByUsername,
   getApiV1ModUsersByCommunityIdRestricted,
   getApiV1MutedCommunityMine,
+  getApiV1Notification,
+  getApiV1NotificationPreferences,
+  getApiV1NotificationUnreadCount,
   getApiV1PostById,
   getApiV1RemovalReasonByCommunityId,
   getApiV1ScheduledPostCommunityByCommunityId,
@@ -155,6 +158,9 @@ import {
   postApiV1ModUsersByCommunityIdBan,
   postApiV1ModUsersByCommunityIdMute,
   postApiV1ModUsersByCommunityIdNotesByUsername,
+  postApiV1NotificationByIdArchive,
+  postApiV1NotificationByIdRead,
+  postApiV1NotificationReadAll,
   postApiV1Post,
   postApiV1PostActionShareByPostId,
   postApiV1RemovalReasonByCommunityId,
@@ -167,6 +173,7 @@ import {
   putApiV1CommunityRuleByCommunityIdReorder,
   putApiV1FlairByCommunityIdMyFlair,
   putApiV1MutedCommunityByCommunityId,
+  putApiV1NotificationPreferences,
   putApiV1PostActionFollowByPostId,
   putApiV1PostActionHideByPostId,
   putApiV1PostActionSaveByPostId,
@@ -342,6 +349,12 @@ import type {
   GetApiV1ModUsersByCommunityIdRestrictedResponse,
   GetApiV1MutedCommunityMineData,
   GetApiV1MutedCommunityMineResponse,
+  GetApiV1NotificationData,
+  GetApiV1NotificationPreferencesData,
+  GetApiV1NotificationPreferencesResponse,
+  GetApiV1NotificationResponse,
+  GetApiV1NotificationUnreadCountData,
+  GetApiV1NotificationUnreadCountResponse,
   GetApiV1PostByIdData,
   GetApiV1PostByIdError,
   GetApiV1PostByIdResponse,
@@ -571,6 +584,12 @@ import type {
   PostApiV1ModUsersByCommunityIdNotesByUsernameData,
   PostApiV1ModUsersByCommunityIdNotesByUsernameError,
   PostApiV1ModUsersByCommunityIdNotesByUsernameResponse,
+  PostApiV1NotificationByIdArchiveData,
+  PostApiV1NotificationByIdArchiveResponse,
+  PostApiV1NotificationByIdReadData,
+  PostApiV1NotificationByIdReadResponse,
+  PostApiV1NotificationReadAllData,
+  PostApiV1NotificationReadAllResponse,
   PostApiV1PostActionShareByPostIdData,
   PostApiV1PostActionShareByPostIdError,
   PostApiV1PostActionShareByPostIdResponse,
@@ -607,6 +626,9 @@ import type {
   PutApiV1MutedCommunityByCommunityIdData,
   PutApiV1MutedCommunityByCommunityIdError,
   PutApiV1MutedCommunityByCommunityIdResponse,
+  PutApiV1NotificationPreferencesData,
+  PutApiV1NotificationPreferencesError,
+  PutApiV1NotificationPreferencesResponse,
   PutApiV1PostActionFollowByPostIdData,
   PutApiV1PostActionFollowByPostIdError,
   PutApiV1PostActionFollowByPostIdResponse,
@@ -5771,6 +5793,244 @@ export const postApiV1ModmailByIdHighlightMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await postApiV1ModmailByIdHighlight({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1NotificationQueryKey = (options?: Options<GetApiV1NotificationData>) =>
+  createQueryKey("getApiV1Notification", options)
+
+/**
+ * List the current user's notifications, newest first
+ */
+export const getApiV1NotificationOptions = (options?: Options<GetApiV1NotificationData>) =>
+  queryOptions<
+    GetApiV1NotificationResponse,
+    DefaultError,
+    GetApiV1NotificationResponse,
+    ReturnType<typeof getApiV1NotificationQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1Notification({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1NotificationQueryKey(options),
+  })
+
+export const getApiV1NotificationInfiniteQueryKey = (
+  options?: Options<GetApiV1NotificationData>,
+): QueryKey<Options<GetApiV1NotificationData>> =>
+  createQueryKey("getApiV1Notification", options, true)
+
+/**
+ * List the current user's notifications, newest first
+ */
+export const getApiV1NotificationInfiniteOptions = (
+  options?: Options<GetApiV1NotificationData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1NotificationResponse,
+    DefaultError,
+    InfiniteData<GetApiV1NotificationResponse>,
+    QueryKey<Options<GetApiV1NotificationData>>,
+    | string
+    | Pick<QueryKey<Options<GetApiV1NotificationData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1NotificationData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1Notification({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1NotificationInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1NotificationUnreadCountQueryKey = (
+  options?: Options<GetApiV1NotificationUnreadCountData>,
+) => createQueryKey("getApiV1NotificationUnreadCount", options)
+
+/**
+ * Number of unread, unarchived notifications
+ */
+export const getApiV1NotificationUnreadCountOptions = (
+  options?: Options<GetApiV1NotificationUnreadCountData>,
+) =>
+  queryOptions<
+    GetApiV1NotificationUnreadCountResponse,
+    DefaultError,
+    GetApiV1NotificationUnreadCountResponse,
+    ReturnType<typeof getApiV1NotificationUnreadCountQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1NotificationUnreadCount({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1NotificationUnreadCountQueryKey(options),
+  })
+
+export const getApiV1NotificationPreferencesQueryKey = (
+  options?: Options<GetApiV1NotificationPreferencesData>,
+) => createQueryKey("getApiV1NotificationPreferences", options)
+
+/**
+ * List notification preferences for every type, with defaults merged in
+ */
+export const getApiV1NotificationPreferencesOptions = (
+  options?: Options<GetApiV1NotificationPreferencesData>,
+) =>
+  queryOptions<
+    GetApiV1NotificationPreferencesResponse,
+    DefaultError,
+    GetApiV1NotificationPreferencesResponse,
+    ReturnType<typeof getApiV1NotificationPreferencesQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1NotificationPreferences({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1NotificationPreferencesQueryKey(options),
+  })
+
+/**
+ * Set the notification level for a type (all is stored but delivered as inbox)
+ */
+export const putApiV1NotificationPreferencesMutation = (
+  options?: Partial<Options<PutApiV1NotificationPreferencesData>>,
+): UseMutationOptions<
+  PutApiV1NotificationPreferencesResponse,
+  PutApiV1NotificationPreferencesError,
+  Options<PutApiV1NotificationPreferencesData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1NotificationPreferencesResponse,
+    PutApiV1NotificationPreferencesError,
+    Options<PutApiV1NotificationPreferencesData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1NotificationPreferences({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Mark all of the current user's notifications as read
+ */
+export const postApiV1NotificationReadAllMutation = (
+  options?: Partial<Options<PostApiV1NotificationReadAllData>>,
+): UseMutationOptions<
+  PostApiV1NotificationReadAllResponse,
+  DefaultError,
+  Options<PostApiV1NotificationReadAllData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1NotificationReadAllResponse,
+    DefaultError,
+    Options<PostApiV1NotificationReadAllData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1NotificationReadAll({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Mark a single notification as read
+ */
+export const postApiV1NotificationByIdReadMutation = (
+  options?: Partial<Options<PostApiV1NotificationByIdReadData>>,
+): UseMutationOptions<
+  PostApiV1NotificationByIdReadResponse,
+  DefaultError,
+  Options<PostApiV1NotificationByIdReadData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1NotificationByIdReadResponse,
+    DefaultError,
+    Options<PostApiV1NotificationByIdReadData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1NotificationByIdRead({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Archive a single notification
+ */
+export const postApiV1NotificationByIdArchiveMutation = (
+  options?: Partial<Options<PostApiV1NotificationByIdArchiveData>>,
+): UseMutationOptions<
+  PostApiV1NotificationByIdArchiveResponse,
+  DefaultError,
+  Options<PostApiV1NotificationByIdArchiveData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1NotificationByIdArchiveResponse,
+    DefaultError,
+    Options<PostApiV1NotificationByIdArchiveData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1NotificationByIdArchive({
         ...options,
         ...fnOptions,
         throwOnError: true,

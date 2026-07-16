@@ -202,6 +202,7 @@ const app = new Hono()
           sort,
           communityId: query.communityId ?? null,
           authorUsername: query.authorUsername ?? null,
+          postId: query.postId ?? null,
           createdAfter: windowStartIso(query.t),
           limit: PAGE_SIZE,
           offset,

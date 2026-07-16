@@ -3987,6 +3987,7 @@ export type GetApiV1SearchData = {
     t?: "hour" | "day" | "week" | "month" | "year" | "all"
     communityId?: string
     authorUsername?: string
+    postId?: string
     cursor?: string
   }
   url: "/api/v1/search"
@@ -6500,3 +6501,180 @@ export type PostApiV1ModmailByIdHighlightResponses = {
 
 export type PostApiV1ModmailByIdHighlightResponse =
   PostApiV1ModmailByIdHighlightResponses[keyof PostApiV1ModmailByIdHighlightResponses]
+
+export type GetApiV1NotificationData = {
+  body?: never
+  path?: never
+  query?: {
+    cursor?: string
+    limit?: number
+  }
+  url: "/api/v1/notification"
+}
+
+export type GetApiV1NotificationResponses = {
+  /**
+   * Notifications
+   */
+  200: {
+    data: Array<{
+      id: string
+      type: string
+      actorUserId: string | null
+      postId: string | null
+      commentId: string | null
+      communityId: string | null
+      conversationId: string | null
+      previewSnapshot: {
+        title?: string | null
+        body?: string | null
+        communityName?: string | null
+        actorUsername?: string | null
+        postId?: string | null
+        commentId?: string | null
+        url?: string | null
+        count?: number | null
+      } | null
+      isRead: boolean
+      createdAt: Date
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1NotificationResponse =
+  GetApiV1NotificationResponses[keyof GetApiV1NotificationResponses]
+
+export type GetApiV1NotificationUnreadCountData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/notification/unread-count"
+}
+
+export type GetApiV1NotificationUnreadCountResponses = {
+  /**
+   * Unread count
+   */
+  200: {
+    count: number
+  }
+}
+
+export type GetApiV1NotificationUnreadCountResponse =
+  GetApiV1NotificationUnreadCountResponses[keyof GetApiV1NotificationUnreadCountResponses]
+
+export type GetApiV1NotificationPreferencesData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/notification/preferences"
+}
+
+export type GetApiV1NotificationPreferencesResponses = {
+  /**
+   * Preferences
+   */
+  200: {
+    data: Array<{
+      type: string
+      level: "off" | "inbox" | "all"
+    }>
+  }
+}
+
+export type GetApiV1NotificationPreferencesResponse =
+  GetApiV1NotificationPreferencesResponses[keyof GetApiV1NotificationPreferencesResponses]
+
+export type PutApiV1NotificationPreferencesData = {
+  body?: {
+    type: string
+    level: "off" | "inbox" | "all"
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/notification/preferences"
+}
+
+export type PutApiV1NotificationPreferencesErrors = {
+  /**
+   * Invalid type or level
+   */
+  400: ErrorResponseT
+}
+
+export type PutApiV1NotificationPreferencesError =
+  PutApiV1NotificationPreferencesErrors[keyof PutApiV1NotificationPreferencesErrors]
+
+export type PutApiV1NotificationPreferencesResponses = {
+  /**
+   * Preference updated
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PutApiV1NotificationPreferencesResponse =
+  PutApiV1NotificationPreferencesResponses[keyof PutApiV1NotificationPreferencesResponses]
+
+export type PostApiV1NotificationReadAllData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/notification/read-all"
+}
+
+export type PostApiV1NotificationReadAllResponses = {
+  /**
+   * Marked read
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1NotificationReadAllResponse =
+  PostApiV1NotificationReadAllResponses[keyof PostApiV1NotificationReadAllResponses]
+
+export type PostApiV1NotificationByIdReadData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/notification/{id}/read"
+}
+
+export type PostApiV1NotificationByIdReadResponses = {
+  /**
+   * Marked read
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1NotificationByIdReadResponse =
+  PostApiV1NotificationByIdReadResponses[keyof PostApiV1NotificationByIdReadResponses]
+
+export type PostApiV1NotificationByIdArchiveData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/notification/{id}/archive"
+}
+
+export type PostApiV1NotificationByIdArchiveResponses = {
+  /**
+   * Archived
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1NotificationByIdArchiveResponse =
+  PostApiV1NotificationByIdArchiveResponses[keyof PostApiV1NotificationByIdArchiveResponses]

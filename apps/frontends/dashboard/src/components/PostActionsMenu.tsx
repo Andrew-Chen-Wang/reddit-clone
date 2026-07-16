@@ -44,6 +44,7 @@ import {
   EditPostDialog,
   type EditPostDialogPost,
 } from "@frontends/dashboard/components/EditPostDialog"
+import { ReportDialog } from "@frontends/dashboard/components/ReportDialog"
 
 export type PostActionsMenuPost = EditPostDialogPost & {
   isAuthor: boolean
@@ -88,6 +89,7 @@ export function PostActionsMenu({
   const [following, setFollowing] = useState(initialFollowing)
   const [editOpen, setEditOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [reportOpen, setReportOpen] = useState(false)
 
   const saveMutation = useMutation({
     mutationFn: (next: boolean) =>
@@ -229,9 +231,14 @@ export function PostActionsMenu({
                 {following ? "Unfollow post" : "Follow post"}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>
+              <DropdownMenuItem
+                disabled={!post.community}
+                onClick={() => {
+                  setReportOpen(true)
+                }}
+              >
                 <Flag className="size-4" />
-                Report (coming soon)
+                Report
               </DropdownMenuItem>
               {post.author ? (
                 <DropdownMenuItem
@@ -252,6 +259,15 @@ export function PostActionsMenu({
 
       {post.isAuthor ? (
         <EditPostDialog post={post} open={editOpen} onOpenChange={setEditOpen} onSaved={onEdited} />
+      ) : null}
+
+      {post.community ? (
+        <ReportDialog
+          open={reportOpen}
+          onOpenChange={setReportOpen}
+          communityId={post.community.id}
+          target={{ type: "post", id: post.id }}
+        />
       ) : null}
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>

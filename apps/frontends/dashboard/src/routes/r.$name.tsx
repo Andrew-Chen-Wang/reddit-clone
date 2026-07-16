@@ -208,10 +208,14 @@ function CommunityPage() {
             <ImagePlus className="size-4" />
             Edit appearance
           </Button>
-          <Button variant="outline" size="sm" disabled>
+          <Link
+            to="/mod/$name"
+            params={{ name: community.name }}
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+          >
             <ShieldHalf className="size-4" />
             Mod Tools
-          </Button>
+          </Link>
         </>
       ) : null}
     </>

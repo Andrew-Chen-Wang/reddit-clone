@@ -18,9 +18,22 @@ import {
   getApiV1CommunityMemberMineOptions,
   getApiV1CommunityMemberModeratedOptions,
   getApiV1HistoryRecentCommunitiesOptions,
+  getApiV1ModTeamMyInvitesOptions,
   patchApiV1CommunityMemberByCommunityIdMembershipMutation,
+  postApiV1ModTeamInviteByIdAcceptMutation,
+  postApiV1ModTeamInviteByIdDeclineMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { ChevronRight, Compass, Home, Plus, ShieldCheck, Star, TrendingUp } from "lucide-react"
+import {
+  Check,
+  ChevronRight,
+  Compass,
+  Home,
+  Plus,
+  ShieldCheck,
+  Star,
+  TrendingUp,
+  X,
+} from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 import { CreateCommunityWizard } from "@frontends/dashboard/components/CreateCommunityWizard"
@@ -90,6 +103,94 @@ function CommunityLink({
   )
 }
 
+/** Sidebar link into a community's mod tools (distinct from the public /r link). */
+function ModCommunityLink({
+  community,
+}: {
+  community: { id: string; name: string; iconImageKey: string | null }
+}) {
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        render={<Link to="/mod/$name" params={{ name: community.name }} />}
+        tooltip={`Mod r/${community.name}`}
+      >
+        <CommunityIcon name={community.name} iconUrl={mediaUrl(community.iconImageKey)} size="sm" />
+        <span>r/{community.name}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  )
+}
+
+/** Banner prompting the viewer to accept or decline pending moderator invites. */
+function ModInvitesBanner() {
+  const queryClient = useQueryClient()
+  const { data } = useQuery(getApiV1ModTeamMyInvitesOptions())
+  const invalidate = () => {
+    void queryClient.invalidateQueries({ queryKey: getApiV1ModTeamMyInvitesOptions().queryKey })
+    void queryClient.invalidateQueries({
+      queryKey: getApiV1CommunityMemberModeratedOptions().queryKey,
+    })
+  }
+  const accept = useMutation({
+    ...postApiV1ModTeamInviteByIdAcceptMutation(),
+    onSuccess: () => {
+      toast.success("You're now a moderator")
+      invalidate()
+    },
+    onError: () => {
+      toast.error("Could not accept invite")
+    },
+  })
+  const decline = useMutation({
+    ...postApiV1ModTeamInviteByIdDeclineMutation(),
+    onSuccess: invalidate,
+    onError: () => {
+      toast.error("Could not decline invite")
+    },
+  })
+
+  const invites = data?.data ?? []
+  if (invites.length === 0) return null
+
+  return (
+    <div className="flex flex-col gap-2 px-2 group-data-[collapsible=icon]:hidden">
+      {invites.map((invite) => (
+        <div key={invite.id} className="rounded-md border bg-muted/40 p-2 text-xs">
+          <p>
+            You&apos;ve been invited to moderate{" "}
+            <span className="font-semibold">r/{invite.communityName}</span>
+          </p>
+          <div className="mt-1.5 flex gap-1.5">
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 rounded bg-primary px-2 py-1 font-medium text-primary-foreground disabled:opacity-50"
+              disabled={accept.isPending}
+              onClick={() => {
+                accept.mutate({ path: { id: invite.id } })
+              }}
+            >
+              <Check className="size-3" />
+              Accept
+            </button>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 rounded border px-2 py-1 font-medium disabled:opacity-50"
+              disabled={decline.isPending}
+              onClick={() => {
+                decline.mutate({ path: { id: invite.id } })
+              }}
+            >
+              <X className="size-3" />
+              Decline
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 const MAIN_NAV = [
   { to: "/" as const, label: "Home", icon: Home },
   { to: "/popular" as const, label: "Popular", icon: TrendingUp },
@@ -101,6 +202,7 @@ export function AppSidebar() {
   const { data: mine } = useQuery(getApiV1CommunityMemberMineOptions())
   const { data: moderated } = useQuery(getApiV1CommunityMemberModeratedOptions())
   const { data: recent } = useQuery(getApiV1HistoryRecentCommunitiesOptions())
+  const { data: invites } = useQuery(getApiV1ModTeamMyInvitesOptions())
 
   const joined = ((mine?.data ?? []) as JoinedCommunity[]).toSorted((a, b) => {
     if (a.isFavorite !== b.isFavorite) return a.isFavorite ? -1 : 1
@@ -108,6 +210,7 @@ export function AppSidebar() {
   })
   const moderatedCommunities = moderated?.data ?? []
   const recentCommunities = (recent?.data ?? []).slice(0, 5)
+  const hasInvites = (invites?.data ?? []).length > 0
 
   return (
     <Sidebar collapsible="icon" className="top-14! h-[calc(100svh-3.5rem)]!">
@@ -129,7 +232,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Moderation */}
-        {moderatedCommunities.length > 0 ? (
+        {moderatedCommunities.length > 0 || hasInvites ? (
           <Collapsible defaultOpen className="group/moderation">
             <SidebarGroup>
               <SidebarGroupLabel
@@ -141,21 +244,28 @@ export function AppSidebar() {
               </SidebarGroupLabel>
               <CollapsibleContent>
                 <SidebarGroupContent>
+                  <ModInvitesBanner />
                   <SidebarMenu>
                     <SidebarMenuItem>
-                      <SidebarMenuButton disabled tooltip="Mod Queue (coming soon)">
+                      <SidebarMenuButton
+                        render={<Link to="/mod/$name" params={{ name: "mod" }} />}
+                        tooltip="Mod Queue"
+                      >
                         <ShieldCheck />
                         <span>Mod Queue</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                      <SidebarMenuButton disabled tooltip="r/Mod (coming soon)">
+                      <SidebarMenuButton
+                        render={<Link to="/mod/$name" params={{ name: "mod" }} />}
+                        tooltip="r/Mod"
+                      >
                         <ShieldCheck />
                         <span>r/Mod</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     {moderatedCommunities.map((community) => (
-                      <CommunityLink key={community.id} community={community} />
+                      <ModCommunityLink key={community.id} community={community} />
                     ))}
                   </SidebarMenu>
                 </SidebarGroupContent>

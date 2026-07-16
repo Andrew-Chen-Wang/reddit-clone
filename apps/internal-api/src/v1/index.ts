@@ -17,6 +17,7 @@ import draft from "./draft"
 import media from "./media"
 import modLog from "./mod-log"
 import modmail from "./modmail"
+import notification from "./notification"
 import modQueue from "./mod-queue"
 import modSavedResponse from "./mod-saved-response"
 import modTeam from "./mod-team"
@@ -73,5 +74,6 @@ const app = new Hono({
   .route("/removal-reason", removalReason)
   .route("/chat", chat)
   .route("/modmail", modmail)
+  .route("/notification", notification)
 
 export default app

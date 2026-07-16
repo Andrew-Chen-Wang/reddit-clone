@@ -8,6 +8,7 @@ import { fetchCommunityMutedUser } from "@lib/dao/communityMutedUser/fetch"
 import { crudModAction } from "@lib/dao/modAction/crud"
 import { crudModNote } from "@lib/dao/modNote/crud"
 import { fetchModNote } from "@lib/dao/modNote/fetch"
+import { emitUserBanned } from "@lib/dao/notification/emit-helpers"
 import { fetchUser } from "@lib/dao/user/fetch"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
@@ -270,6 +271,12 @@ const app = new Hono()
         action: "ban_user",
         targetUserId: target.id,
         details: { days: body.days ?? null },
+      })
+      await emitUserBanned(db, {
+        userId: target.id,
+        actorUserId: user.id,
+        communityId,
+        messageToUser: body.messageToUser ?? null,
       })
       return c.json({})
     },

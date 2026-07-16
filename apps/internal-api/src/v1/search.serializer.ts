@@ -35,6 +35,7 @@ export const searchSchemaQuery = Type.Object({
   t: Type.Optional(searchWindow),
   communityId: Type.Optional(UUID7String),
   authorUsername: Type.Optional(Type.String({ maxLength: 64 })),
+  postId: Type.Optional(UUID7String),
   cursor: Type.Optional(Type.String()),
 })
 

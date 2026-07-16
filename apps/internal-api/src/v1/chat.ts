@@ -4,6 +4,7 @@ import { crudChatMessage } from "@lib/dao/chatMessage/crud"
 import { fetchChatMessage } from "@lib/dao/chatMessage/fetch"
 import { crudChatParticipant } from "@lib/dao/chatParticipant/crud"
 import { fetchChatParticipant } from "@lib/dao/chatParticipant/fetch"
+import { emitChatRequest } from "@lib/dao/notification/emit-helpers"
 import { fetchUser } from "@lib/dao/user/fetch"
 import { fetchUserBlock } from "@lib/dao/userBlock/fetch"
 import { fetchUserSettings } from "@lib/dao/userSettings/fetch"
@@ -209,6 +210,11 @@ const app = new Hono()
         conversationId: conversation.id,
         senderUserId: user.id,
         body,
+      })
+      await emitChatRequest(db, {
+        recipientUserId: recipient.id,
+        actorUserId: user.id,
+        conversationId: conversation.id,
       })
       return c.json({ conversationId: conversation.id }, 201)
     },
