@@ -53,6 +53,7 @@ export const postCardSchema = Type.Object({
   title: Type.String(),
   bodyMd: Nullable(Type.String()),
   linkUrl: Nullable(Type.String()),
+  linkImageUrl: Nullable(Type.String()),
   isNsfw: Type.Boolean(),
   isSpoiler: Type.Boolean(),
   isOc: Type.Boolean(),

@@ -30,14 +30,27 @@ export type CommentWithPostListProps = {
   fetchPage: (cursor: string | undefined) => Promise<CommentWithPostPage>
   emptyTitle: string
   emptyDescription: string
+  /** Compact view tightens spacing to match the feed's compact density. */
+  compact?: boolean
 }
 
-function CommentCard({ comment }: { comment: CommentWithPost }) {
+/**
+ * A single "comment with its post context" row: shows what post the comment was
+ * left on plus the comment body and score. Exported so the intertwined Overview
+ * feed can render comment items identically to the Comments tab.
+ */
+export function CommentCard({
+  comment,
+  compact = false,
+}: {
+  comment: CommentWithPost
+  compact?: boolean
+}) {
   const community = comment.post.community
 
   return (
     <Card>
-      <CardContent className="flex flex-col gap-2 py-4">
+      <CardContent className={compact ? "flex flex-col gap-1.5 py-3" : "flex flex-col gap-2 py-4"}>
         <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
           <MessageSquare className="size-3.5 shrink-0" />
           <span>commented on</span>
@@ -86,6 +99,7 @@ export function CommentWithPostList({
   fetchPage,
   emptyTitle,
   emptyDescription,
+  compact = false,
 }: CommentWithPostListProps) {
   const list = useInfiniteQuery({
     queryKey,
@@ -150,9 +164,9 @@ export function CommentWithPostList({
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className={compact ? "flex flex-col gap-2" : "flex flex-col gap-3"}>
       {comments.map((comment) => (
-        <CommentCard key={comment.id} comment={comment} />
+        <CommentCard key={comment.id} comment={comment} compact={compact} />
       ))}
       {list.isFetchingNextPage ? <Skeleton className="h-24 w-full rounded-lg" /> : null}
       <div ref={sentinelRef} aria-hidden className="h-px" />

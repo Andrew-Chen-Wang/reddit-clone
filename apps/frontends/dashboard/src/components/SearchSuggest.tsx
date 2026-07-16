@@ -75,8 +75,8 @@ export function SearchSuggest() {
   }
 
   return (
-    <div className="relative flex-1 max-w-md">
-      <div className="flex items-center gap-2 rounded-md border bg-background pl-3 focus-within:ring-1 focus-within:ring-ring">
+    <div className="relative w-full max-w-2xl">
+      <div className="flex h-10 items-center gap-2 rounded-full bg-muted/60 pl-4 focus-within:bg-background focus-within:ring-1 focus-within:ring-ring">
         <Search className="pointer-events-none size-4 shrink-0 text-muted-foreground" />
         {scopeLabel ? (
           <span className="flex shrink-0 items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
@@ -161,7 +161,10 @@ export function SearchSuggest() {
                   }}
                   onClick={() => {
                     setOpen(false)
-                    void navigate({ to: "/user/$username", params: { username: profile.username } })
+                    void navigate({
+                      to: "/user/$username",
+                      params: { username: profile.username },
+                    })
                   }}
                 >
                   <span className="min-w-0 flex-1 truncate text-sm">u/{profile.username}</span>

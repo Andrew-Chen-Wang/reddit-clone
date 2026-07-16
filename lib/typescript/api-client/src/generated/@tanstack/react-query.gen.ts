@@ -66,6 +66,7 @@ import {
   getApiV1FeedProfileByUsername,
   getApiV1FlairByCommunityIdPostTemplates,
   getApiV1FlairByCommunityIdUserTemplates,
+  getApiV1HistoryPosts,
   getApiV1HistoryRecentCommunities,
   getApiV1HistoryRecentPosts,
   getApiV1ModLogByCommunityId,
@@ -97,6 +98,7 @@ import {
   getApiV1UserBlockMine,
   getApiV1UserByUsernameByUsername,
   getApiV1UserByUsernameByUsernameComments,
+  getApiV1UserByUsernameByUsernameOverview,
   getApiV1UserFollowMine,
   getApiV1UserMe,
   getApiV1UserMeDownvoted,
@@ -355,6 +357,8 @@ import type {
   GetApiV1FlairByCommunityIdPostTemplatesResponse,
   GetApiV1FlairByCommunityIdUserTemplatesData,
   GetApiV1FlairByCommunityIdUserTemplatesResponse,
+  GetApiV1HistoryPostsData,
+  GetApiV1HistoryPostsResponse,
   GetApiV1HistoryRecentCommunitiesData,
   GetApiV1HistoryRecentCommunitiesResponse,
   GetApiV1HistoryRecentPostsData,
@@ -434,6 +438,9 @@ import type {
   GetApiV1UserByUsernameByUsernameCommentsResponse,
   GetApiV1UserByUsernameByUsernameData,
   GetApiV1UserByUsernameByUsernameError,
+  GetApiV1UserByUsernameByUsernameOverviewData,
+  GetApiV1UserByUsernameByUsernameOverviewError,
+  GetApiV1UserByUsernameByUsernameOverviewResponse,
   GetApiV1UserByUsernameByUsernameResponse,
   GetApiV1UserFollowMineData,
   GetApiV1UserFollowMineResponse,
@@ -973,6 +980,86 @@ export const getApiV1UserByUsernameByUsernameCommentsInfiniteOptions = (
         return data
       },
       queryKey: getApiV1UserByUsernameByUsernameCommentsInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1UserByUsernameByUsernameOverviewQueryKey = (
+  options: Options<GetApiV1UserByUsernameByUsernameOverviewData>,
+) => createQueryKey("getApiV1UserByUsernameByUsernameOverview", options)
+
+/**
+ * A user's posts and comments interleaved, newest first
+ */
+export const getApiV1UserByUsernameByUsernameOverviewOptions = (
+  options: Options<GetApiV1UserByUsernameByUsernameOverviewData>,
+) =>
+  queryOptions<
+    GetApiV1UserByUsernameByUsernameOverviewResponse,
+    GetApiV1UserByUsernameByUsernameOverviewError,
+    GetApiV1UserByUsernameByUsernameOverviewResponse,
+    ReturnType<typeof getApiV1UserByUsernameByUsernameOverviewQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserByUsernameByUsernameOverview({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserByUsernameByUsernameOverviewQueryKey(options),
+  })
+
+export const getApiV1UserByUsernameByUsernameOverviewInfiniteQueryKey = (
+  options: Options<GetApiV1UserByUsernameByUsernameOverviewData>,
+): QueryKey<Options<GetApiV1UserByUsernameByUsernameOverviewData>> =>
+  createQueryKey("getApiV1UserByUsernameByUsernameOverview", options, true)
+
+/**
+ * A user's posts and comments interleaved, newest first
+ */
+export const getApiV1UserByUsernameByUsernameOverviewInfiniteOptions = (
+  options: Options<GetApiV1UserByUsernameByUsernameOverviewData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1UserByUsernameByUsernameOverviewResponse,
+    GetApiV1UserByUsernameByUsernameOverviewError,
+    InfiniteData<GetApiV1UserByUsernameByUsernameOverviewResponse>,
+    QueryKey<Options<GetApiV1UserByUsernameByUsernameOverviewData>>,
+    | string
+    | Pick<
+        QueryKey<Options<GetApiV1UserByUsernameByUsernameOverviewData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1UserByUsernameByUsernameOverviewData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1UserByUsernameByUsernameOverview({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1UserByUsernameByUsernameOverviewInfiniteQueryKey(options),
     },
   )
   return opts as Omit<typeof opts, "initialData">
@@ -3733,6 +3820,80 @@ export const getApiV1HistoryRecentPostsOptions = (
     },
     queryKey: getApiV1HistoryRecentPostsQueryKey(options),
   })
+
+export const getApiV1HistoryPostsQueryKey = (options?: Options<GetApiV1HistoryPostsData>) =>
+  createQueryKey("getApiV1HistoryPosts", options)
+
+/**
+ * Paginated feed of the current user's recently viewed posts, newest view first
+ */
+export const getApiV1HistoryPostsOptions = (options?: Options<GetApiV1HistoryPostsData>) =>
+  queryOptions<
+    GetApiV1HistoryPostsResponse,
+    DefaultError,
+    GetApiV1HistoryPostsResponse,
+    ReturnType<typeof getApiV1HistoryPostsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1HistoryPosts({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1HistoryPostsQueryKey(options),
+  })
+
+export const getApiV1HistoryPostsInfiniteQueryKey = (
+  options?: Options<GetApiV1HistoryPostsData>,
+): QueryKey<Options<GetApiV1HistoryPostsData>> =>
+  createQueryKey("getApiV1HistoryPosts", options, true)
+
+/**
+ * Paginated feed of the current user's recently viewed posts, newest view first
+ */
+export const getApiV1HistoryPostsInfiniteOptions = (
+  options?: Options<GetApiV1HistoryPostsData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1HistoryPostsResponse,
+    DefaultError,
+    InfiniteData<GetApiV1HistoryPostsResponse>,
+    QueryKey<Options<GetApiV1HistoryPostsData>>,
+    | string
+    | Pick<QueryKey<Options<GetApiV1HistoryPostsData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1HistoryPostsData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1HistoryPosts({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1HistoryPostsInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
 
 export const getApiV1HistoryRecentCommunitiesQueryKey = (
   options?: Options<GetApiV1HistoryRecentCommunitiesData>,

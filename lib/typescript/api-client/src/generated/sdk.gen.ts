@@ -150,6 +150,8 @@ import type {
   GetApiV1FlairByCommunityIdPostTemplatesResponses,
   GetApiV1FlairByCommunityIdUserTemplatesData,
   GetApiV1FlairByCommunityIdUserTemplatesResponses,
+  GetApiV1HistoryPostsData,
+  GetApiV1HistoryPostsResponses,
   GetApiV1HistoryRecentCommunitiesData,
   GetApiV1HistoryRecentCommunitiesResponses,
   GetApiV1HistoryRecentPostsData,
@@ -229,6 +231,9 @@ import type {
   GetApiV1UserByUsernameByUsernameCommentsResponses,
   GetApiV1UserByUsernameByUsernameData,
   GetApiV1UserByUsernameByUsernameErrors,
+  GetApiV1UserByUsernameByUsernameOverviewData,
+  GetApiV1UserByUsernameByUsernameOverviewErrors,
+  GetApiV1UserByUsernameByUsernameOverviewResponses,
   GetApiV1UserByUsernameByUsernameResponses,
   GetApiV1UserFollowMineData,
   GetApiV1UserFollowMineResponses,
@@ -612,6 +617,22 @@ export const getApiV1UserByUsernameByUsernameComments = <ThrowOnError extends bo
     GetApiV1UserByUsernameByUsernameCommentsErrors,
     ThrowOnError
   >({ url: "/api/v1/user/by-username/{username}/comments", ...options })
+
+/**
+ * A user's posts and comments interleaved, newest first
+ */
+export const getApiV1UserByUsernameByUsernameOverview = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1UserByUsernameByUsernameOverviewData, ThrowOnError>,
+): RequestResult<
+  GetApiV1UserByUsernameByUsernameOverviewResponses,
+  GetApiV1UserByUsernameByUsernameOverviewErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1UserByUsernameByUsernameOverviewResponses,
+    GetApiV1UserByUsernameByUsernameOverviewErrors,
+    ThrowOnError
+  >({ url: "/api/v1/user/by-username/{username}/overview", ...options })
 
 /**
  * The current user's saved posts or comments
@@ -1961,6 +1982,17 @@ export const getApiV1HistoryRecentPosts = <ThrowOnError extends boolean = false>
 ): RequestResult<GetApiV1HistoryRecentPostsResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<GetApiV1HistoryRecentPostsResponses, unknown, ThrowOnError>({
     url: "/api/v1/history/recent-posts",
+    ...options,
+  })
+
+/**
+ * Paginated feed of the current user's recently viewed posts, newest view first
+ */
+export const getApiV1HistoryPosts = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1HistoryPostsData, ThrowOnError>,
+): RequestResult<GetApiV1HistoryPostsResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1HistoryPostsResponses, unknown, ThrowOnError>({
+    url: "/api/v1/history/posts",
     ...options,
   })
 

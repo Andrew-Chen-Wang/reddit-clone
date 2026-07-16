@@ -21,6 +21,9 @@ export function AnonPostDetail({ post, communityHref, authorHref }: AnonPostDeta
         post={post}
         communityHref={communityHref}
         authorHref={authorHref}
+        onBack={() => {
+          window.history.back()
+        }}
         voteDisabled={post.isLocked}
         onUpvote={() => {
           setLoginOpen(true)

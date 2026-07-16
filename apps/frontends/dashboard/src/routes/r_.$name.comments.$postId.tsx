@@ -9,6 +9,10 @@ import { PostCommentSearch } from "@frontends/dashboard/components/PostCommentSe
 import { PostActionsMenu } from "@frontends/dashboard/components/PostActionsMenu"
 import { PostShareMenu } from "@frontends/dashboard/components/PostShareMenu"
 import {
+  CommunityLinkHoverCard,
+  UserLinkHoverCard,
+} from "@frontends/dashboard/components/PostHoverCards"
+import {
   getApiV1CommunityByNameOptions,
   getApiV1PostByIdOptions,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
@@ -113,6 +117,15 @@ function PostDetailPage() {
           }
           communityHref={post.community ? `/r/${post.community.name}` : undefined}
           authorHref={post.author ? `/user/${post.author.username}` : undefined}
+          onBack={() => {
+            window.history.back()
+          }}
+          wrapCommunityLink={(link, communityName) => (
+            <CommunityLinkHoverCard name={communityName}>{link}</CommunityLinkHoverCard>
+          )}
+          wrapAuthorLink={(link, username) => (
+            <UserLinkHoverCard username={username}>{link}</UserLinkHoverCard>
+          )}
           voteDisabled={post.isLocked}
           onUpvote={() => {
             vote(1)

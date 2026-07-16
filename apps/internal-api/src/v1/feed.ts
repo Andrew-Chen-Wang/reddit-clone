@@ -283,7 +283,14 @@ const app = new Hono()
       const profile = await fetchUser(db).getOneByUsername(username, ["id"])
       if (!profile) return throwNotFound(c, "User not found")
 
-      const feedQuery = fetchPost(db).profileFeed(profile.id)
+      const rawSort = query.sort ?? "new"
+      const sort: Exclude<PostSort, "rising"> = rawSort === "rising" ? "new" : rawSort
+
+      const feedQuery = fetchPost(db).authoredPostsFeed({
+        authorUserId: profile.id,
+        sort,
+        windowStart: windowStartFor(query.t),
+      })
 
       const { results, nextCursor } = await cursorOffsetPaginate({
         query: feedQuery,

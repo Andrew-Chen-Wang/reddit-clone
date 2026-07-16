@@ -59,3 +59,25 @@ export function assembleCommentTree(nodes: CommentNode[]): CommentTreeNode[] {
 export function unloadedReplyCount(node: CommentTreeNode): number {
   return Math.max(0, node.childCount - node.children.length)
 }
+
+/**
+ * Build the tree for a single-comment permalink ("single comment thread") view.
+ * The strict ancestors are stitched in front of the focused subtree so the whole
+ * chain renders as one normal nested thread leading down to the target comment
+ * (matching Reddit), instead of a separate "context" box. Each ancestor's
+ * `childCount` is clamped to the children actually stitched in, so the sibling
+ * branches we deliberately omit don't surface a spurious "N more replies" link.
+ */
+export function assembleFocusedThread(
+  ancestors: CommentNode[],
+  nodes: CommentNode[],
+): CommentTreeNode[] {
+  const roots = assembleCommentTree([...ancestors, ...nodes])
+  const ancestorIds = new Set(ancestors.map((a) => a.id))
+  const clamp = (node: CommentTreeNode): void => {
+    if (ancestorIds.has(node.id)) node.childCount = node.children.length
+    for (const child of node.children) clamp(child)
+  }
+  for (const root of roots) clamp(root)
+  return roots
+}

@@ -193,6 +193,128 @@ export type GetApiV1UserByUsernameByUsernameCommentsResponses = {
 export type GetApiV1UserByUsernameByUsernameCommentsResponse =
   GetApiV1UserByUsernameByUsernameCommentsResponses[keyof GetApiV1UserByUsernameByUsernameCommentsResponses]
 
+export type GetApiV1UserByUsernameByUsernameOverviewData = {
+  body?: never
+  path: {
+    username: string
+  }
+  query?: {
+    cursor?: string
+  }
+  url: "/api/v1/user/by-username/{username}/overview"
+}
+
+export type GetApiV1UserByUsernameByUsernameOverviewErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1UserByUsernameByUsernameOverviewError =
+  GetApiV1UserByUsernameByUsernameOverviewErrors[keyof GetApiV1UserByUsernameByUsernameOverviewErrors]
+
+export type GetApiV1UserByUsernameByUsernameOverviewResponses = {
+  /**
+   * User overview
+   */
+  200: {
+    data: Array<
+      | {
+          kind: "post"
+          post: {
+            id: string
+            type: string
+            title: string
+            bodyMd: string | null
+            linkUrl: string | null
+            linkImageUrl: string | null
+            isNsfw: boolean
+            isSpoiler: boolean
+            isOc: boolean
+            isLocked: boolean
+            stickyPosition: number | null
+            ups: number
+            downs: number
+            score: number
+            commentCount: number
+            viewCount: number
+            shareCount: number
+            createdAt: Date
+            editedAt: Date | null
+            userVote: number
+            isAuthor: boolean
+            removed?: boolean
+            removedByMod?: boolean
+            removalReasonId?: string | null
+            author: {
+              id: string
+              username: string
+              displayName: string | null
+              avatarImageKey: string | null
+            } | null
+            community: {
+              id: string
+              name: string
+              displayName: string | null
+              iconImageKey: string | null
+              isNsfw: boolean
+              isMember: boolean
+            } | null
+            flair: {
+              id: string
+              text: string
+              bgColor: string | null
+              textColor: string | null
+            } | null
+            media: Array<{
+              mediaType: string
+              url: string
+              width: number | null
+              height: number | null
+            }>
+          }
+        }
+      | {
+          kind: "comment"
+          comment: {
+            id: string
+            postId: string
+            parentCommentId: string | null
+            depth: number
+            bodyMd: string | null
+            ups: number
+            downs: number
+            score: number
+            isDeleted: boolean
+            createdAt: Date
+            editedAt: Date | null
+            userVote: number
+            isAuthor: boolean
+            author: {
+              id: string
+              username: string
+              displayName: string | null
+              avatarImageKey: string | null
+            } | null
+            post: {
+              id: string
+              title: string
+              community: {
+                id: string
+                name: string
+              } | null
+            }
+          }
+        }
+    >
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1UserByUsernameByUsernameOverviewResponse =
+  GetApiV1UserByUsernameByUsernameOverviewResponses[keyof GetApiV1UserByUsernameByUsernameOverviewResponses]
+
 export type GetApiV1UserMeSavedData = {
   body?: never
   path?: never
@@ -214,6 +336,7 @@ export type GetApiV1UserMeSavedResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -315,6 +438,7 @@ export type GetApiV1UserMeHiddenResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -387,6 +511,7 @@ export type GetApiV1UserMeUpvotedResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -459,6 +584,7 @@ export type GetApiV1UserMeDownvotedResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -1876,6 +2002,7 @@ export type GetApiV1CustomFeedByUsernameBySlugPostsResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -3065,6 +3192,7 @@ export type GetApiV1PostByIdResponses = {
     title: string
     bodyMd: string | null
     linkUrl: string | null
+    linkImageUrl: string | null
     isNsfw: boolean
     isSpoiler: boolean
     isOc: boolean
@@ -3353,6 +3481,7 @@ export type GetApiV1FeedCommunityByNameResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -3428,6 +3557,7 @@ export type GetApiV1FeedPopularResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -3502,6 +3632,7 @@ export type GetApiV1FeedHomeResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -3576,6 +3707,7 @@ export type GetApiV1FeedModResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -3662,6 +3794,7 @@ export type GetApiV1FeedProfileByUsernameResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -3761,6 +3894,79 @@ export type GetApiV1HistoryRecentPostsResponses = {
 
 export type GetApiV1HistoryRecentPostsResponse =
   GetApiV1HistoryRecentPostsResponses[keyof GetApiV1HistoryRecentPostsResponses]
+
+export type GetApiV1HistoryPostsData = {
+  body?: never
+  path?: never
+  query?: {
+    cursor?: string
+  }
+  url: "/api/v1/history/posts"
+}
+
+export type GetApiV1HistoryPostsResponses = {
+  /**
+   * Recently viewed posts
+   */
+  200: {
+    data: Array<{
+      id: string
+      type: string
+      title: string
+      bodyMd: string | null
+      linkUrl: string | null
+      linkImageUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      isLocked: boolean
+      stickyPosition: number | null
+      ups: number
+      downs: number
+      score: number
+      commentCount: number
+      viewCount: number
+      shareCount: number
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      removed?: boolean
+      removedByMod?: boolean
+      removalReasonId?: string | null
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+      community: {
+        id: string
+        name: string
+        displayName: string | null
+        iconImageKey: string | null
+        isNsfw: boolean
+        isMember: boolean
+      } | null
+      flair: {
+        id: string
+        text: string
+        bgColor: string | null
+        textColor: string | null
+      } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1HistoryPostsResponse =
+  GetApiV1HistoryPostsResponses[keyof GetApiV1HistoryPostsResponses]
 
 export type GetApiV1HistoryRecentCommunitiesData = {
   body?: never
@@ -5104,6 +5310,7 @@ export type GetApiV1SearchResponses = {
       title: string
       bodyMd: string | null
       linkUrl: string | null
+      linkImageUrl: string | null
       isNsfw: boolean
       isSpoiler: boolean
       isOc: boolean
@@ -5339,6 +5546,7 @@ export type GetApiV1ModQueueByCommunityIdResponses = {
         title: string
         bodyMd: string | null
         linkUrl: string | null
+        linkImageUrl: string | null
         isNsfw: boolean
         isSpoiler: boolean
         isOc: boolean

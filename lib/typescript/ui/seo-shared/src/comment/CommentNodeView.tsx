@@ -37,6 +37,8 @@ export type CommentNodeViewProps = {
   onConnectorHoverChange?: (hovering: boolean) => void
   /** Author id of the post this comment belongs to, for the "OP" badge. */
   postAuthorId?: string
+  /** Highlights this comment (the target of a single-comment permalink). */
+  highlighted?: boolean
   /** Number of descendants hidden while collapsed (shown in the meta line). */
   collapsedCount?: number
   onUpvote?: () => void
@@ -75,6 +77,7 @@ export function CommentNodeView({
   connectorHovered = false,
   onConnectorHoverChange,
   postAuthorId,
+  highlighted = false,
   collapsedCount,
   onUpvote,
   onDownvote,
@@ -116,7 +119,12 @@ export function CommentNodeView({
   }
 
   return (
-    <div className="flex gap-2">
+    <div
+      className={cn(
+        "flex gap-2",
+        highlighted && "-mx-2 rounded-md bg-primary/5 px-2 py-1 ring-1 ring-primary/20",
+      )}
+    >
       {/* Avatar rail: avatar on top, then the collapse thread-line + toggle. */}
       <div className="flex w-8 shrink-0 flex-col items-center">
         {/* 32px avatar filling the 32px rail so the child elbows land flush against

@@ -172,7 +172,9 @@ export function CommunityUserFlairCard({
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() =>{  setSelectedId(null); }}
+              onClick={() => {
+                setSelectedId(null)
+              }}
               className={cn(
                 "inline-flex h-7 items-center rounded-full border px-3 text-xs font-medium transition-colors hover:bg-muted",
                 selectedId === null && "ring-2 ring-ring ring-offset-2 ring-offset-background",
@@ -186,7 +188,9 @@ export function CommunityUserFlairCard({
                 <button
                   key={template.id}
                   type="button"
-                  onClick={() =>{  setSelectedId(template.id); }}
+                  onClick={() => {
+                    setSelectedId(template.id)
+                  }}
                   className={cn(
                     "inline-flex h-7 max-w-full items-center truncate rounded-full px-3 text-xs font-medium transition-colors",
                     !hasColor && "bg-secondary text-secondary-foreground hover:bg-secondary/80",
@@ -202,7 +206,12 @@ export function CommunityUserFlairCard({
             })}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() =>{  setOpen(false); }}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setOpen(false)
+              }}
+            >
               Cancel
             </Button>
             <Button onClick={apply} disabled={setFlair.isPending}>

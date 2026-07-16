@@ -40,7 +40,7 @@ export type RawCommentRow = {
   removedAt: Date | null
 }
 
-const COMMENT_COLUMNS = [
+export const COMMENT_COLUMNS = [
   "comment.id",
   "comment.postId",
   "comment.parentCommentId",

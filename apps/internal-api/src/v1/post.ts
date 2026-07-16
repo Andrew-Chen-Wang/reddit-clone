@@ -10,7 +10,7 @@ import { fetchPostFlairTemplate } from "@lib/dao/postFlairTemplate/fetch"
 import { crudPostView } from "@lib/dao/postView/crud"
 import { db } from "@template-nextjs/db"
 import { createMediaUploadPost, getExtensionForMediaContentType } from "@utils/aws"
-import { enqueueEsSyncPost, enqueueMediaCleanup } from "@utils/queues"
+import { enqueueEsSyncPost, enqueueLinkPreviewFetch, enqueueMediaCleanup } from "@utils/queues"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
 import { resolver, validator } from "hono-typebox-openapi/typebox"
@@ -346,6 +346,10 @@ const app = new Hono()
       if (holdForReview) await crudPost(db).hold(created.id)
 
       await enqueueEsSyncPost(created.id)
+
+      if (body.type === "link" && body.linkUrl) {
+        await enqueueLinkPreviewFetch(created.id, body.linkUrl)
+      }
 
       if (body.type === "media" && body.media) {
         const items = body.media.map((file, i) => {

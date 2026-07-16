@@ -14,6 +14,7 @@ export interface JobPayloadMap {
   "es-sync-community": { communityId: string }
   "es-sync-user": { userId: string }
   "es-backfill": Record<string, never>
+  "link-preview-fetch": { postId: string; linkUrl: string }
 }
 
 export type JobName = keyof JobPayloadMap
@@ -29,6 +30,7 @@ const jobQueues: { [K in JobName]: Queue } = {
   "es-sync-community": fastQueue,
   "es-sync-user": fastQueue,
   "es-backfill": slowQueue,
+  "link-preview-fetch": slowQueue,
 }
 
 export async function enqueue<K extends JobName>(
@@ -140,6 +142,22 @@ export async function enqueueEsBackfill(): Promise<void> {
     "es-backfill",
     {},
     { jobId: "es-backfill", removeOnComplete: true, removeOnFail: 100 },
+  )
+}
+
+export function linkPreviewFetchJobId(postId: string): string {
+  return `link-preview-fetch__${postId}`
+}
+
+export async function enqueueLinkPreviewFetch(postId: string, linkUrl: string): Promise<void> {
+  await enqueue(
+    "link-preview-fetch",
+    { postId, linkUrl },
+    {
+      jobId: linkPreviewFetchJobId(postId),
+      removeOnComplete: true,
+      removeOnFail: 100,
+    },
   )
 }
 

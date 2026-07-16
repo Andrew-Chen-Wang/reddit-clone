@@ -55,3 +55,23 @@ export const commentTabSchemaResponse = Type.Object({
   data: Type.Array(commentWithPostSchema),
   nextCursor: Nullable(Type.String()),
 })
+
+export const overviewSchemaQuery = Type.Object({
+  cursor: Type.Optional(Type.String()),
+})
+
+export const overviewItemSchema = Type.Union([
+  Type.Object({
+    kind: Type.Literal("post"),
+    post: postCardSchema,
+  }),
+  Type.Object({
+    kind: Type.Literal("comment"),
+    comment: commentWithPostSchema,
+  }),
+])
+
+export const overviewSchemaResponse = Type.Object({
+  data: Type.Array(overviewItemSchema),
+  nextCursor: Nullable(Type.String()),
+})

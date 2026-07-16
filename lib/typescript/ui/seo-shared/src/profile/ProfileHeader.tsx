@@ -36,8 +36,8 @@ export function ProfileHeader({ user, action, children }: ProfileHeaderProps) {
   const totalKarma = user.postKarma + user.commentKarma
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4">
-      <div className="h-20 w-full overflow-hidden rounded-b-lg bg-gradient-to-r from-primary/30 to-primary/10 sm:h-28">
+    <div className="mx-auto w-full max-w-6xl px-4">
+      <div className="h-16 w-full overflow-hidden rounded-b-lg bg-gradient-to-r from-primary/30 to-primary/10 sm:h-24">
         {user.bannerUrl ? (
           // oxlint-disable-next-line no-img-element
           <img src={user.bannerUrl} alt="" className="h-full w-full object-cover" />
@@ -45,7 +45,7 @@ export function ProfileHeader({ user, action, children }: ProfileHeaderProps) {
       </div>
 
       <div className="-mt-8 flex items-end gap-4 px-2">
-        <Avatar className="size-20 border-4 border-background">
+        <Avatar className="size-16 border-4 border-background sm:size-20">
           {user.avatarUrl ? <AvatarImage src={user.avatarUrl} alt={name} /> : null}
           <AvatarFallback className="text-2xl">{initial}</AvatarFallback>
         </Avatar>
@@ -61,7 +61,7 @@ export function ProfileHeader({ user, action, children }: ProfileHeaderProps) {
       {user.about ? <p className="mt-3 px-2 text-sm text-foreground/90">{user.about}</p> : null}
 
       <div className="mt-6 flex flex-col gap-6 lg:flex-row-reverse">
-        <aside className={`w-full shrink-0${children ? " lg:w-80" : ""}`}>
+        <aside className={`w-full shrink-0${children ? " lg:w-72" : ""}`}>
           <Card>
             <CardContent className="flex flex-col gap-4 pt-6">
               <div>
