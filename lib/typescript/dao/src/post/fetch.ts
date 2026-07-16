@@ -174,7 +174,9 @@ export function fetchPost(db: Kysely<DB>) {
     windowStart: Date | null
     excludeSticky: boolean
     viewerId?: string | null
+    flairTemplateId?: string | null
   }): PostQuery {
+    const flairId = opts.flairTemplateId ?? null
     const exclude = (q: PostQuery): PostQuery =>
       opts.viewerId ? applyViewerExclusions(q, opts.viewerId) : q
     if (opts.sort === "rising") {
@@ -185,6 +187,7 @@ export function fetchPost(db: Kysely<DB>) {
             .innerJoin("postRising", "postRising.postId", "post.id")
             .where("post.communityId", "=", opts.communityId)
             .where("post.removedAt", "is", null)
+            .$if(flairId !== null, (qb) => qb.where("post.flairTemplateId", "=", flairId))
             .select(POST_COLUMNS)
             .orderBy("postRising.score", "desc")
             .orderBy("post.id", "desc"),
@@ -197,6 +200,7 @@ export function fetchPost(db: Kysely<DB>) {
         .where("post.communityId", "=", opts.communityId)
         .where("post.removedAt", "is", null)
         .$if(opts.excludeSticky, (qb) => qb.where("post.stickyPosition", "is", null))
+        .$if(flairId !== null, (qb) => qb.where("post.flairTemplateId", "=", flairId))
         .select(POST_COLUMNS),
     )
     return exclude(applyNonRisingSort(base, opts.sort, opts.windowStart))

@@ -10,15 +10,18 @@ import {
 } from "@ui/base/ui/dropdown-menu"
 import { CommunityHeader } from "@ui/seo-shared/community/CommunityHeader"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
+import { CommunityPostTypesCard } from "@ui/seo-shared/community/CommunityPostTypesCard"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/base/ui/dialog"
 import { Markdown } from "@ui/seo-shared/Markdown"
 import { PostFeed, type FeedPost } from "@frontends/dashboard/components/PostFeed"
 import { CommunityAppearanceDialog } from "@frontends/dashboard/components/CommunityAppearanceDialog"
+import { CommunityUserFlairCard } from "@frontends/dashboard/components/CommunityUserFlairCard"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1CommunityByNameOptions,
   getApiV1CommunityMemberMineOptions,
   getApiV1CommunityWidgetByCommunityNameOptions,
+  getApiV1FlairByCommunityIdPostTemplatesOptions,
   patchApiV1CommunityMemberByCommunityIdMembershipMutation,
   postApiV1CommunityMemberByCommunityIdJoinMutation,
   postApiV1CommunityMemberByCommunityIdLeaveMutation,
@@ -29,6 +32,9 @@ import { toast } from "sonner"
 
 export const Route = createFileRoute("/r/$name")({
   component: CommunityPage,
+  validateSearch: (search: Record<string, unknown>): { flair?: string } => ({
+    flair: typeof search.flair === "string" ? search.flair : undefined,
+  }),
 })
 
 type NotificationLevel = "off" | "low" | "frequent"
@@ -49,6 +55,7 @@ const COMMUNITY_SORTS = [
 
 function CommunityPage() {
   const { name } = Route.useParams()
+  const { flair: activeFlairId } = Route.useSearch()
   const queryClient = useQueryClient()
   const [appearanceOpen, setAppearanceOpen] = useState(false)
   const [welcomeOpen, setWelcomeOpen] = useState(false)
@@ -56,6 +63,13 @@ function CommunityPage() {
   const widgetsQuery = useQuery(
     getApiV1CommunityWidgetByCommunityNameOptions({ path: { communityName: name } }),
   )
+  const communityIdForFlair = communityQuery.data?.id
+  const postFlairQuery = useQuery({
+    ...getApiV1FlairByCommunityIdPostTemplatesOptions({
+      path: { communityId: communityIdForFlair ?? "" },
+    }),
+    enabled: Boolean(communityIdForFlair),
+  })
 
   const invalidate = () => {
     void queryClient.invalidateQueries({
@@ -260,7 +274,7 @@ function CommunityPage() {
       <div className="mx-auto mt-4 flex w-full max-w-5xl flex-col gap-6 px-4 lg:flex-row">
         <div className="min-w-0 flex-1">
           <PostFeed
-            source={{ kind: "community", name: community.name }}
+            source={{ kind: "community", name: community.name, flairTemplateId: activeFlairId }}
             sorts={COMMUNITY_SORTS}
             defaultSort="hot"
             showCommunity={false}
@@ -293,6 +307,29 @@ function CommunityPage() {
               iconUrl: mediaUrl(r.iconImageKey),
               memberCount: r.memberCount,
             }))}
+            userFlairSlot={
+              viewer.isMember ? (
+                <CommunityUserFlairCard communityId={communityId} currentFlair={viewer.userFlair} />
+              ) : null
+            }
+            postTypesSlot={
+              <CommunityPostTypesCard
+                templates={postFlairQuery.data?.data ?? []}
+                activeFlairId={activeFlairId ?? null}
+                renderPill={({ template, active, className, style, children }) => (
+                  <Link
+                    key={template.id}
+                    to="/r/$name"
+                    params={{ name: community.name }}
+                    search={{ flair: active ? undefined : template.id }}
+                    className={className}
+                    style={style}
+                  >
+                    {children}
+                  </Link>
+                )}
+              />
+            }
           />
         </aside>
       </div>

@@ -1,6 +1,10 @@
+import type { ReactNode } from "react"
+import { Mail } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@ui/base/ui/accordion"
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/base/ui/avatar"
+import { buttonVariants } from "@ui/base/ui/button"
 import { Card, CardContent } from "@ui/base/ui/card"
+import { cn } from "@ui/base/lib/utils"
 import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
 import { formatCompactNumber } from "@ui/seo-shared/format-number"
 import { visibilityMeta } from "@ui/seo-shared/community/visibility"
@@ -52,6 +56,10 @@ export type CommunityRightRailProps = {
   bookmarks?: CommunityRightRailBookmark[]
   widgets?: CommunityRightRailWidget[]
   related?: CommunityRightRailRelated[]
+  /** Interactive "USER FLAIR" card, supplied by authenticated frontends. */
+  userFlairSlot?: ReactNode
+  /** "VIEW BY POST TYPES" flair-filter card, supplied when the community has post flair. */
+  postTypesSlot?: ReactNode
 }
 
 function formatCreated(value: string | Date): string {
@@ -75,6 +83,8 @@ export function CommunityRightRail({
   bookmarks = [],
   widgets = [],
   related = [],
+  userFlairSlot,
+  postTypesSlot,
 }: CommunityRightRailProps) {
   const meta = visibilityMeta(visibility)
   const VisibilityIcon = meta.icon
@@ -111,6 +121,8 @@ export function CommunityRightRail({
         </CardContent>
       </Card>
 
+      {userFlairSlot}
+
       {bookmarks.length > 0 ? (
         <Card>
           <CardContent className="flex flex-wrap gap-2 pt-6">
@@ -136,25 +148,32 @@ export function CommunityRightRail({
               Rules
             </h2>
             <Accordion>
-              {rules.map((rule, index) => (
-                <AccordionItem key={rule.id} value={rule.id}>
-                  <AccordionTrigger className="text-left text-sm">
-                    <span className="flex gap-2">
-                      <span className="text-muted-foreground">{index + 1}.</span>
-                      <span>{rule.name}</span>
-                    </span>
-                  </AccordionTrigger>
-                  {rule.description ? (
-                    <AccordionContent className="text-sm text-muted-foreground">
+              {rules.map((rule, index) =>
+                rule.description ? (
+                  <AccordionItem key={rule.id} value={rule.id}>
+                    <AccordionTrigger className="text-left text-sm font-normal">
+                      <span className="flex gap-2 pr-2">
+                        <span className="shrink-0 text-muted-foreground">{index + 1}</span>
+                        <span>{rule.name}</span>
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="pl-6 text-sm text-muted-foreground">
                       {rule.description}
                     </AccordionContent>
-                  ) : null}
-                </AccordionItem>
-              ))}
+                  </AccordionItem>
+                ) : (
+                  <div key={rule.id} className="flex gap-2 py-2.5 text-sm not-last:border-b">
+                    <span className="shrink-0 text-muted-foreground">{index + 1}</span>
+                    <span>{rule.name}</span>
+                  </div>
+                ),
+              )}
             </Accordion>
           </CardContent>
         </Card>
       ) : null}
+
+      {postTypesSlot}
 
       {moderators.length > 0 ? (
         <Card>
@@ -162,13 +181,20 @@ export function CommunityRightRail({
             <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Moderators
             </h2>
+            <SeoLink
+              href={`/message-mods/${name}`}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-full")}
+            >
+              <Mail className="size-4" />
+              Message Mods
+            </SeoLink>
             <ul className="flex flex-col gap-2">
               {shownMods.map((mod) => {
                 const initial = mod.username.charAt(0).toUpperCase()
                 return (
                   <li key={mod.userId}>
                     <SeoLink
-                      href={`/u/${mod.username}`}
+                      href={`/user/${mod.username}`}
                       className="flex items-center gap-2 text-sm hover:underline"
                     >
                       <Avatar className="size-6">
@@ -191,12 +217,6 @@ export function CommunityRightRail({
                 View all moderators
               </SeoLink>
             ) : null}
-            <SeoLink
-              href={`/message-mods/${name}`}
-              className="text-sm text-primary hover:underline"
-            >
-              Message Mods
-            </SeoLink>
           </CardContent>
         </Card>
       ) : null}

@@ -147,5 +147,13 @@ export const communityDetailSchemaResponse = Type.Object({
     isModerator: Type.Boolean(),
     notificationLevel: Nullable(notificationLevel),
     pendingJoinRequest: Type.Boolean(),
+    userFlair: Nullable(
+      Type.Object({
+        templateId: Nullable(UUID7String),
+        text: Type.String(),
+        bgColor: Nullable(Type.String()),
+        textColor: Nullable(Type.String()),
+      }),
+    ),
   }),
 })

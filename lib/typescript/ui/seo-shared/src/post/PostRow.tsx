@@ -1,8 +1,9 @@
 "use client"
 
-import type { CSSProperties, ReactNode } from "react"
-import { Lock, MessageSquare, Pin, Share2 } from "lucide-react"
+import type { CSSProperties, ReactElement, ReactNode } from "react"
+import { FileText, Link2, Lock, MessageSquare, Pin, Play, Share2 } from "lucide-react"
 import { Badge } from "@ui/base/ui/badge"
+import { cn } from "@ui/base/lib/utils"
 import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
 import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
 import { formatCompactNumber } from "@ui/seo-shared/format-number"
@@ -10,7 +11,6 @@ import { markdownToText } from "@ui/seo-shared/markdown-to-text"
 import { RelativeTime } from "@ui/seo-shared/RelativeTime"
 import { VoteCluster } from "@ui/seo-shared/post/VoteCluster"
 import { MediaGallery, type MediaGalleryItem } from "@ui/seo-shared/post/MediaGallery"
-import { Film } from "lucide-react"
 
 export type PostRowPost = {
   id: string
@@ -34,25 +34,56 @@ export type PostRowPost = {
   media?: MediaGalleryItem[]
 }
 
-/** Small square thumbnail of a post's first media item, used in compact rows. */
-function CompactMediaThumb({ media }: { media: MediaGalleryItem[] }) {
-  const first = media[0]
-  if (!first) return null
-  if (first.mediaType === "video") {
+const COMPACT_THUMB = "h-20 w-28 shrink-0 overflow-hidden rounded-lg border"
+const COMPACT_THUMB_PLACEHOLDER = cn(
+  COMPACT_THUMB,
+  "flex items-center justify-center bg-muted text-muted-foreground",
+)
+
+/**
+ * Reddit-style left thumbnail for a compact row. Media images render the first
+ * item; videos and text posts show an icon placeholder; link posts show an
+ * external-link placeholder with the domain overlaid. For link posts the
+ * thumbnail is itself the external link (raised above the card overlay); for
+ * other types it stays static so a click falls through to the post-detail
+ * overlay, matching reddit's compact behavior.
+ */
+function CompactThumb({ post, media }: { post: PostRowPost; media: MediaGalleryItem[] }) {
+  const first = post.type === "media" ? media[0] : undefined
+
+  if (first && first.mediaType !== "video") {
     return (
-      <div className="flex size-12 shrink-0 items-center justify-center rounded-md border bg-muted text-muted-foreground">
-        <Film className="size-5" />
+      // oxlint-disable-next-line no-img-element
+      <img src={first.url} alt="" loading="lazy" className={cn(COMPACT_THUMB, "object-cover")} />
+    )
+  }
+  if (first && first.mediaType === "video") {
+    return (
+      <div className={COMPACT_THUMB_PLACEHOLDER}>
+        <Play className="size-6 fill-current" />
       </div>
     )
   }
+  if (post.type === "link" && post.linkUrl) {
+    return (
+      <a
+        href={post.linkUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={domainFromUrl(post.linkUrl)}
+        className={cn(COMPACT_THUMB_PLACEHOLDER, "relative z-10 hover:bg-muted/70")}
+      >
+        <Link2 className="size-6" />
+        <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-black/70 to-transparent px-1.5 py-1 text-[10px] font-medium text-white">
+          {domainFromUrl(post.linkUrl)}
+        </span>
+      </a>
+    )
+  }
   return (
-    // oxlint-disable-next-line no-img-element
-    <img
-      src={first.url}
-      alt=""
-      loading="lazy"
-      className="size-12 shrink-0 rounded-md border object-cover"
-    />
+    <div className={COMPACT_THUMB_PLACEHOLDER}>
+      <FileText className="size-6" />
+    </div>
   )
 }
 
@@ -78,6 +109,14 @@ export type PostRowProps = {
   menuSlot?: ReactNode
   /** Right-aligned Join control in the header (shown on multi-community feeds). */
   joinSlot?: ReactNode
+  /**
+   * Optionally enrich the r/community link with a hover card. Receives the plain
+   * link element and the community name and returns the wrapped node. Omit on the
+   * anon/SSR site so the link degrades to a plain anchor.
+   */
+  wrapCommunityLink?: (link: ReactElement, name: string) => ReactNode
+  /** Optionally enrich the u/author link with a hover card. See {@link wrapCommunityLink}. */
+  wrapAuthorLink?: (link: ReactElement, username: string) => ReactNode
 }
 
 function domainFromUrl(url: string): string {
@@ -124,15 +163,34 @@ function MetaLine({
   communityHref,
   authorHref,
   showCommunity,
-  compact,
+  wrapCommunityLink,
+  wrapAuthorLink,
 }: {
   post: PostRowPost
   communityHref?: string
   authorHref?: string
   showCommunity: boolean
-  compact?: boolean
+  wrapCommunityLink?: (link: ReactElement, name: string) => ReactNode
+  wrapAuthorLink?: (link: ReactElement, username: string) => ReactNode
 }) {
   const community = post.community
+  const author = post.author
+  // Links carry `relative z-10` so they sit above the full-card click overlay.
+  const communityLink =
+    community && communityHref ? (
+      <SeoLink
+        href={communityHref}
+        className="relative z-10 font-medium text-foreground hover:underline"
+      >
+        r/{community.name}
+      </SeoLink>
+    ) : null
+  const authorLink =
+    author && authorHref ? (
+      <SeoLink href={authorHref} className="relative z-10 hover:underline">
+        u/{author.username}
+      </SeoLink>
+    ) : null
   return (
     <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
       {post.stickyPosition !== null ? (
@@ -140,27 +198,29 @@ function MetaLine({
       ) : null}
       {showCommunity && community ? (
         <>
-          {!compact ? (
-            <CommunityIcon name={community.name} iconUrl={community.iconImageKey} size="sm" />
-          ) : null}
-          {communityHref ? (
-            <SeoLink href={communityHref} className="font-medium text-foreground hover:underline">
-              r/{community.name}
-            </SeoLink>
+          <CommunityIcon name={community.name} iconUrl={community.iconImageKey} size="sm" />
+          {communityLink ? (
+            wrapCommunityLink ? (
+              wrapCommunityLink(communityLink, community.name)
+            ) : (
+              communityLink
+            )
           ) : (
             <span className="font-medium text-foreground">r/{community.name}</span>
           )}
           <span aria-hidden>·</span>
         </>
       ) : null}
-      {(!showCommunity || !community) && post.author ? (
+      {(!showCommunity || !community) && author ? (
         <>
-          {authorHref ? (
-            <SeoLink href={authorHref} className="hover:underline">
-              u/{post.author.username}
-            </SeoLink>
+          {authorLink ? (
+            wrapAuthorLink ? (
+              wrapAuthorLink(authorLink, author.username)
+            ) : (
+              authorLink
+            )
           ) : (
-            <span>u/{post.author.username}</span>
+            <span>u/{author.username}</span>
           )}
           <span aria-hidden>·</span>
         </>
@@ -189,7 +249,7 @@ function Footer({
   shareSlot?: ReactNode
 }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="relative z-10 flex w-fit items-center gap-1.5">
       <VoteCluster
         score={post.score}
         userVote={post.userVote}
@@ -223,7 +283,7 @@ function Footer({
  * Reddit-style post row. Presentational and props-only: navigation goes through
  * `SeoLink` (each frontend aliases it to its router's link) and vote/share actions
  * are supplied by the caller. Two variants: `card` (full preview) and `compact`
- * (dense one-line). Shared between the Next.js SEO site and the dashboard SPA.
+ * (left thumbnail + dense row). Shared between the Next.js SEO site and the dashboard SPA.
  */
 export function PostRow({
   post,
@@ -239,53 +299,64 @@ export function PostRow({
   showCommunity = true,
   menuSlot,
   joinSlot,
+  wrapCommunityLink,
+  wrapAuthorLink,
 }: PostRowProps) {
   const media = post.media ?? []
   const hasMedia = post.type === "media" && media.length > 0
 
   if (variant === "compact") {
+    // Reddit compact row: left thumbnail + right column (header, title, action row).
+    // Whole-row click-through via the overlay anchor; interactive controls raised.
     return (
-      <article className="flex items-center gap-3 border-b px-3 py-2 last:border-b-0 hover:bg-muted/40">
-        <VoteCluster
-          score={post.score}
-          userVote={post.userVote}
-          onUpvote={onUpvote}
-          onDownvote={onDownvote}
-          disabled={voteDisabled}
-          size="sm"
-        />
-        {showCommunity && post.community ? (
-          <CommunityIcon
-            name={post.community.name}
-            iconUrl={post.community.iconImageKey}
-            size="sm"
-          />
-        ) : null}
-        <div className="min-w-0 flex-1">
-          <div className="flex min-w-0 items-center gap-1.5">
-            {post.isLocked ? <Lock className="size-3.5 shrink-0 text-muted-foreground" /> : null}
-            <SeoLink href={href} className="truncate text-sm font-medium hover:underline">
+      <article className="relative flex items-start gap-3 border-b px-3 py-3 last:border-b-0 hover:bg-muted/40">
+        {/* oxlint-disable-next-line jsx-a11y/anchor-has-content */}
+        <SeoLink href={href} aria-hidden tabIndex={-1} className="absolute inset-0" />
+        <CompactThumb post={post} media={media} />
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <MetaLine
+              post={post}
+              communityHref={communityHref}
+              authorHref={authorHref}
+              showCommunity={showCommunity}
+              wrapCommunityLink={wrapCommunityLink}
+              wrapAuthorLink={wrapAuthorLink}
+            />
+            {joinSlot ? <div className="relative z-10 ml-auto shrink-0">{joinSlot}</div> : null}
+          </div>
+
+          <div className="flex items-start gap-1.5">
+            {post.isLocked ? (
+              <Lock className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-label="Locked" />
+            ) : null}
+            <SeoLink
+              href={href}
+              className="relative z-10 line-clamp-2 text-base font-semibold leading-snug"
+            >
               {post.title}
             </SeoLink>
-            <Badges post={post} />
           </div>
-          <MetaLine
-            post={post}
-            communityHref={communityHref}
-            authorHref={authorHref}
-            showCommunity={showCommunity}
-            compact
-          />
+
+          {post.flair || post.isNsfw || post.isSpoiler || post.isOc ? (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Badges post={post} />
+            </div>
+          ) : null}
+
+          <div className="flex items-center gap-1.5">
+            <Footer
+              post={post}
+              href={href}
+              onUpvote={onUpvote}
+              onDownvote={onDownvote}
+              voteDisabled={voteDisabled}
+              onShare={onShare}
+              shareSlot={shareSlot}
+            />
+            {menuSlot ? <div className="relative z-10">{menuSlot}</div> : null}
+          </div>
         </div>
-        <SeoLink
-          href={href}
-          className="hidden shrink-0 items-center gap-1 text-xs text-muted-foreground hover:underline sm:inline-flex"
-        >
-          <MessageSquare className="size-4" />
-          {formatCompactNumber(post.commentCount)}
-        </SeoLink>
-        {hasMedia ? <CompactMediaThumb media={media} /> : null}
-        {menuSlot}
       </article>
     )
   }
@@ -293,15 +364,27 @@ export function PostRow({
   const preview = post.type === "text" && post.bodyMd ? markdownToText(post.bodyMd, 280) : null
 
   return (
-    <article className="flex flex-col gap-2 rounded-lg border-b px-3 py-3 transition-colors last:border-b-0 hover:bg-muted/40">
+    <article className="relative flex flex-col gap-2 rounded-lg border-b px-3 py-3 transition-colors last:border-b-0 hover:bg-muted/40">
+      {/*
+        Reddit-style whole-card click-through: a full-bleed overlay anchor
+        navigates to the post detail, while every interactive control (links,
+        votes, media, footer) carries `relative z-10` so it sits above the
+        overlay and captures its own clicks. Static content (body preview, empty
+        space) falls through to the overlay. The visible title link remains the
+        keyboard/screen-reader target; the overlay is decorative.
+      */}
+      {/* oxlint-disable-next-line jsx-a11y/anchor-has-content */}
+      <SeoLink href={href} aria-hidden tabIndex={-1} className="absolute inset-0" />
       <div className="flex items-center gap-2">
         <MetaLine
           post={post}
           communityHref={communityHref}
           authorHref={authorHref}
           showCommunity={showCommunity}
+          wrapCommunityLink={wrapCommunityLink}
+          wrapAuthorLink={wrapAuthorLink}
         />
-        <div className="ml-auto flex shrink-0 items-center gap-1">
+        <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1">
           {joinSlot}
           {menuSlot}
         </div>
@@ -311,7 +394,7 @@ export function PostRow({
         {post.isLocked ? (
           <Lock className="size-4 text-muted-foreground" aria-label="Locked" />
         ) : null}
-        <SeoLink href={href} className="text-lg font-semibold leading-snug hover:underline">
+        <SeoLink href={href} className="relative z-10 text-lg font-semibold leading-snug">
           {post.title}
         </SeoLink>
       </div>
@@ -321,7 +404,9 @@ export function PostRow({
       </div>
 
       {hasMedia ? (
-        <MediaGallery media={media} isNsfw={post.isNsfw} isSpoiler={post.isSpoiler} />
+        <div className="relative z-10">
+          <MediaGallery media={media} isNsfw={post.isNsfw} isSpoiler={post.isSpoiler} />
+        </div>
       ) : null}
 
       {preview ? <p className="line-clamp-3 text-sm text-muted-foreground">{preview}</p> : null}
@@ -331,7 +416,7 @@ export function PostRow({
           href={post.linkUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex w-fit items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-muted"
+          className="relative z-10 inline-flex w-fit items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-muted"
         >
           {domainFromUrl(post.linkUrl)}
         </a>

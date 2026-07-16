@@ -1,6 +1,6 @@
 "use client"
 
-import type { ReactNode } from "react"
+import type { ReactElement, ReactNode } from "react"
 import { ExternalLink, Lock, MessageSquare, Pin, Share2 } from "lucide-react"
 import { Badge } from "@ui/base/ui/badge"
 import { cn } from "@ui/base/lib/utils"
@@ -25,6 +25,10 @@ export type PostDetailCardProps = {
   shareSlot?: ReactNode
   /** Extra action slot (e.g. author/mod overflow menu). */
   menuSlot?: ReactNode
+  /** Optionally enrich the r/community link with a hover card (see PostRow). */
+  wrapCommunityLink?: (link: ReactElement, name: string) => ReactNode
+  /** Optionally enrich the u/author link with a hover card (see PostRow). */
+  wrapAuthorLink?: (link: ReactElement, username: string) => ReactNode
 }
 
 function domainFromUrl(url: string): string {
@@ -46,7 +50,21 @@ export function PostDetailCard({
   onShare,
   shareSlot,
   menuSlot,
+  wrapCommunityLink,
+  wrapAuthorLink,
 }: PostDetailCardProps) {
+  const communityLink =
+    post.community && communityHref ? (
+      <SeoLink href={communityHref} className="font-medium text-foreground hover:underline">
+        r/{post.community.name}
+      </SeoLink>
+    ) : null
+  const authorLink =
+    post.author && authorHref ? (
+      <SeoLink href={authorHref} className="hover:underline">
+        u/{post.author.username}
+      </SeoLink>
+    ) : null
   return (
     <article className="flex flex-col gap-3 rounded-lg border bg-card p-4">
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -60,10 +78,12 @@ export function PostDetailCard({
               iconUrl={post.community.iconImageKey}
               size="sm"
             />
-            {communityHref ? (
-              <SeoLink href={communityHref} className="font-medium text-foreground hover:underline">
-                r/{post.community.name}
-              </SeoLink>
+            {communityLink ? (
+              wrapCommunityLink ? (
+                wrapCommunityLink(communityLink, post.community.name)
+              ) : (
+                communityLink
+              )
             ) : (
               <span className="font-medium text-foreground">r/{post.community.name}</span>
             )}
@@ -73,10 +93,12 @@ export function PostDetailCard({
         {post.author ? (
           <>
             <span>Posted by</span>
-            {authorHref ? (
-              <SeoLink href={authorHref} className="hover:underline">
-                u/{post.author.username}
-              </SeoLink>
+            {authorLink ? (
+              wrapAuthorLink ? (
+                wrapAuthorLink(authorLink, post.author.username)
+              ) : (
+                authorLink
+              )
             ) : (
               <span>u/{post.author.username}</span>
             )}

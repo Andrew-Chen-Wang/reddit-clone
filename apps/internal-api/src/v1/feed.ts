@@ -104,6 +104,7 @@ const app = new Hono()
         windowStart: windowStartFor(query.t),
         excludeSticky: sort === "hot",
         viewerId: user?.id ?? null,
+        flairTemplateId: query.flairTemplateId ?? null,
       })
 
       const { results, nextCursor } = await cursorOffsetPaginate({

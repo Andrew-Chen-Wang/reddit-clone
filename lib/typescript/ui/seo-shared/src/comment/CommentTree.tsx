@@ -68,6 +68,10 @@ function nextVote(current: number, direction: 1 | -1): -1 | 0 | 1 {
  */
 export function CommentTree({ nodes, callbacks, postAuthorId, className }: CommentTreeProps) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(() => new Set())
+  // Id of the comment whose thread line is currently hovered. All connector
+  // segments belonging to that comment (its own stub + every child gutter)
+  // highlight together, matching Reddit's whole-line hover.
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   function toggleCollapse(id: string) {
     setCollapsed((prev) => {
@@ -81,15 +85,16 @@ export function CommentTree({ nodes, callbacks, postAuthorId, className }: Comme
   /**
    * @param isLast   whether this node is the last of its sibling group (controls
    *                 whether the parent's thread line continues past it).
-   * @param collapseParent collapses the parent's subtree — wired to the gutter
-   *                 line drawn to the left of this node (Reddit: clicking the
-   *                 line beside a reply collapses the comment it belongs to).
+   * @param parentId id of the parent comment. The gutter line drawn to the left
+   *                 of this node belongs to the parent — clicking it collapses
+   *                 the parent, and it hover-highlights with the parent's other
+   *                 connector segments (Reddit behaviour).
    */
   function renderNode(
     node: CommentTreeNode,
     visualDepth: number,
     isLast: boolean,
-    collapseParent?: () => void,
+    parentId?: string,
   ): ReactNode {
     const isCollapsed = collapsed.has(node.id)
     const atMaxDepth = visualDepth >= MAX_VISUAL_DEPTH
@@ -113,6 +118,10 @@ export function CommentTree({ nodes, callbacks, postAuthorId, className }: Comme
             toggleCollapse(node.id)
           }}
           hasThread={showChildrenArea}
+          connectorHovered={showChildrenArea && hoveredId === node.id}
+          onConnectorHoverChange={(h) => {
+            setHoveredId(h ? node.id : null)
+          }}
           postAuthorId={postAuthorId}
           collapsedCount={countLoadedDescendants(node)}
           voteDisabled={callbacks.voteDisabled}
@@ -157,15 +166,22 @@ export function CommentTree({ nodes, callbacks, postAuthorId, className }: Comme
                   child,
                   visualDepth + 1,
                   i === node.children.length - 1 && remaining === 0,
-                  () => {
-                    toggleCollapse(node.id)
-                  },
+                  node.id,
                 )}
               </Fragment>
             ))}
             {remaining > 0 ? (
               <div className="flex">
-                <ThreadGutter isLast onCollapse={undefined} />
+                <ThreadGutter
+                  isLast
+                  onCollapse={() => {
+                    toggleCollapse(node.id)
+                  }}
+                  hovered={hoveredId === node.id}
+                  onHoverChange={(h) => {
+                    setHoveredId(h ? node.id : null)
+                  }}
+                />
                 <div className="min-w-0 flex-1 pt-2">
                   <MoreReplies
                     node={node}
@@ -197,7 +213,20 @@ export function CommentTree({ nodes, callbacks, postAuthorId, className }: Comme
 
     return (
       <div className="flex">
-        <ThreadGutter isLast={isLast} onCollapse={collapseParent} />
+        <ThreadGutter
+          isLast={isLast}
+          onCollapse={
+            parentId
+              ? () => {
+                  toggleCollapse(parentId)
+                }
+              : undefined
+          }
+          hovered={parentId != null && hoveredId === parentId}
+          onHoverChange={(h) => {
+            setHoveredId(h ? (parentId ?? null) : null)
+          }}
+        />
         {main}
       </div>
     )
@@ -216,30 +245,65 @@ export function CommentTree({ nodes, callbacks, postAuthorId, className }: Comme
  * The 32px-wide left column drawn beside every non-root comment. It renders the
  * curved elbow that connects the parent's vertical thread line into this
  * comment's avatar, plus (when this isn't the last sibling) the straight
- * continuation carrying the line down to the next sibling. The continuation is a
- * click target that collapses the parent subtree.
+ * continuation carrying the line down to the next sibling. The whole gutter is a
+ * click target that collapses the parent subtree and highlights the parent's
+ * connector on hover (matching Reddit). Leaf comments render no gutter at all.
  */
-function ThreadGutter({ isLast, onCollapse }: { isLast: boolean; onCollapse?: () => void }) {
+function ThreadGutter({
+  isLast,
+  onCollapse,
+  hovered = false,
+  onHoverChange,
+}: {
+  isLast: boolean
+  onCollapse?: () => void
+  hovered?: boolean
+  onHoverChange?: (hovering: boolean) => void
+}) {
+  const lineColor = hovered ? "bg-foreground/50" : "bg-border"
+  const borderColor = hovered ? "border-foreground/50" : "border-border"
+  const elbow = (
+    <span
+      className={cn(
+        "pointer-events-none absolute top-0 left-1/2 h-[24px] w-1/2 rounded-bl-[12px] border-b border-l transition-colors",
+        borderColor,
+      )}
+    />
+  )
+  const continuation = !isLast ? (
+    <span
+      className={cn(
+        "pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 transition-colors",
+        lineColor,
+      )}
+    />
+  ) : null
+
+  if (!onCollapse) {
+    return (
+      <div className="relative w-8 shrink-0">
+        {elbow}
+        {continuation}
+      </div>
+    )
+  }
+
   return (
-    <div className="relative w-8 shrink-0">
-      {/* Curved elbow into the avatar (border-left + border-bottom + rounded corner). */}
-      <span className="pointer-events-none absolute top-0 left-1/2 h-[26px] w-1/2 rounded-bl-[11px] border-b border-l border-border" />
-      {/* Straight line to the next sibling; clicking it collapses the parent. */}
-      {!isLast ? (
-        onCollapse ? (
-          <button
-            type="button"
-            aria-label="Collapse thread"
-            onClick={onCollapse}
-            className="group/gline absolute inset-y-0 left-1/2 flex w-3 -translate-x-1/2 cursor-pointer justify-center"
-          >
-            <span className="w-px bg-border transition-colors group-hover/gline:bg-foreground/40" />
-          </button>
-        ) : (
-          <span className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border" />
-        )
-      ) : null}
-    </div>
+    <button
+      type="button"
+      aria-label="Collapse thread"
+      onClick={onCollapse}
+      onMouseEnter={() => {
+        onHoverChange?.(true)
+      }}
+      onMouseLeave={() => {
+        onHoverChange?.(false)
+      }}
+      className="relative w-8 shrink-0 cursor-pointer"
+    >
+      {elbow}
+      {continuation}
+    </button>
   )
 }
 

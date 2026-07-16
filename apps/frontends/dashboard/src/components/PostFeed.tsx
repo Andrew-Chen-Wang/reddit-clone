@@ -10,18 +10,25 @@ import { cn } from "@ui/base/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@ui/base/ui/dropdown-menu"
 import { PostRow, type PostRowPost } from "@ui/seo-shared/post/PostRow"
 import { PostFeedSkeleton } from "@ui/seo-shared/post/PostRowSkeleton"
 import { PostActionsMenu } from "@frontends/dashboard/components/PostActionsMenu"
 import { PostShareMenu } from "@frontends/dashboard/components/PostShareMenu"
+import {
+  CommunityLinkHoverCard,
+  UserLinkHoverCard,
+} from "@frontends/dashboard/components/PostHoverCards"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1CustomFeedByUsernameBySlugPosts,
   getApiV1FeedCommunityByName,
   getApiV1FeedHome,
+  getApiV1FeedMod,
   getApiV1FeedPopular,
   getApiV1FeedProfileByUsername,
   putApiV1PostVoteByPostId,
@@ -94,11 +101,12 @@ export type FeedSortDef = { value: string; label: string }
 
 /** Which backend feed this component pulls from. */
 export type FeedSource =
-  | { kind: "community"; name: string }
+  | { kind: "community"; name: string; flairTemplateId?: string }
   | { kind: "popular" }
   | { kind: "home" }
   | { kind: "profile"; username: string }
   | { kind: "customFeed"; username: string; slug: string }
+  | { kind: "mod" }
 
 type ViewMode = "card" | "compact"
 
@@ -121,7 +129,7 @@ async function fetchFeedPage(
   if (source.kind === "community") {
     const { data } = await getApiV1FeedCommunityByName({
       path: { name: source.name },
-      query: query as never,
+      query: { ...query, flairTemplateId: source.flairTemplateId } as never,
       throwOnError: true,
     })
     return data
@@ -146,6 +154,10 @@ async function fetchFeedPage(
     const { data } = await getApiV1FeedHome({ query: query as never, throwOnError: true })
     return data
   }
+  if (source.kind === "mod") {
+    const { data } = await getApiV1FeedMod({ query: query as never, throwOnError: true })
+    return data
+  }
   const { data } = await getApiV1FeedPopular({ query: query as never, throwOnError: true })
   return data
 }
@@ -153,7 +165,7 @@ async function fetchFeedPage(
 function feedQueryKey(source: FeedSource, sort: string, t: TopWindow): unknown[] {
   const base =
     source.kind === "community"
-      ? ["feed", "community", source.name]
+      ? ["feed", "community", source.name, source.flairTemplateId ?? null]
       : source.kind === "profile"
         ? ["feed", "profile", source.username]
         : source.kind === "customFeed"
@@ -364,27 +376,42 @@ export function PostFeed({
           </DropdownMenu>
         ) : null}
 
-        <div className="ml-auto flex items-center gap-1">
-          <Button
-            variant={view === "card" ? "secondary" : "ghost"}
-            size="icon-sm"
-            aria-label="Card view"
-            onClick={() => {
-              setViewMode("card")
-            }}
-          >
-            <LayoutList className="size-4" />
-          </Button>
-          <Button
-            variant={view === "compact" ? "secondary" : "ghost"}
-            size="icon-sm"
-            aria-label="Compact view"
-            onClick={() => {
-              setViewMode("compact")
-            }}
-          >
-            <Rows3 className="size-4" />
-          </Button>
+        <div className="ml-auto">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className={cn(buttonVariants({ variant: "ghost", size: "icon-sm" }))}
+              aria-label="Change view"
+            >
+              {view === "compact" ? (
+                <Rows3 className="size-4" />
+              ) : (
+                <LayoutList className="size-4" />
+              )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>View</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setViewMode("card")
+                  }}
+                >
+                  <LayoutList className="size-4" />
+                  Card
+                  {view === "card" ? <Check className="ml-auto size-4" /> : null}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setViewMode("compact")
+                  }}
+                >
+                  <Rows3 className="size-4" />
+                  Compact
+                  {view === "compact" ? <Check className="ml-auto size-4" /> : null}
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -420,6 +447,12 @@ export function PostFeed({
               communityHref={post.community ? `/r/${post.community.name}` : undefined}
               authorHref={post.author ? `/user/${post.author.username}` : undefined}
               showCommunity={showCommunity}
+              wrapCommunityLink={(link, name) => (
+                <CommunityLinkHoverCard name={name}>{link}</CommunityLinkHoverCard>
+              )}
+              wrapAuthorLink={(link, username) => (
+                <UserLinkHoverCard username={username}>{link}</UserLinkHoverCard>
+              )}
               onUpvote={() => {
                 vote(post, 1)
               }}
