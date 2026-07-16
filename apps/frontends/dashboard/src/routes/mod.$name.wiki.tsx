@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link, createFileRoute } from "@tanstack/react-router"
-import { Button, buttonVariants } from "@ui/base/ui/button"
+import { buttonVariants } from "@ui/base/ui/button"
 import { cn } from "@ui/base/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/base/ui/card"
 import { Input } from "@ui/base/ui/input"
@@ -119,7 +119,7 @@ function PagesList({ name }: { name: string }) {
                 <p className="text-xs text-muted-foreground">/{page.slug}</p>
               </div>
               <Link
-                to="/r_/$name/wiki/$"
+                to="/r/$name/wiki/$"
                 params={{ name, _splat: page.slug }}
                 className={cn(buttonVariants({ variant: "ghost", size: "icon-sm" }))}
                 aria-label="View and edit page"

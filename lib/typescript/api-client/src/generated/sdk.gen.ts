@@ -19,6 +19,18 @@ import type {
   DeleteApiV1CommunityRuleByIdData,
   DeleteApiV1CommunityRuleByIdErrors,
   DeleteApiV1CommunityRuleByIdResponses,
+  DeleteApiV1CommunityWidgetBookmarkByIdData,
+  DeleteApiV1CommunityWidgetBookmarkByIdErrors,
+  DeleteApiV1CommunityWidgetBookmarkByIdResponses,
+  DeleteApiV1CommunityWidgetWidgetByIdData,
+  DeleteApiV1CommunityWidgetWidgetByIdErrors,
+  DeleteApiV1CommunityWidgetWidgetByIdResponses,
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdData,
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdErrors,
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponses,
+  DeleteApiV1CustomFeedByIdData,
+  DeleteApiV1CustomFeedByIdErrors,
+  DeleteApiV1CustomFeedByIdResponses,
   DeleteApiV1DraftByIdData,
   DeleteApiV1DraftByIdErrors,
   DeleteApiV1DraftByIdResponses,
@@ -104,6 +116,17 @@ import type {
   GetApiV1CommunityNameAvailableResponses,
   GetApiV1CommunityRuleByCommunityIdData,
   GetApiV1CommunityRuleByCommunityIdResponses,
+  GetApiV1CommunityWidgetByCommunityNameData,
+  GetApiV1CommunityWidgetByCommunityNameErrors,
+  GetApiV1CommunityWidgetByCommunityNameResponses,
+  GetApiV1CustomFeedByUsernameBySlugData,
+  GetApiV1CustomFeedByUsernameBySlugErrors,
+  GetApiV1CustomFeedByUsernameBySlugPostsData,
+  GetApiV1CustomFeedByUsernameBySlugPostsErrors,
+  GetApiV1CustomFeedByUsernameBySlugPostsResponses,
+  GetApiV1CustomFeedByUsernameBySlugResponses,
+  GetApiV1CustomFeedMineData,
+  GetApiV1CustomFeedMineResponses,
   GetApiV1DraftByIdData,
   GetApiV1DraftByIdErrors,
   GetApiV1DraftByIdResponses,
@@ -179,6 +202,9 @@ import type {
   GetApiV1PostByIdData,
   GetApiV1PostByIdErrors,
   GetApiV1PostByIdResponses,
+  GetApiV1PostInsightsByPostIdData,
+  GetApiV1PostInsightsByPostIdErrors,
+  GetApiV1PostInsightsByPostIdResponses,
   GetApiV1RemovalReasonByCommunityIdData,
   GetApiV1RemovalReasonByCommunityIdErrors,
   GetApiV1RemovalReasonByCommunityIdResponses,
@@ -220,6 +246,15 @@ import type {
   GetApiV1UserUsernameAvailableData,
   GetApiV1UserUsernameAvailableErrors,
   GetApiV1UserUsernameAvailableResponses,
+  GetApiV1WikiByCommunityNameBySlugData,
+  GetApiV1WikiByCommunityNameBySlugErrors,
+  GetApiV1WikiByCommunityNameBySlugResponses,
+  GetApiV1WikiByCommunityNameBySlugRevisionsData,
+  GetApiV1WikiByCommunityNameBySlugRevisionsErrors,
+  GetApiV1WikiByCommunityNameBySlugRevisionsResponses,
+  GetApiV1WikiByCommunityNameData,
+  GetApiV1WikiByCommunityNameErrors,
+  GetApiV1WikiByCommunityNameResponses,
   PatchApiV1ChatByConversationIdData,
   PatchApiV1ChatByConversationIdErrors,
   PatchApiV1ChatByConversationIdResponses,
@@ -235,6 +270,15 @@ import type {
   PatchApiV1CommunityRuleByIdData,
   PatchApiV1CommunityRuleByIdErrors,
   PatchApiV1CommunityRuleByIdResponses,
+  PatchApiV1CommunityWidgetBookmarkByIdData,
+  PatchApiV1CommunityWidgetBookmarkByIdErrors,
+  PatchApiV1CommunityWidgetBookmarkByIdResponses,
+  PatchApiV1CommunityWidgetWidgetByIdData,
+  PatchApiV1CommunityWidgetWidgetByIdErrors,
+  PatchApiV1CommunityWidgetWidgetByIdResponses,
+  PatchApiV1CustomFeedByIdData,
+  PatchApiV1CustomFeedByIdErrors,
+  PatchApiV1CustomFeedByIdResponses,
   PatchApiV1DraftByIdData,
   PatchApiV1DraftByIdErrors,
   PatchApiV1DraftByIdResponses,
@@ -312,6 +356,15 @@ import type {
   PostApiV1CommunityRuleByCommunityIdData,
   PostApiV1CommunityRuleByCommunityIdErrors,
   PostApiV1CommunityRuleByCommunityIdResponses,
+  PostApiV1CommunityWidgetByCommunityIdBookmarkData,
+  PostApiV1CommunityWidgetByCommunityIdBookmarkErrors,
+  PostApiV1CommunityWidgetByCommunityIdBookmarkResponses,
+  PostApiV1CommunityWidgetByCommunityIdWidgetData,
+  PostApiV1CommunityWidgetByCommunityIdWidgetErrors,
+  PostApiV1CommunityWidgetByCommunityIdWidgetResponses,
+  PostApiV1CustomFeedData,
+  PostApiV1CustomFeedErrors,
+  PostApiV1CustomFeedResponses,
   PostApiV1DraftData,
   PostApiV1DraftErrors,
   PostApiV1DraftResponses,
@@ -429,6 +482,12 @@ import type {
   PostApiV1ScheduledPostData,
   PostApiV1ScheduledPostErrors,
   PostApiV1ScheduledPostResponses,
+  PostApiV1WikiByCommunityNameBySlugRevertData,
+  PostApiV1WikiByCommunityNameBySlugRevertErrors,
+  PostApiV1WikiByCommunityNameBySlugRevertResponses,
+  PostApiV1WikiByCommunityNameData,
+  PostApiV1WikiByCommunityNameErrors,
+  PostApiV1WikiByCommunityNameResponses,
   PutApiV1CommentActionFollowByCommentIdData,
   PutApiV1CommentActionFollowByCommentIdErrors,
   PutApiV1CommentActionFollowByCommentIdResponses,
@@ -441,6 +500,18 @@ import type {
   PutApiV1CommunityRuleByCommunityIdReorderData,
   PutApiV1CommunityRuleByCommunityIdReorderErrors,
   PutApiV1CommunityRuleByCommunityIdReorderResponses,
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderData,
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderErrors,
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponses,
+  PutApiV1CommunityWidgetByCommunityIdRelatedData,
+  PutApiV1CommunityWidgetByCommunityIdRelatedErrors,
+  PutApiV1CommunityWidgetByCommunityIdRelatedResponses,
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderData,
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderErrors,
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponses,
+  PutApiV1CustomFeedByIdCommunityByCommunityIdData,
+  PutApiV1CustomFeedByIdCommunityByCommunityIdErrors,
+  PutApiV1CustomFeedByIdCommunityByCommunityIdResponses,
   PutApiV1FlairByCommunityIdMyFlairData,
   PutApiV1FlairByCommunityIdMyFlairErrors,
   PutApiV1FlairByCommunityIdMyFlairResponses,
@@ -468,6 +539,9 @@ import type {
   PutApiV1UserFollowByUsernameData,
   PutApiV1UserFollowByUsernameErrors,
   PutApiV1UserFollowByUsernameResponses,
+  PutApiV1WikiByCommunityNameBySlugData,
+  PutApiV1WikiByCommunityNameBySlugErrors,
+  PutApiV1WikiByCommunityNameBySlugResponses,
 } from "./types.gen"
 
 export type Options<
@@ -931,6 +1005,219 @@ export const putApiV1CommunityRuleByCommunityIdReorder = <ThrowOnError extends b
   })
 
 /**
+ * A community's bookmarks, text widgets, and related communities
+ */
+export const getApiV1CommunityWidgetByCommunityName = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1CommunityWidgetByCommunityNameData, ThrowOnError>,
+): RequestResult<
+  GetApiV1CommunityWidgetByCommunityNameResponses,
+  GetApiV1CommunityWidgetByCommunityNameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1CommunityWidgetByCommunityNameResponses,
+    GetApiV1CommunityWidgetByCommunityNameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community-widget/{communityName}", ...options })
+
+/**
+ * Add a community bookmark (moderators with config permission)
+ */
+export const postApiV1CommunityWidgetByCommunityIdBookmark = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1CommunityWidgetByCommunityIdBookmarkData, ThrowOnError>,
+): RequestResult<
+  PostApiV1CommunityWidgetByCommunityIdBookmarkResponses,
+  PostApiV1CommunityWidgetByCommunityIdBookmarkErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1CommunityWidgetByCommunityIdBookmarkResponses,
+    PostApiV1CommunityWidgetByCommunityIdBookmarkErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-widget/{communityId}/bookmark",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Delete a community bookmark (moderators with config permission)
+ */
+export const deleteApiV1CommunityWidgetBookmarkById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1CommunityWidgetBookmarkByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1CommunityWidgetBookmarkByIdResponses,
+  DeleteApiV1CommunityWidgetBookmarkByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1CommunityWidgetBookmarkByIdResponses,
+    DeleteApiV1CommunityWidgetBookmarkByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community-widget/bookmark/{id}", ...options })
+
+/**
+ * Update a community bookmark (moderators with config permission)
+ */
+export const patchApiV1CommunityWidgetBookmarkById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1CommunityWidgetBookmarkByIdData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1CommunityWidgetBookmarkByIdResponses,
+  PatchApiV1CommunityWidgetBookmarkByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1CommunityWidgetBookmarkByIdResponses,
+    PatchApiV1CommunityWidgetBookmarkByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-widget/bookmark/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Reorder community bookmarks (moderators with config permission)
+ */
+export const putApiV1CommunityWidgetByCommunityIdBookmarkReorder = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutApiV1CommunityWidgetByCommunityIdBookmarkReorderData, ThrowOnError>,
+): RequestResult<
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponses,
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponses,
+    PutApiV1CommunityWidgetByCommunityIdBookmarkReorderErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-widget/{communityId}/bookmark/reorder",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Add a text widget (moderators with config permission)
+ */
+export const postApiV1CommunityWidgetByCommunityIdWidget = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1CommunityWidgetByCommunityIdWidgetData, ThrowOnError>,
+): RequestResult<
+  PostApiV1CommunityWidgetByCommunityIdWidgetResponses,
+  PostApiV1CommunityWidgetByCommunityIdWidgetErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1CommunityWidgetByCommunityIdWidgetResponses,
+    PostApiV1CommunityWidgetByCommunityIdWidgetErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-widget/{communityId}/widget",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Delete a text widget (moderators with config permission)
+ */
+export const deleteApiV1CommunityWidgetWidgetById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1CommunityWidgetWidgetByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1CommunityWidgetWidgetByIdResponses,
+  DeleteApiV1CommunityWidgetWidgetByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1CommunityWidgetWidgetByIdResponses,
+    DeleteApiV1CommunityWidgetWidgetByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/community-widget/widget/{id}", ...options })
+
+/**
+ * Update a text widget (moderators with config permission)
+ */
+export const patchApiV1CommunityWidgetWidgetById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1CommunityWidgetWidgetByIdData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1CommunityWidgetWidgetByIdResponses,
+  PatchApiV1CommunityWidgetWidgetByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1CommunityWidgetWidgetByIdResponses,
+    PatchApiV1CommunityWidgetWidgetByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-widget/widget/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Reorder text widgets (moderators with config permission)
+ */
+export const putApiV1CommunityWidgetByCommunityIdWidgetReorder = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PutApiV1CommunityWidgetByCommunityIdWidgetReorderData, ThrowOnError>,
+): RequestResult<
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponses,
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponses,
+    PutApiV1CommunityWidgetByCommunityIdWidgetReorderErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-widget/{communityId}/widget/reorder",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Set the related communities list (moderators with config permission)
+ */
+export const putApiV1CommunityWidgetByCommunityIdRelated = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1CommunityWidgetByCommunityIdRelatedData, ThrowOnError>,
+): RequestResult<
+  PutApiV1CommunityWidgetByCommunityIdRelatedResponses,
+  PutApiV1CommunityWidgetByCommunityIdRelatedErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1CommunityWidgetByCommunityIdRelatedResponses,
+    PutApiV1CommunityWidgetByCommunityIdRelatedErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/community-widget/{communityId}/related",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
  * List pending join requests (moderators with users permission)
  */
 export const getApiV1CommunityJoinRequestByCommunityIdPending = <
@@ -979,6 +1266,254 @@ export const postApiV1CommunityJoinRequestByIdDeny = <ThrowOnError extends boole
     PostApiV1CommunityJoinRequestByIdDenyErrors,
     ThrowOnError
   >({ url: "/api/v1/community-join-request/{id}/deny", ...options })
+
+/**
+ * Public detail for a user's custom feed
+ */
+export const getApiV1CustomFeedByUsernameBySlug = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1CustomFeedByUsernameBySlugData, ThrowOnError>,
+): RequestResult<
+  GetApiV1CustomFeedByUsernameBySlugResponses,
+  GetApiV1CustomFeedByUsernameBySlugErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1CustomFeedByUsernameBySlugResponses,
+    GetApiV1CustomFeedByUsernameBySlugErrors,
+    ThrowOnError
+  >({ url: "/api/v1/custom-feed/{username}/{slug}", ...options })
+
+/**
+ * Posts across the communities in a custom feed
+ */
+export const getApiV1CustomFeedByUsernameBySlugPosts = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1CustomFeedByUsernameBySlugPostsData, ThrowOnError>,
+): RequestResult<
+  GetApiV1CustomFeedByUsernameBySlugPostsResponses,
+  GetApiV1CustomFeedByUsernameBySlugPostsErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1CustomFeedByUsernameBySlugPostsResponses,
+    GetApiV1CustomFeedByUsernameBySlugPostsErrors,
+    ThrowOnError
+  >({ url: "/api/v1/custom-feed/{username}/{slug}/posts", ...options })
+
+/**
+ * The current user's custom feeds
+ */
+export const getApiV1CustomFeedMine = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1CustomFeedMineData, ThrowOnError>,
+): RequestResult<GetApiV1CustomFeedMineResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1CustomFeedMineResponses, unknown, ThrowOnError>({
+    url: "/api/v1/custom-feed/mine",
+    ...options,
+  })
+
+/**
+ * Create a custom feed
+ */
+export const postApiV1CustomFeed = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1CustomFeedData, ThrowOnError>,
+): RequestResult<PostApiV1CustomFeedResponses, PostApiV1CustomFeedErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1CustomFeedResponses,
+    PostApiV1CustomFeedErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/custom-feed",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Delete a custom feed (owner only)
+ */
+export const deleteApiV1CustomFeedById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1CustomFeedByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1CustomFeedByIdResponses,
+  DeleteApiV1CustomFeedByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1CustomFeedByIdResponses,
+    DeleteApiV1CustomFeedByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/custom-feed/{id}", ...options })
+
+/**
+ * Update a custom feed (owner only)
+ */
+export const patchApiV1CustomFeedById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1CustomFeedByIdData, ThrowOnError>,
+): RequestResult<PatchApiV1CustomFeedByIdResponses, PatchApiV1CustomFeedByIdErrors, ThrowOnError> =>
+  (options.client ?? client).patch<
+    PatchApiV1CustomFeedByIdResponses,
+    PatchApiV1CustomFeedByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/custom-feed/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Remove a community from a custom feed (owner only)
+ */
+export const deleteApiV1CustomFeedByIdCommunityByCommunityId = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteApiV1CustomFeedByIdCommunityByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponses,
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponses,
+    DeleteApiV1CustomFeedByIdCommunityByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/custom-feed/{id}/community/{communityId}", ...options })
+
+/**
+ * Add a community to a custom feed (owner only)
+ */
+export const putApiV1CustomFeedByIdCommunityByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1CustomFeedByIdCommunityByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  PutApiV1CustomFeedByIdCommunityByCommunityIdResponses,
+  PutApiV1CustomFeedByIdCommunityByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1CustomFeedByIdCommunityByCommunityIdResponses,
+    PutApiV1CustomFeedByIdCommunityByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/custom-feed/{id}/community/{communityId}", ...options })
+
+/**
+ * List a community's wiki pages
+ */
+export const getApiV1WikiByCommunityName = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1WikiByCommunityNameData, ThrowOnError>,
+): RequestResult<
+  GetApiV1WikiByCommunityNameResponses,
+  GetApiV1WikiByCommunityNameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1WikiByCommunityNameResponses,
+    GetApiV1WikiByCommunityNameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/wiki/{communityName}", ...options })
+
+/**
+ * Create a wiki page (moderators with wiki permission)
+ */
+export const postApiV1WikiByCommunityName = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1WikiByCommunityNameData, ThrowOnError>,
+): RequestResult<
+  PostApiV1WikiByCommunityNameResponses,
+  PostApiV1WikiByCommunityNameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1WikiByCommunityNameResponses,
+    PostApiV1WikiByCommunityNameErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/wiki/{communityName}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Get a wiki page with its current revision
+ */
+export const getApiV1WikiByCommunityNameBySlug = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1WikiByCommunityNameBySlugData, ThrowOnError>,
+): RequestResult<
+  GetApiV1WikiByCommunityNameBySlugResponses,
+  GetApiV1WikiByCommunityNameBySlugErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1WikiByCommunityNameBySlugResponses,
+    GetApiV1WikiByCommunityNameBySlugErrors,
+    ThrowOnError
+  >({ url: "/api/v1/wiki/{communityName}/{slug}", ...options })
+
+/**
+ * Save a new revision of a wiki page (moderators with wiki permission)
+ */
+export const putApiV1WikiByCommunityNameBySlug = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1WikiByCommunityNameBySlugData, ThrowOnError>,
+): RequestResult<
+  PutApiV1WikiByCommunityNameBySlugResponses,
+  PutApiV1WikiByCommunityNameBySlugErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1WikiByCommunityNameBySlugResponses,
+    PutApiV1WikiByCommunityNameBySlugErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/wiki/{communityName}/{slug}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * List a wiki page's revision history
+ */
+export const getApiV1WikiByCommunityNameBySlugRevisions = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1WikiByCommunityNameBySlugRevisionsData, ThrowOnError>,
+): RequestResult<
+  GetApiV1WikiByCommunityNameBySlugRevisionsResponses,
+  GetApiV1WikiByCommunityNameBySlugRevisionsErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1WikiByCommunityNameBySlugRevisionsResponses,
+    GetApiV1WikiByCommunityNameBySlugRevisionsErrors,
+    ThrowOnError
+  >({ url: "/api/v1/wiki/{communityName}/{slug}/revisions", ...options })
+
+/**
+ * Revert a wiki page to a prior revision (moderators with wiki permission)
+ */
+export const postApiV1WikiByCommunityNameBySlugRevert = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1WikiByCommunityNameBySlugRevertData, ThrowOnError>,
+): RequestResult<
+  PostApiV1WikiByCommunityNameBySlugRevertResponses,
+  PostApiV1WikiByCommunityNameBySlugRevertErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1WikiByCommunityNameBySlugRevertResponses,
+    PostApiV1WikiByCommunityNameBySlugRevertErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/wiki/{communityName}/{slug}/revert",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
 
 /**
  * List a community's post flair templates
@@ -1305,6 +1840,22 @@ export const postApiV1Post = <ThrowOnError extends boolean = false>(
       ...options?.headers,
     },
   })
+
+/**
+ * Insights for a post (author only)
+ */
+export const getApiV1PostInsightsByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1PostInsightsByPostIdData, ThrowOnError>,
+): RequestResult<
+  GetApiV1PostInsightsByPostIdResponses,
+  GetApiV1PostInsightsByPostIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1PostInsightsByPostIdResponses,
+    GetApiV1PostInsightsByPostIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/post-insights/{postId}", ...options })
 
 /**
  * Upvote, downvote, or clear a vote on a post

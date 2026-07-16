@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
+import { formatCompactNumber } from "@ui/seo-shared/format-number"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
 import { PostDetailCard } from "@ui/seo-shared/post/PostDetailCard"
 import type { CommentSortValue } from "@ui/seo-shared/comment/types"
@@ -157,6 +158,18 @@ function PostDetailPage() {
             />
           }
         />
+
+        {post.isAuthor ? (
+          <div className="mt-2 flex justify-end">
+            <Link
+              to="/poststats/$postId"
+              params={{ postId }}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              {formatCompactNumber(post.viewCount)} views · See more insights →
+            </Link>
+          </div>
+        ) : null}
 
         <PostCommentSearch postId={postId} communityName={name} />
 

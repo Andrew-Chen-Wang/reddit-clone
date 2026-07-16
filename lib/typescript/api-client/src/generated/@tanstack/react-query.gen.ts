@@ -16,6 +16,10 @@ import {
   deleteApiV1CommentActionSaveByCommentId,
   deleteApiV1CommentById,
   deleteApiV1CommunityRuleById,
+  deleteApiV1CommunityWidgetBookmarkById,
+  deleteApiV1CommunityWidgetWidgetById,
+  deleteApiV1CustomFeedById,
+  deleteApiV1CustomFeedByIdCommunityByCommunityId,
   deleteApiV1DraftById,
   deleteApiV1FlairPostTemplatesById,
   deleteApiV1FlairUserTemplatesById,
@@ -48,6 +52,10 @@ import {
   getApiV1CommunityMemberModerated,
   getApiV1CommunityNameAvailable,
   getApiV1CommunityRuleByCommunityId,
+  getApiV1CommunityWidgetByCommunityName,
+  getApiV1CustomFeedByUsernameBySlug,
+  getApiV1CustomFeedByUsernameBySlugPosts,
+  getApiV1CustomFeedMine,
   getApiV1Draft,
   getApiV1DraftById,
   getApiV1Explore,
@@ -78,6 +86,7 @@ import {
   getApiV1NotificationPreferences,
   getApiV1NotificationUnreadCount,
   getApiV1PostById,
+  getApiV1PostInsightsByPostId,
   getApiV1RemovalReasonByCommunityId,
   getApiV1ScheduledPostCommunityByCommunityId,
   getApiV1ScheduledPostMine,
@@ -95,12 +104,18 @@ import {
   getApiV1UserMeSettings,
   getApiV1UserMeUpvoted,
   getApiV1UserUsernameAvailable,
+  getApiV1WikiByCommunityName,
+  getApiV1WikiByCommunityNameBySlug,
+  getApiV1WikiByCommunityNameBySlugRevisions,
   type Options,
   patchApiV1ChatByConversationId,
   patchApiV1CommentById,
   patchApiV1CommunityById,
   patchApiV1CommunityMemberByCommunityIdMembership,
   patchApiV1CommunityRuleById,
+  patchApiV1CommunityWidgetBookmarkById,
+  patchApiV1CommunityWidgetWidgetById,
+  patchApiV1CustomFeedById,
   patchApiV1DraftById,
   patchApiV1FlairPostTemplatesById,
   patchApiV1FlairUserTemplatesById,
@@ -127,6 +142,9 @@ import {
   postApiV1CommunityMemberByCommunityIdJoin,
   postApiV1CommunityMemberByCommunityIdLeave,
   postApiV1CommunityRuleByCommunityId,
+  postApiV1CommunityWidgetByCommunityIdBookmark,
+  postApiV1CommunityWidgetByCommunityIdWidget,
+  postApiV1CustomFeed,
   postApiV1Draft,
   postApiV1FlairByCommunityIdPostTemplates,
   postApiV1FlairByCommunityIdUserTemplates,
@@ -167,10 +185,16 @@ import {
   postApiV1ReportCommentByCommentId,
   postApiV1ReportPostByPostId,
   postApiV1ScheduledPost,
+  postApiV1WikiByCommunityName,
+  postApiV1WikiByCommunityNameBySlugRevert,
   putApiV1CommentActionFollowByCommentId,
   putApiV1CommentActionSaveByCommentId,
   putApiV1CommentVoteByCommentId,
   putApiV1CommunityRuleByCommunityIdReorder,
+  putApiV1CommunityWidgetByCommunityIdBookmarkReorder,
+  putApiV1CommunityWidgetByCommunityIdRelated,
+  putApiV1CommunityWidgetByCommunityIdWidgetReorder,
+  putApiV1CustomFeedByIdCommunityByCommunityId,
   putApiV1FlairByCommunityIdMyFlair,
   putApiV1MutedCommunityByCommunityId,
   putApiV1NotificationPreferences,
@@ -180,6 +204,7 @@ import {
   putApiV1PostVoteByPostId,
   putApiV1UserBlockByUsername,
   putApiV1UserFollowByUsername,
+  putApiV1WikiByCommunityNameBySlug,
 } from "../sdk.gen"
 import type {
   DeleteApiV1ChatByConversationIdParticipantsByUserIdData,
@@ -198,6 +223,18 @@ import type {
   DeleteApiV1CommunityRuleByIdData,
   DeleteApiV1CommunityRuleByIdError,
   DeleteApiV1CommunityRuleByIdResponse,
+  DeleteApiV1CommunityWidgetBookmarkByIdData,
+  DeleteApiV1CommunityWidgetBookmarkByIdError,
+  DeleteApiV1CommunityWidgetBookmarkByIdResponse,
+  DeleteApiV1CommunityWidgetWidgetByIdData,
+  DeleteApiV1CommunityWidgetWidgetByIdError,
+  DeleteApiV1CommunityWidgetWidgetByIdResponse,
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdData,
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdError,
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponse,
+  DeleteApiV1CustomFeedByIdData,
+  DeleteApiV1CustomFeedByIdError,
+  DeleteApiV1CustomFeedByIdResponse,
   DeleteApiV1DraftByIdData,
   DeleteApiV1DraftByIdError,
   DeleteApiV1DraftByIdResponse,
@@ -283,6 +320,17 @@ import type {
   GetApiV1CommunityNameAvailableResponse,
   GetApiV1CommunityRuleByCommunityIdData,
   GetApiV1CommunityRuleByCommunityIdResponse,
+  GetApiV1CommunityWidgetByCommunityNameData,
+  GetApiV1CommunityWidgetByCommunityNameError,
+  GetApiV1CommunityWidgetByCommunityNameResponse,
+  GetApiV1CustomFeedByUsernameBySlugData,
+  GetApiV1CustomFeedByUsernameBySlugError,
+  GetApiV1CustomFeedByUsernameBySlugPostsData,
+  GetApiV1CustomFeedByUsernameBySlugPostsError,
+  GetApiV1CustomFeedByUsernameBySlugPostsResponse,
+  GetApiV1CustomFeedByUsernameBySlugResponse,
+  GetApiV1CustomFeedMineData,
+  GetApiV1CustomFeedMineResponse,
   GetApiV1DraftByIdData,
   GetApiV1DraftByIdError,
   GetApiV1DraftByIdResponse,
@@ -358,6 +406,9 @@ import type {
   GetApiV1PostByIdData,
   GetApiV1PostByIdError,
   GetApiV1PostByIdResponse,
+  GetApiV1PostInsightsByPostIdData,
+  GetApiV1PostInsightsByPostIdError,
+  GetApiV1PostInsightsByPostIdResponse,
   GetApiV1RemovalReasonByCommunityIdData,
   GetApiV1RemovalReasonByCommunityIdError,
   GetApiV1RemovalReasonByCommunityIdResponse,
@@ -399,6 +450,15 @@ import type {
   GetApiV1UserUsernameAvailableData,
   GetApiV1UserUsernameAvailableError,
   GetApiV1UserUsernameAvailableResponse,
+  GetApiV1WikiByCommunityNameBySlugData,
+  GetApiV1WikiByCommunityNameBySlugError,
+  GetApiV1WikiByCommunityNameBySlugResponse,
+  GetApiV1WikiByCommunityNameBySlugRevisionsData,
+  GetApiV1WikiByCommunityNameBySlugRevisionsError,
+  GetApiV1WikiByCommunityNameBySlugRevisionsResponse,
+  GetApiV1WikiByCommunityNameData,
+  GetApiV1WikiByCommunityNameError,
+  GetApiV1WikiByCommunityNameResponse,
   PatchApiV1ChatByConversationIdData,
   PatchApiV1ChatByConversationIdError,
   PatchApiV1ChatByConversationIdResponse,
@@ -414,6 +474,15 @@ import type {
   PatchApiV1CommunityRuleByIdData,
   PatchApiV1CommunityRuleByIdError,
   PatchApiV1CommunityRuleByIdResponse,
+  PatchApiV1CommunityWidgetBookmarkByIdData,
+  PatchApiV1CommunityWidgetBookmarkByIdError,
+  PatchApiV1CommunityWidgetBookmarkByIdResponse,
+  PatchApiV1CommunityWidgetWidgetByIdData,
+  PatchApiV1CommunityWidgetWidgetByIdError,
+  PatchApiV1CommunityWidgetWidgetByIdResponse,
+  PatchApiV1CustomFeedByIdData,
+  PatchApiV1CustomFeedByIdError,
+  PatchApiV1CustomFeedByIdResponse,
   PatchApiV1DraftByIdData,
   PatchApiV1DraftByIdError,
   PatchApiV1DraftByIdResponse,
@@ -491,6 +560,15 @@ import type {
   PostApiV1CommunityRuleByCommunityIdData,
   PostApiV1CommunityRuleByCommunityIdError,
   PostApiV1CommunityRuleByCommunityIdResponse,
+  PostApiV1CommunityWidgetByCommunityIdBookmarkData,
+  PostApiV1CommunityWidgetByCommunityIdBookmarkError,
+  PostApiV1CommunityWidgetByCommunityIdBookmarkResponse,
+  PostApiV1CommunityWidgetByCommunityIdWidgetData,
+  PostApiV1CommunityWidgetByCommunityIdWidgetError,
+  PostApiV1CommunityWidgetByCommunityIdWidgetResponse,
+  PostApiV1CustomFeedData,
+  PostApiV1CustomFeedError,
+  PostApiV1CustomFeedResponse,
   PostApiV1DraftData,
   PostApiV1DraftError,
   PostApiV1DraftResponse,
@@ -608,6 +686,12 @@ import type {
   PostApiV1ScheduledPostData,
   PostApiV1ScheduledPostError,
   PostApiV1ScheduledPostResponse,
+  PostApiV1WikiByCommunityNameBySlugRevertData,
+  PostApiV1WikiByCommunityNameBySlugRevertError,
+  PostApiV1WikiByCommunityNameBySlugRevertResponse,
+  PostApiV1WikiByCommunityNameData,
+  PostApiV1WikiByCommunityNameError,
+  PostApiV1WikiByCommunityNameResponse,
   PutApiV1CommentActionFollowByCommentIdData,
   PutApiV1CommentActionFollowByCommentIdError,
   PutApiV1CommentActionFollowByCommentIdResponse,
@@ -620,6 +704,18 @@ import type {
   PutApiV1CommunityRuleByCommunityIdReorderData,
   PutApiV1CommunityRuleByCommunityIdReorderError,
   PutApiV1CommunityRuleByCommunityIdReorderResponse,
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderData,
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderError,
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponse,
+  PutApiV1CommunityWidgetByCommunityIdRelatedData,
+  PutApiV1CommunityWidgetByCommunityIdRelatedError,
+  PutApiV1CommunityWidgetByCommunityIdRelatedResponse,
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderData,
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderError,
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponse,
+  PutApiV1CustomFeedByIdCommunityByCommunityIdData,
+  PutApiV1CustomFeedByIdCommunityByCommunityIdError,
+  PutApiV1CustomFeedByIdCommunityByCommunityIdResponse,
   PutApiV1FlairByCommunityIdMyFlairData,
   PutApiV1FlairByCommunityIdMyFlairError,
   PutApiV1FlairByCommunityIdMyFlairResponse,
@@ -647,6 +743,9 @@ import type {
   PutApiV1UserFollowByUsernameData,
   PutApiV1UserFollowByUsernameError,
   PutApiV1UserFollowByUsernameResponse,
+  PutApiV1WikiByCommunityNameBySlugData,
+  PutApiV1WikiByCommunityNameBySlugError,
+  PutApiV1WikiByCommunityNameBySlugResponse,
 } from "../types.gen"
 
 export type QueryKey<TOptions extends Options> = [
@@ -1759,6 +1858,277 @@ export const putApiV1CommunityRuleByCommunityIdReorderMutation = (
   return mutationOptions
 }
 
+export const getApiV1CommunityWidgetByCommunityNameQueryKey = (
+  options: Options<GetApiV1CommunityWidgetByCommunityNameData>,
+) => createQueryKey("getApiV1CommunityWidgetByCommunityName", options)
+
+/**
+ * A community's bookmarks, text widgets, and related communities
+ */
+export const getApiV1CommunityWidgetByCommunityNameOptions = (
+  options: Options<GetApiV1CommunityWidgetByCommunityNameData>,
+) =>
+  queryOptions<
+    GetApiV1CommunityWidgetByCommunityNameResponse,
+    GetApiV1CommunityWidgetByCommunityNameError,
+    GetApiV1CommunityWidgetByCommunityNameResponse,
+    ReturnType<typeof getApiV1CommunityWidgetByCommunityNameQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1CommunityWidgetByCommunityName({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1CommunityWidgetByCommunityNameQueryKey(options),
+  })
+
+/**
+ * Add a community bookmark (moderators with config permission)
+ */
+export const postApiV1CommunityWidgetByCommunityIdBookmarkMutation = (
+  options?: Partial<Options<PostApiV1CommunityWidgetByCommunityIdBookmarkData>>,
+): UseMutationOptions<
+  PostApiV1CommunityWidgetByCommunityIdBookmarkResponse,
+  PostApiV1CommunityWidgetByCommunityIdBookmarkError,
+  Options<PostApiV1CommunityWidgetByCommunityIdBookmarkData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1CommunityWidgetByCommunityIdBookmarkResponse,
+    PostApiV1CommunityWidgetByCommunityIdBookmarkError,
+    Options<PostApiV1CommunityWidgetByCommunityIdBookmarkData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1CommunityWidgetByCommunityIdBookmark({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Delete a community bookmark (moderators with config permission)
+ */
+export const deleteApiV1CommunityWidgetBookmarkByIdMutation = (
+  options?: Partial<Options<DeleteApiV1CommunityWidgetBookmarkByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1CommunityWidgetBookmarkByIdResponse,
+  DeleteApiV1CommunityWidgetBookmarkByIdError,
+  Options<DeleteApiV1CommunityWidgetBookmarkByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1CommunityWidgetBookmarkByIdResponse,
+    DeleteApiV1CommunityWidgetBookmarkByIdError,
+    Options<DeleteApiV1CommunityWidgetBookmarkByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1CommunityWidgetBookmarkById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Update a community bookmark (moderators with config permission)
+ */
+export const patchApiV1CommunityWidgetBookmarkByIdMutation = (
+  options?: Partial<Options<PatchApiV1CommunityWidgetBookmarkByIdData>>,
+): UseMutationOptions<
+  PatchApiV1CommunityWidgetBookmarkByIdResponse,
+  PatchApiV1CommunityWidgetBookmarkByIdError,
+  Options<PatchApiV1CommunityWidgetBookmarkByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1CommunityWidgetBookmarkByIdResponse,
+    PatchApiV1CommunityWidgetBookmarkByIdError,
+    Options<PatchApiV1CommunityWidgetBookmarkByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1CommunityWidgetBookmarkById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Reorder community bookmarks (moderators with config permission)
+ */
+export const putApiV1CommunityWidgetByCommunityIdBookmarkReorderMutation = (
+  options?: Partial<Options<PutApiV1CommunityWidgetByCommunityIdBookmarkReorderData>>,
+): UseMutationOptions<
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponse,
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderError,
+  Options<PutApiV1CommunityWidgetByCommunityIdBookmarkReorderData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponse,
+    PutApiV1CommunityWidgetByCommunityIdBookmarkReorderError,
+    Options<PutApiV1CommunityWidgetByCommunityIdBookmarkReorderData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1CommunityWidgetByCommunityIdBookmarkReorder({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Add a text widget (moderators with config permission)
+ */
+export const postApiV1CommunityWidgetByCommunityIdWidgetMutation = (
+  options?: Partial<Options<PostApiV1CommunityWidgetByCommunityIdWidgetData>>,
+): UseMutationOptions<
+  PostApiV1CommunityWidgetByCommunityIdWidgetResponse,
+  PostApiV1CommunityWidgetByCommunityIdWidgetError,
+  Options<PostApiV1CommunityWidgetByCommunityIdWidgetData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1CommunityWidgetByCommunityIdWidgetResponse,
+    PostApiV1CommunityWidgetByCommunityIdWidgetError,
+    Options<PostApiV1CommunityWidgetByCommunityIdWidgetData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1CommunityWidgetByCommunityIdWidget({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Delete a text widget (moderators with config permission)
+ */
+export const deleteApiV1CommunityWidgetWidgetByIdMutation = (
+  options?: Partial<Options<DeleteApiV1CommunityWidgetWidgetByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1CommunityWidgetWidgetByIdResponse,
+  DeleteApiV1CommunityWidgetWidgetByIdError,
+  Options<DeleteApiV1CommunityWidgetWidgetByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1CommunityWidgetWidgetByIdResponse,
+    DeleteApiV1CommunityWidgetWidgetByIdError,
+    Options<DeleteApiV1CommunityWidgetWidgetByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1CommunityWidgetWidgetById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Update a text widget (moderators with config permission)
+ */
+export const patchApiV1CommunityWidgetWidgetByIdMutation = (
+  options?: Partial<Options<PatchApiV1CommunityWidgetWidgetByIdData>>,
+): UseMutationOptions<
+  PatchApiV1CommunityWidgetWidgetByIdResponse,
+  PatchApiV1CommunityWidgetWidgetByIdError,
+  Options<PatchApiV1CommunityWidgetWidgetByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1CommunityWidgetWidgetByIdResponse,
+    PatchApiV1CommunityWidgetWidgetByIdError,
+    Options<PatchApiV1CommunityWidgetWidgetByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1CommunityWidgetWidgetById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Reorder text widgets (moderators with config permission)
+ */
+export const putApiV1CommunityWidgetByCommunityIdWidgetReorderMutation = (
+  options?: Partial<Options<PutApiV1CommunityWidgetByCommunityIdWidgetReorderData>>,
+): UseMutationOptions<
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponse,
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderError,
+  Options<PutApiV1CommunityWidgetByCommunityIdWidgetReorderData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponse,
+    PutApiV1CommunityWidgetByCommunityIdWidgetReorderError,
+    Options<PutApiV1CommunityWidgetByCommunityIdWidgetReorderData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1CommunityWidgetByCommunityIdWidgetReorder({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Set the related communities list (moderators with config permission)
+ */
+export const putApiV1CommunityWidgetByCommunityIdRelatedMutation = (
+  options?: Partial<Options<PutApiV1CommunityWidgetByCommunityIdRelatedData>>,
+): UseMutationOptions<
+  PutApiV1CommunityWidgetByCommunityIdRelatedResponse,
+  PutApiV1CommunityWidgetByCommunityIdRelatedError,
+  Options<PutApiV1CommunityWidgetByCommunityIdRelatedData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1CommunityWidgetByCommunityIdRelatedResponse,
+    PutApiV1CommunityWidgetByCommunityIdRelatedError,
+    Options<PutApiV1CommunityWidgetByCommunityIdRelatedData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1CommunityWidgetByCommunityIdRelated({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
 export const getApiV1CommunityJoinRequestByCommunityIdPendingQueryKey = (
   options: Options<GetApiV1CommunityJoinRequestByCommunityIdPendingData>,
 ) => createQueryKey("getApiV1CommunityJoinRequestByCommunityIdPending", options)
@@ -1831,6 +2201,439 @@ export const postApiV1CommunityJoinRequestByIdDenyMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await postApiV1CommunityJoinRequestByIdDeny({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1CustomFeedByUsernameBySlugQueryKey = (
+  options: Options<GetApiV1CustomFeedByUsernameBySlugData>,
+) => createQueryKey("getApiV1CustomFeedByUsernameBySlug", options)
+
+/**
+ * Public detail for a user's custom feed
+ */
+export const getApiV1CustomFeedByUsernameBySlugOptions = (
+  options: Options<GetApiV1CustomFeedByUsernameBySlugData>,
+) =>
+  queryOptions<
+    GetApiV1CustomFeedByUsernameBySlugResponse,
+    GetApiV1CustomFeedByUsernameBySlugError,
+    GetApiV1CustomFeedByUsernameBySlugResponse,
+    ReturnType<typeof getApiV1CustomFeedByUsernameBySlugQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1CustomFeedByUsernameBySlug({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1CustomFeedByUsernameBySlugQueryKey(options),
+  })
+
+export const getApiV1CustomFeedByUsernameBySlugPostsQueryKey = (
+  options: Options<GetApiV1CustomFeedByUsernameBySlugPostsData>,
+) => createQueryKey("getApiV1CustomFeedByUsernameBySlugPosts", options)
+
+/**
+ * Posts across the communities in a custom feed
+ */
+export const getApiV1CustomFeedByUsernameBySlugPostsOptions = (
+  options: Options<GetApiV1CustomFeedByUsernameBySlugPostsData>,
+) =>
+  queryOptions<
+    GetApiV1CustomFeedByUsernameBySlugPostsResponse,
+    GetApiV1CustomFeedByUsernameBySlugPostsError,
+    GetApiV1CustomFeedByUsernameBySlugPostsResponse,
+    ReturnType<typeof getApiV1CustomFeedByUsernameBySlugPostsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1CustomFeedByUsernameBySlugPosts({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1CustomFeedByUsernameBySlugPostsQueryKey(options),
+  })
+
+export const getApiV1CustomFeedByUsernameBySlugPostsInfiniteQueryKey = (
+  options: Options<GetApiV1CustomFeedByUsernameBySlugPostsData>,
+): QueryKey<Options<GetApiV1CustomFeedByUsernameBySlugPostsData>> =>
+  createQueryKey("getApiV1CustomFeedByUsernameBySlugPosts", options, true)
+
+/**
+ * Posts across the communities in a custom feed
+ */
+export const getApiV1CustomFeedByUsernameBySlugPostsInfiniteOptions = (
+  options: Options<GetApiV1CustomFeedByUsernameBySlugPostsData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1CustomFeedByUsernameBySlugPostsResponse,
+    GetApiV1CustomFeedByUsernameBySlugPostsError,
+    InfiniteData<GetApiV1CustomFeedByUsernameBySlugPostsResponse>,
+    QueryKey<Options<GetApiV1CustomFeedByUsernameBySlugPostsData>>,
+    | string
+    | Pick<
+        QueryKey<Options<GetApiV1CustomFeedByUsernameBySlugPostsData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1CustomFeedByUsernameBySlugPostsData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1CustomFeedByUsernameBySlugPosts({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1CustomFeedByUsernameBySlugPostsInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1CustomFeedMineQueryKey = (options?: Options<GetApiV1CustomFeedMineData>) =>
+  createQueryKey("getApiV1CustomFeedMine", options)
+
+/**
+ * The current user's custom feeds
+ */
+export const getApiV1CustomFeedMineOptions = (options?: Options<GetApiV1CustomFeedMineData>) =>
+  queryOptions<
+    GetApiV1CustomFeedMineResponse,
+    DefaultError,
+    GetApiV1CustomFeedMineResponse,
+    ReturnType<typeof getApiV1CustomFeedMineQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1CustomFeedMine({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1CustomFeedMineQueryKey(options),
+  })
+
+/**
+ * Create a custom feed
+ */
+export const postApiV1CustomFeedMutation = (
+  options?: Partial<Options<PostApiV1CustomFeedData>>,
+): UseMutationOptions<
+  PostApiV1CustomFeedResponse,
+  PostApiV1CustomFeedError,
+  Options<PostApiV1CustomFeedData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1CustomFeedResponse,
+    PostApiV1CustomFeedError,
+    Options<PostApiV1CustomFeedData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1CustomFeed({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Delete a custom feed (owner only)
+ */
+export const deleteApiV1CustomFeedByIdMutation = (
+  options?: Partial<Options<DeleteApiV1CustomFeedByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1CustomFeedByIdResponse,
+  DeleteApiV1CustomFeedByIdError,
+  Options<DeleteApiV1CustomFeedByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1CustomFeedByIdResponse,
+    DeleteApiV1CustomFeedByIdError,
+    Options<DeleteApiV1CustomFeedByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1CustomFeedById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Update a custom feed (owner only)
+ */
+export const patchApiV1CustomFeedByIdMutation = (
+  options?: Partial<Options<PatchApiV1CustomFeedByIdData>>,
+): UseMutationOptions<
+  PatchApiV1CustomFeedByIdResponse,
+  PatchApiV1CustomFeedByIdError,
+  Options<PatchApiV1CustomFeedByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1CustomFeedByIdResponse,
+    PatchApiV1CustomFeedByIdError,
+    Options<PatchApiV1CustomFeedByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1CustomFeedById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Remove a community from a custom feed (owner only)
+ */
+export const deleteApiV1CustomFeedByIdCommunityByCommunityIdMutation = (
+  options?: Partial<Options<DeleteApiV1CustomFeedByIdCommunityByCommunityIdData>>,
+): UseMutationOptions<
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponse,
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdError,
+  Options<DeleteApiV1CustomFeedByIdCommunityByCommunityIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponse,
+    DeleteApiV1CustomFeedByIdCommunityByCommunityIdError,
+    Options<DeleteApiV1CustomFeedByIdCommunityByCommunityIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1CustomFeedByIdCommunityByCommunityId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Add a community to a custom feed (owner only)
+ */
+export const putApiV1CustomFeedByIdCommunityByCommunityIdMutation = (
+  options?: Partial<Options<PutApiV1CustomFeedByIdCommunityByCommunityIdData>>,
+): UseMutationOptions<
+  PutApiV1CustomFeedByIdCommunityByCommunityIdResponse,
+  PutApiV1CustomFeedByIdCommunityByCommunityIdError,
+  Options<PutApiV1CustomFeedByIdCommunityByCommunityIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1CustomFeedByIdCommunityByCommunityIdResponse,
+    PutApiV1CustomFeedByIdCommunityByCommunityIdError,
+    Options<PutApiV1CustomFeedByIdCommunityByCommunityIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1CustomFeedByIdCommunityByCommunityId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1WikiByCommunityNameQueryKey = (
+  options: Options<GetApiV1WikiByCommunityNameData>,
+) => createQueryKey("getApiV1WikiByCommunityName", options)
+
+/**
+ * List a community's wiki pages
+ */
+export const getApiV1WikiByCommunityNameOptions = (
+  options: Options<GetApiV1WikiByCommunityNameData>,
+) =>
+  queryOptions<
+    GetApiV1WikiByCommunityNameResponse,
+    GetApiV1WikiByCommunityNameError,
+    GetApiV1WikiByCommunityNameResponse,
+    ReturnType<typeof getApiV1WikiByCommunityNameQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1WikiByCommunityName({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1WikiByCommunityNameQueryKey(options),
+  })
+
+/**
+ * Create a wiki page (moderators with wiki permission)
+ */
+export const postApiV1WikiByCommunityNameMutation = (
+  options?: Partial<Options<PostApiV1WikiByCommunityNameData>>,
+): UseMutationOptions<
+  PostApiV1WikiByCommunityNameResponse,
+  PostApiV1WikiByCommunityNameError,
+  Options<PostApiV1WikiByCommunityNameData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1WikiByCommunityNameResponse,
+    PostApiV1WikiByCommunityNameError,
+    Options<PostApiV1WikiByCommunityNameData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1WikiByCommunityName({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1WikiByCommunityNameBySlugQueryKey = (
+  options: Options<GetApiV1WikiByCommunityNameBySlugData>,
+) => createQueryKey("getApiV1WikiByCommunityNameBySlug", options)
+
+/**
+ * Get a wiki page with its current revision
+ */
+export const getApiV1WikiByCommunityNameBySlugOptions = (
+  options: Options<GetApiV1WikiByCommunityNameBySlugData>,
+) =>
+  queryOptions<
+    GetApiV1WikiByCommunityNameBySlugResponse,
+    GetApiV1WikiByCommunityNameBySlugError,
+    GetApiV1WikiByCommunityNameBySlugResponse,
+    ReturnType<typeof getApiV1WikiByCommunityNameBySlugQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1WikiByCommunityNameBySlug({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1WikiByCommunityNameBySlugQueryKey(options),
+  })
+
+/**
+ * Save a new revision of a wiki page (moderators with wiki permission)
+ */
+export const putApiV1WikiByCommunityNameBySlugMutation = (
+  options?: Partial<Options<PutApiV1WikiByCommunityNameBySlugData>>,
+): UseMutationOptions<
+  PutApiV1WikiByCommunityNameBySlugResponse,
+  PutApiV1WikiByCommunityNameBySlugError,
+  Options<PutApiV1WikiByCommunityNameBySlugData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1WikiByCommunityNameBySlugResponse,
+    PutApiV1WikiByCommunityNameBySlugError,
+    Options<PutApiV1WikiByCommunityNameBySlugData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1WikiByCommunityNameBySlug({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1WikiByCommunityNameBySlugRevisionsQueryKey = (
+  options: Options<GetApiV1WikiByCommunityNameBySlugRevisionsData>,
+) => createQueryKey("getApiV1WikiByCommunityNameBySlugRevisions", options)
+
+/**
+ * List a wiki page's revision history
+ */
+export const getApiV1WikiByCommunityNameBySlugRevisionsOptions = (
+  options: Options<GetApiV1WikiByCommunityNameBySlugRevisionsData>,
+) =>
+  queryOptions<
+    GetApiV1WikiByCommunityNameBySlugRevisionsResponse,
+    GetApiV1WikiByCommunityNameBySlugRevisionsError,
+    GetApiV1WikiByCommunityNameBySlugRevisionsResponse,
+    ReturnType<typeof getApiV1WikiByCommunityNameBySlugRevisionsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1WikiByCommunityNameBySlugRevisions({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1WikiByCommunityNameBySlugRevisionsQueryKey(options),
+  })
+
+/**
+ * Revert a wiki page to a prior revision (moderators with wiki permission)
+ */
+export const postApiV1WikiByCommunityNameBySlugRevertMutation = (
+  options?: Partial<Options<PostApiV1WikiByCommunityNameBySlugRevertData>>,
+): UseMutationOptions<
+  PostApiV1WikiByCommunityNameBySlugRevertResponse,
+  PostApiV1WikiByCommunityNameBySlugRevertError,
+  Options<PostApiV1WikiByCommunityNameBySlugRevertData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1WikiByCommunityNameBySlugRevertResponse,
+    PostApiV1WikiByCommunityNameBySlugRevertError,
+    Options<PostApiV1WikiByCommunityNameBySlugRevertData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1WikiByCommunityNameBySlugRevert({
         ...options,
         ...fnOptions,
         throwOnError: true,
@@ -2445,6 +3248,34 @@ export const postApiV1PostMutation = (
   }
   return mutationOptions
 }
+
+export const getApiV1PostInsightsByPostIdQueryKey = (
+  options: Options<GetApiV1PostInsightsByPostIdData>,
+) => createQueryKey("getApiV1PostInsightsByPostId", options)
+
+/**
+ * Insights for a post (author only)
+ */
+export const getApiV1PostInsightsByPostIdOptions = (
+  options: Options<GetApiV1PostInsightsByPostIdData>,
+) =>
+  queryOptions<
+    GetApiV1PostInsightsByPostIdResponse,
+    GetApiV1PostInsightsByPostIdError,
+    GetApiV1PostInsightsByPostIdResponse,
+    ReturnType<typeof getApiV1PostInsightsByPostIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1PostInsightsByPostId({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1PostInsightsByPostIdQueryKey(options),
+  })
 
 /**
  * Upvote, downvote, or clear a vote on a post
