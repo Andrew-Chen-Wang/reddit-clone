@@ -191,6 +191,12 @@ export function CommunityRightRail({
                 View all moderators
               </SeoLink>
             ) : null}
+            <SeoLink
+              href={`/message-mods/${name}`}
+              className="text-sm text-primary hover:underline"
+            >
+              Message Mods
+            </SeoLink>
           </CardContent>
         </Card>
       ) : null}
