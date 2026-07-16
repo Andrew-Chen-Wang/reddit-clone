@@ -4,15 +4,28 @@ import type {
   GetApiV1CommentPostByPostIdResponse,
   GetApiV1CommunityByNameResponse,
   GetApiV1CommunityJoinRequestByCommunityIdPendingResponse,
+  GetApiV1DraftByIdResponse,
+  GetApiV1DraftResponse,
   GetApiV1FeedCommunityByNameResponse,
   GetApiV1FeedHomeResponse,
   GetApiV1FeedPopularResponse,
   GetApiV1FeedProfileByUsernameResponse,
   GetApiV1HistoryRecentCommunitiesResponse,
   GetApiV1HistoryRecentPostsResponse,
+  GetApiV1MutedCommunityMineResponse,
   GetApiV1PostByIdResponse,
+  GetApiV1ScheduledPostCommunityByCommunityIdResponse,
+  GetApiV1ScheduledPostMineResponse,
+  GetApiV1UserBlockMineResponse,
+  GetApiV1UserByUsernameByUsernameCommentsResponse,
   GetApiV1UserByUsernameByUsernameResponse,
+  GetApiV1UserFollowMineResponse,
+  GetApiV1UserMeDownvotedResponse,
+  GetApiV1UserMeHiddenResponse,
   GetApiV1UserMeResponse,
+  GetApiV1UserMeSavedResponse,
+  GetApiV1UserMeUpvotedResponse,
+  PatchApiV1DraftByIdResponse,
   PatchApiV1UserMeResponse,
 } from "./types.gen"
 
@@ -20,6 +33,78 @@ export const getApiV1UserByUsernameByUsernameResponseTransformer = async (
   data: any,
 ): Promise<GetApiV1UserByUsernameByUsernameResponse> => {
   data.createdAt = new Date(data.createdAt)
+  return data
+}
+
+export const getApiV1UserByUsernameByUsernameCommentsResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1UserByUsernameByUsernameCommentsResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1UserMeSavedResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1UserMeSavedResponse> => {
+  data.posts = data.posts.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  data.comments = data.comments.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1UserMeHiddenResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1UserMeHiddenResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1UserMeUpvotedResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1UserMeUpvotedResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1UserMeDownvotedResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1UserMeDownvotedResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
   return data
 }
 
@@ -151,6 +236,85 @@ export const getApiV1HistoryRecentCommunitiesResponseTransformer = async (
 ): Promise<GetApiV1HistoryRecentCommunitiesResponse> => {
   data.data = data.data.map((item: any) => {
     item.lastVisitedAt = new Date(item.lastVisitedAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1UserFollowMineResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1UserFollowMineResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1UserBlockMineResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1UserBlockMineResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1MutedCommunityMineResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1MutedCommunityMineResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1DraftResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1DraftResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    item.updatedAt = new Date(item.updatedAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1DraftByIdResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1DraftByIdResponse> => {
+  data.createdAt = new Date(data.createdAt)
+  data.updatedAt = new Date(data.updatedAt)
+  return data
+}
+
+export const patchApiV1DraftByIdResponseTransformer = async (
+  data: any,
+): Promise<PatchApiV1DraftByIdResponse> => {
+  data.createdAt = new Date(data.createdAt)
+  data.updatedAt = new Date(data.updatedAt)
+  return data
+}
+
+export const getApiV1ScheduledPostMineResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ScheduledPostMineResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.scheduledAt = new Date(item.scheduledAt)
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1ScheduledPostCommunityByCommunityIdResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ScheduledPostCommunityByCommunityIdResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.scheduledAt = new Date(item.scheduledAt)
+    item.createdAt = new Date(item.createdAt)
     return item
   })
   return data

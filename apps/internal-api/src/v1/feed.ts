@@ -4,6 +4,7 @@ import { fetchCommunityMember } from "@lib/dao/communityMember/fetch"
 import { fetchPost, type PostSort, type RawPostRow } from "@lib/dao/post/fetch"
 import { processPosts, type ProcessedPost } from "@lib/dao/post/processPost"
 import { fetchUser } from "@lib/dao/user/fetch"
+import { fetchUserFollow } from "@lib/dao/userFollow/fetch"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
@@ -84,7 +85,7 @@ const app = new Hono()
       const user = c.var.user
       const { name } = c.req.valid("param")
       const query = c.req.valid("query")
-      const sort = (query.sort ?? "hot") as PostSort
+      const sort = query.sort ?? "hot"
       const cursor = query.cursor ?? null
 
       const community = await fetchCommunity(db).getOneByName(name, ["id", "visibility"])
@@ -101,6 +102,7 @@ const app = new Hono()
         sort,
         windowStart: windowStartFor(query.t),
         excludeSticky: sort === "hot",
+        viewerId: user?.id ?? null,
       })
 
       const { results, nextCursor } = await cursorOffsetPaginate({
@@ -116,11 +118,7 @@ const app = new Hono()
         stickyRows = await fetchPost(db).getStickyForCommunity(community.id)
       }
 
-      const processed = await processPosts(
-        db,
-        [...stickyRows, ...(results as RawPostRow[])],
-        user?.id ?? null,
-      )
+      const processed = await processPosts(db, [...stickyRows, ...results], user?.id ?? null)
 
       return c.json({ data: processed, nextCursor })
     },
@@ -141,12 +139,13 @@ const app = new Hono()
     async (c) => {
       const user = c.var.user
       const query = c.req.valid("query")
-      const sort = (query.sort ?? "hot") as PostSort
+      const sort = query.sort ?? "hot"
       const cursor = query.cursor ?? null
 
       const feedQuery = fetchPost(db).globalFeed({
         sort,
         windowStart: windowStartFor(query.t),
+        viewerId: user?.id ?? null,
       })
 
       const { results, nextCursor } = await cursorOffsetPaginate({
@@ -157,7 +156,7 @@ const app = new Hono()
         pageSize: PAGE_SIZE,
       })
 
-      const processed = await processPosts(db, results as RawPostRow[], user?.id ?? null)
+      const processed = await processPosts(db, results, user?.id ?? null)
       return c.json({ data: processed, nextCursor })
     },
   )
@@ -182,11 +181,12 @@ const app = new Hono()
 
       const memberships = await fetchCommunityMember(db).getManyForUser(user.id)
       const communityIds = memberships.map((m) => m.id)
-      if (communityIds.length === 0) {
+      const followedUserIds = await fetchUserFollow(db).listFollowedIds(user.id)
+      if (communityIds.length === 0 && followedUserIds.length === 0) {
         return c.json({ data: [], nextCursor: null })
       }
 
-      const sort: PostSort = homeSort === "best" ? "hot" : (homeSort as PostSort)
+      const sort: PostSort = homeSort === "best" ? "hot" : homeSort
       const excludeViewed = homeSort === "best"
 
       const feedQuery = fetchPost(db).homeFeed({
@@ -195,6 +195,7 @@ const app = new Hono()
         sort,
         windowStart: windowStartFor(query.t),
         excludeViewed,
+        followedUserIds,
       })
 
       const { results, nextCursor } = await cursorOffsetPaginate({
@@ -205,7 +206,7 @@ const app = new Hono()
         pageSize: PAGE_SIZE,
       })
 
-      let processed = await processPosts(db, results as RawPostRow[], user.id)
+      let processed = await processPosts(db, results, user.id)
       if (homeSort === "best") processed = capConsecutive(processed, HOME_CONSECUTIVE_CAP)
 
       return c.json({ data: processed, nextCursor })
@@ -248,7 +249,7 @@ const app = new Hono()
         pageSize: PAGE_SIZE,
       })
 
-      const processed = await processPosts(db, results as RawPostRow[], user?.id ?? null)
+      const processed = await processPosts(db, results, user?.id ?? null)
       return c.json({ data: processed, nextCursor })
     },
   )

@@ -82,20 +82,22 @@ async function createUploadPost(
 export async function createImageUploadPost(params: {
   key: string
   contentType: string
+  maxSizeBytes?: number
 }): Promise<PresignedUploadPost> {
   if (!isAllowedImageType(params.contentType)) {
     throw new Error(`Unsupported image content type: ${params.contentType}`)
   }
-  return createUploadPost(params.key, params.contentType, IMAGE_MAX_BYTES)
+  return createUploadPost(params.key, params.contentType, params.maxSizeBytes ?? IMAGE_MAX_BYTES)
 }
 
 export async function createMediaUploadPost(params: {
   key: string
   contentType: string
+  maxSizeBytes?: number
 }): Promise<PresignedUploadPost> {
-  const maxBytes = getMediaMaxSize(params.contentType)
-  if (maxBytes === undefined) {
+  const defaultMax = getMediaMaxSize(params.contentType)
+  if (defaultMax === undefined) {
     throw new Error(`Unsupported media content type: ${params.contentType}`)
   }
-  return createUploadPost(params.key, params.contentType, maxBytes)
+  return createUploadPost(params.key, params.contentType, params.maxSizeBytes ?? defaultMax)
 }

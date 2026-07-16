@@ -10,12 +10,22 @@ import {
 
 import { client } from "../client.gen"
 import {
+  deleteApiV1CommentActionFollowByCommentId,
+  deleteApiV1CommentActionSaveByCommentId,
   deleteApiV1CommentById,
   deleteApiV1CommunityRuleById,
+  deleteApiV1DraftById,
   deleteApiV1FlairPostTemplatesById,
   deleteApiV1FlairUserTemplatesById,
   deleteApiV1HistoryRecentPosts,
+  deleteApiV1MutedCommunityByCommunityId,
+  deleteApiV1PostActionFollowByPostId,
+  deleteApiV1PostActionHideByPostId,
+  deleteApiV1PostActionSaveByPostId,
   deleteApiV1PostById,
+  deleteApiV1ScheduledPostById,
+  deleteApiV1UserBlockByUsername,
+  deleteApiV1UserFollowByUsername,
   deleteApiV1UserMeDelete,
   getApiV1AuthMe,
   getApiV1CommentPostByPostId,
@@ -25,6 +35,8 @@ import {
   getApiV1CommunityMemberModerated,
   getApiV1CommunityNameAvailable,
   getApiV1CommunityRuleByCommunityId,
+  getApiV1Draft,
+  getApiV1DraftById,
   getApiV1Explore,
   getApiV1FeedCommunityByName,
   getApiV1FeedHome,
@@ -34,17 +46,28 @@ import {
   getApiV1FlairByCommunityIdUserTemplates,
   getApiV1HistoryRecentCommunities,
   getApiV1HistoryRecentPosts,
+  getApiV1MutedCommunityMine,
   getApiV1PostById,
+  getApiV1ScheduledPostCommunityByCommunityId,
+  getApiV1ScheduledPostMine,
   getApiV1Topic,
+  getApiV1UserBlockMine,
   getApiV1UserByUsernameByUsername,
+  getApiV1UserByUsernameByUsernameComments,
+  getApiV1UserFollowMine,
   getApiV1UserMe,
+  getApiV1UserMeDownvoted,
+  getApiV1UserMeHidden,
+  getApiV1UserMeSaved,
   getApiV1UserMeSettings,
+  getApiV1UserMeUpvoted,
   getApiV1UserUsernameAvailable,
   type Options,
   patchApiV1CommentById,
   patchApiV1CommunityById,
   patchApiV1CommunityMemberByCommunityIdMembership,
   patchApiV1CommunityRuleById,
+  patchApiV1DraftById,
   patchApiV1FlairPostTemplatesById,
   patchApiV1FlairUserTemplatesById,
   patchApiV1PostById,
@@ -58,21 +81,48 @@ import {
   postApiV1CommunityMemberByCommunityIdJoin,
   postApiV1CommunityMemberByCommunityIdLeave,
   postApiV1CommunityRuleByCommunityId,
+  postApiV1Draft,
   postApiV1FlairByCommunityIdPostTemplates,
   postApiV1FlairByCommunityIdUserTemplates,
+  postApiV1MediaAvatarConfirm,
+  postApiV1MediaAvatarUpload,
+  postApiV1MediaBannerConfirm,
+  postApiV1MediaBannerUpload,
+  postApiV1MediaCommunityBannerConfirm,
+  postApiV1MediaCommunityBannerUpload,
+  postApiV1MediaCommunityIconConfirm,
+  postApiV1MediaCommunityIconUpload,
+  postApiV1MediaConfirm,
   postApiV1Post,
+  postApiV1PostActionShareByPostId,
+  postApiV1ScheduledPost,
+  putApiV1CommentActionFollowByCommentId,
+  putApiV1CommentActionSaveByCommentId,
   putApiV1CommentVoteByCommentId,
   putApiV1CommunityRuleByCommunityIdReorder,
   putApiV1FlairByCommunityIdMyFlair,
+  putApiV1MutedCommunityByCommunityId,
+  putApiV1PostActionFollowByPostId,
+  putApiV1PostActionHideByPostId,
+  putApiV1PostActionSaveByPostId,
   putApiV1PostVoteByPostId,
+  putApiV1UserBlockByUsername,
+  putApiV1UserFollowByUsername,
 } from "../sdk.gen"
 import type {
+  DeleteApiV1CommentActionFollowByCommentIdData,
+  DeleteApiV1CommentActionFollowByCommentIdResponse,
+  DeleteApiV1CommentActionSaveByCommentIdData,
+  DeleteApiV1CommentActionSaveByCommentIdResponse,
   DeleteApiV1CommentByIdData,
   DeleteApiV1CommentByIdError,
   DeleteApiV1CommentByIdResponse,
   DeleteApiV1CommunityRuleByIdData,
   DeleteApiV1CommunityRuleByIdError,
   DeleteApiV1CommunityRuleByIdResponse,
+  DeleteApiV1DraftByIdData,
+  DeleteApiV1DraftByIdError,
+  DeleteApiV1DraftByIdResponse,
   DeleteApiV1FlairPostTemplatesByIdData,
   DeleteApiV1FlairPostTemplatesByIdError,
   DeleteApiV1FlairPostTemplatesByIdResponse,
@@ -81,9 +131,26 @@ import type {
   DeleteApiV1FlairUserTemplatesByIdResponse,
   DeleteApiV1HistoryRecentPostsData,
   DeleteApiV1HistoryRecentPostsResponse,
+  DeleteApiV1MutedCommunityByCommunityIdData,
+  DeleteApiV1MutedCommunityByCommunityIdResponse,
+  DeleteApiV1PostActionFollowByPostIdData,
+  DeleteApiV1PostActionFollowByPostIdResponse,
+  DeleteApiV1PostActionHideByPostIdData,
+  DeleteApiV1PostActionHideByPostIdResponse,
+  DeleteApiV1PostActionSaveByPostIdData,
+  DeleteApiV1PostActionSaveByPostIdResponse,
   DeleteApiV1PostByIdData,
   DeleteApiV1PostByIdError,
   DeleteApiV1PostByIdResponse,
+  DeleteApiV1ScheduledPostByIdData,
+  DeleteApiV1ScheduledPostByIdError,
+  DeleteApiV1ScheduledPostByIdResponse,
+  DeleteApiV1UserBlockByUsernameData,
+  DeleteApiV1UserBlockByUsernameError,
+  DeleteApiV1UserBlockByUsernameResponse,
+  DeleteApiV1UserFollowByUsernameData,
+  DeleteApiV1UserFollowByUsernameError,
+  DeleteApiV1UserFollowByUsernameResponse,
   DeleteApiV1UserMeDeleteData,
   DeleteApiV1UserMeDeleteError,
   DeleteApiV1UserMeDeleteResponse,
@@ -107,6 +174,11 @@ import type {
   GetApiV1CommunityNameAvailableResponse,
   GetApiV1CommunityRuleByCommunityIdData,
   GetApiV1CommunityRuleByCommunityIdResponse,
+  GetApiV1DraftByIdData,
+  GetApiV1DraftByIdError,
+  GetApiV1DraftByIdResponse,
+  GetApiV1DraftData,
+  GetApiV1DraftResponse,
   GetApiV1ExploreData,
   GetApiV1ExploreResponse,
   GetApiV1FeedCommunityByNameData,
@@ -127,19 +199,41 @@ import type {
   GetApiV1HistoryRecentCommunitiesResponse,
   GetApiV1HistoryRecentPostsData,
   GetApiV1HistoryRecentPostsResponse,
+  GetApiV1MutedCommunityMineData,
+  GetApiV1MutedCommunityMineResponse,
   GetApiV1PostByIdData,
   GetApiV1PostByIdError,
   GetApiV1PostByIdResponse,
+  GetApiV1ScheduledPostCommunityByCommunityIdData,
+  GetApiV1ScheduledPostCommunityByCommunityIdError,
+  GetApiV1ScheduledPostCommunityByCommunityIdResponse,
+  GetApiV1ScheduledPostMineData,
+  GetApiV1ScheduledPostMineResponse,
   GetApiV1TopicData,
   GetApiV1TopicResponse,
+  GetApiV1UserBlockMineData,
+  GetApiV1UserBlockMineResponse,
+  GetApiV1UserByUsernameByUsernameCommentsData,
+  GetApiV1UserByUsernameByUsernameCommentsError,
+  GetApiV1UserByUsernameByUsernameCommentsResponse,
   GetApiV1UserByUsernameByUsernameData,
   GetApiV1UserByUsernameByUsernameError,
   GetApiV1UserByUsernameByUsernameResponse,
+  GetApiV1UserFollowMineData,
+  GetApiV1UserFollowMineResponse,
   GetApiV1UserMeData,
+  GetApiV1UserMeDownvotedData,
+  GetApiV1UserMeDownvotedResponse,
   GetApiV1UserMeError,
+  GetApiV1UserMeHiddenData,
+  GetApiV1UserMeHiddenResponse,
   GetApiV1UserMeResponse,
+  GetApiV1UserMeSavedData,
+  GetApiV1UserMeSavedResponse,
   GetApiV1UserMeSettingsData,
   GetApiV1UserMeSettingsResponse,
+  GetApiV1UserMeUpvotedData,
+  GetApiV1UserMeUpvotedResponse,
   GetApiV1UserUsernameAvailableData,
   GetApiV1UserUsernameAvailableError,
   GetApiV1UserUsernameAvailableResponse,
@@ -155,6 +249,9 @@ import type {
   PatchApiV1CommunityRuleByIdData,
   PatchApiV1CommunityRuleByIdError,
   PatchApiV1CommunityRuleByIdResponse,
+  PatchApiV1DraftByIdData,
+  PatchApiV1DraftByIdError,
+  PatchApiV1DraftByIdResponse,
   PatchApiV1FlairPostTemplatesByIdData,
   PatchApiV1FlairPostTemplatesByIdError,
   PatchApiV1FlairPostTemplatesByIdResponse,
@@ -193,15 +290,57 @@ import type {
   PostApiV1CommunityRuleByCommunityIdData,
   PostApiV1CommunityRuleByCommunityIdError,
   PostApiV1CommunityRuleByCommunityIdResponse,
+  PostApiV1DraftData,
+  PostApiV1DraftError,
+  PostApiV1DraftResponse,
   PostApiV1FlairByCommunityIdPostTemplatesData,
   PostApiV1FlairByCommunityIdPostTemplatesError,
   PostApiV1FlairByCommunityIdPostTemplatesResponse,
   PostApiV1FlairByCommunityIdUserTemplatesData,
   PostApiV1FlairByCommunityIdUserTemplatesError,
   PostApiV1FlairByCommunityIdUserTemplatesResponse,
+  PostApiV1MediaAvatarConfirmData,
+  PostApiV1MediaAvatarConfirmError,
+  PostApiV1MediaAvatarConfirmResponse,
+  PostApiV1MediaAvatarUploadData,
+  PostApiV1MediaAvatarUploadError,
+  PostApiV1MediaAvatarUploadResponse,
+  PostApiV1MediaBannerConfirmData,
+  PostApiV1MediaBannerConfirmError,
+  PostApiV1MediaBannerConfirmResponse,
+  PostApiV1MediaBannerUploadData,
+  PostApiV1MediaBannerUploadError,
+  PostApiV1MediaBannerUploadResponse,
+  PostApiV1MediaCommunityBannerConfirmData,
+  PostApiV1MediaCommunityBannerConfirmError,
+  PostApiV1MediaCommunityBannerConfirmResponse,
+  PostApiV1MediaCommunityBannerUploadData,
+  PostApiV1MediaCommunityBannerUploadError,
+  PostApiV1MediaCommunityBannerUploadResponse,
+  PostApiV1MediaCommunityIconConfirmData,
+  PostApiV1MediaCommunityIconConfirmError,
+  PostApiV1MediaCommunityIconConfirmResponse,
+  PostApiV1MediaCommunityIconUploadData,
+  PostApiV1MediaCommunityIconUploadError,
+  PostApiV1MediaCommunityIconUploadResponse,
+  PostApiV1MediaConfirmData,
+  PostApiV1MediaConfirmError,
+  PostApiV1MediaConfirmResponse,
+  PostApiV1PostActionShareByPostIdData,
+  PostApiV1PostActionShareByPostIdError,
+  PostApiV1PostActionShareByPostIdResponse,
   PostApiV1PostData,
   PostApiV1PostError,
   PostApiV1PostResponse,
+  PostApiV1ScheduledPostData,
+  PostApiV1ScheduledPostError,
+  PostApiV1ScheduledPostResponse,
+  PutApiV1CommentActionFollowByCommentIdData,
+  PutApiV1CommentActionFollowByCommentIdError,
+  PutApiV1CommentActionFollowByCommentIdResponse,
+  PutApiV1CommentActionSaveByCommentIdData,
+  PutApiV1CommentActionSaveByCommentIdError,
+  PutApiV1CommentActionSaveByCommentIdResponse,
   PutApiV1CommentVoteByCommentIdData,
   PutApiV1CommentVoteByCommentIdError,
   PutApiV1CommentVoteByCommentIdResponse,
@@ -211,9 +350,27 @@ import type {
   PutApiV1FlairByCommunityIdMyFlairData,
   PutApiV1FlairByCommunityIdMyFlairError,
   PutApiV1FlairByCommunityIdMyFlairResponse,
+  PutApiV1MutedCommunityByCommunityIdData,
+  PutApiV1MutedCommunityByCommunityIdError,
+  PutApiV1MutedCommunityByCommunityIdResponse,
+  PutApiV1PostActionFollowByPostIdData,
+  PutApiV1PostActionFollowByPostIdError,
+  PutApiV1PostActionFollowByPostIdResponse,
+  PutApiV1PostActionHideByPostIdData,
+  PutApiV1PostActionHideByPostIdError,
+  PutApiV1PostActionHideByPostIdResponse,
+  PutApiV1PostActionSaveByPostIdData,
+  PutApiV1PostActionSaveByPostIdError,
+  PutApiV1PostActionSaveByPostIdResponse,
   PutApiV1PostVoteByPostIdData,
   PutApiV1PostVoteByPostIdError,
   PutApiV1PostVoteByPostIdResponse,
+  PutApiV1UserBlockByUsernameData,
+  PutApiV1UserBlockByUsernameError,
+  PutApiV1UserBlockByUsernameResponse,
+  PutApiV1UserFollowByUsernameData,
+  PutApiV1UserFollowByUsernameError,
+  PutApiV1UserFollowByUsernameResponse,
 } from "../types.gen"
 
 export type QueryKey<TOptions extends Options> = [
@@ -328,6 +485,414 @@ export const getApiV1UserByUsernameByUsernameOptions = (
     },
     queryKey: getApiV1UserByUsernameByUsernameQueryKey(options),
   })
+
+export const getApiV1UserByUsernameByUsernameCommentsQueryKey = (
+  options: Options<GetApiV1UserByUsernameByUsernameCommentsData>,
+) => createQueryKey("getApiV1UserByUsernameByUsernameComments", options)
+
+/**
+ * A user's comments with post context, newest first
+ */
+export const getApiV1UserByUsernameByUsernameCommentsOptions = (
+  options: Options<GetApiV1UserByUsernameByUsernameCommentsData>,
+) =>
+  queryOptions<
+    GetApiV1UserByUsernameByUsernameCommentsResponse,
+    GetApiV1UserByUsernameByUsernameCommentsError,
+    GetApiV1UserByUsernameByUsernameCommentsResponse,
+    ReturnType<typeof getApiV1UserByUsernameByUsernameCommentsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserByUsernameByUsernameComments({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserByUsernameByUsernameCommentsQueryKey(options),
+  })
+
+const createInfiniteParams = <
+  K extends Pick<QueryKey<Options>[0], "body" | "headers" | "path" | "query">,
+>(
+  queryKey: QueryKey<Options>,
+  page: K,
+) => {
+  const params = { ...queryKey[0] }
+  if (page.body) {
+    params.body = {
+      ...(queryKey[0].body as any),
+      ...(page.body as any),
+    }
+  }
+  if (page.headers) {
+    params.headers = {
+      ...queryKey[0].headers,
+      ...page.headers,
+    }
+  }
+  if (page.path) {
+    params.path = {
+      ...(queryKey[0].path as any),
+      ...(page.path as any),
+    }
+  }
+  if (page.query) {
+    params.query = {
+      ...(queryKey[0].query as any),
+      ...(page.query as any),
+    }
+  }
+  return params as unknown as typeof page
+}
+
+export const getApiV1UserByUsernameByUsernameCommentsInfiniteQueryKey = (
+  options: Options<GetApiV1UserByUsernameByUsernameCommentsData>,
+): QueryKey<Options<GetApiV1UserByUsernameByUsernameCommentsData>> =>
+  createQueryKey("getApiV1UserByUsernameByUsernameComments", options, true)
+
+/**
+ * A user's comments with post context, newest first
+ */
+export const getApiV1UserByUsernameByUsernameCommentsInfiniteOptions = (
+  options: Options<GetApiV1UserByUsernameByUsernameCommentsData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1UserByUsernameByUsernameCommentsResponse,
+    GetApiV1UserByUsernameByUsernameCommentsError,
+    InfiniteData<GetApiV1UserByUsernameByUsernameCommentsResponse>,
+    QueryKey<Options<GetApiV1UserByUsernameByUsernameCommentsData>>,
+    | string
+    | Pick<
+        QueryKey<Options<GetApiV1UserByUsernameByUsernameCommentsData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1UserByUsernameByUsernameCommentsData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1UserByUsernameByUsernameComments({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1UserByUsernameByUsernameCommentsInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1UserMeSavedQueryKey = (options?: Options<GetApiV1UserMeSavedData>) =>
+  createQueryKey("getApiV1UserMeSaved", options)
+
+/**
+ * The current user's saved posts or comments
+ */
+export const getApiV1UserMeSavedOptions = (options?: Options<GetApiV1UserMeSavedData>) =>
+  queryOptions<
+    GetApiV1UserMeSavedResponse,
+    DefaultError,
+    GetApiV1UserMeSavedResponse,
+    ReturnType<typeof getApiV1UserMeSavedQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserMeSaved({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserMeSavedQueryKey(options),
+  })
+
+export const getApiV1UserMeSavedInfiniteQueryKey = (
+  options?: Options<GetApiV1UserMeSavedData>,
+): QueryKey<Options<GetApiV1UserMeSavedData>> =>
+  createQueryKey("getApiV1UserMeSaved", options, true)
+
+/**
+ * The current user's saved posts or comments
+ */
+export const getApiV1UserMeSavedInfiniteOptions = (options?: Options<GetApiV1UserMeSavedData>) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1UserMeSavedResponse,
+    DefaultError,
+    InfiniteData<GetApiV1UserMeSavedResponse>,
+    QueryKey<Options<GetApiV1UserMeSavedData>>,
+    | string
+    | Pick<QueryKey<Options<GetApiV1UserMeSavedData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1UserMeSavedData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1UserMeSaved({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1UserMeSavedInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1UserMeHiddenQueryKey = (options?: Options<GetApiV1UserMeHiddenData>) =>
+  createQueryKey("getApiV1UserMeHidden", options)
+
+/**
+ * The current user's hidden posts
+ */
+export const getApiV1UserMeHiddenOptions = (options?: Options<GetApiV1UserMeHiddenData>) =>
+  queryOptions<
+    GetApiV1UserMeHiddenResponse,
+    DefaultError,
+    GetApiV1UserMeHiddenResponse,
+    ReturnType<typeof getApiV1UserMeHiddenQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserMeHidden({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserMeHiddenQueryKey(options),
+  })
+
+export const getApiV1UserMeHiddenInfiniteQueryKey = (
+  options?: Options<GetApiV1UserMeHiddenData>,
+): QueryKey<Options<GetApiV1UserMeHiddenData>> =>
+  createQueryKey("getApiV1UserMeHidden", options, true)
+
+/**
+ * The current user's hidden posts
+ */
+export const getApiV1UserMeHiddenInfiniteOptions = (
+  options?: Options<GetApiV1UserMeHiddenData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1UserMeHiddenResponse,
+    DefaultError,
+    InfiniteData<GetApiV1UserMeHiddenResponse>,
+    QueryKey<Options<GetApiV1UserMeHiddenData>>,
+    | string
+    | Pick<QueryKey<Options<GetApiV1UserMeHiddenData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1UserMeHiddenData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1UserMeHidden({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1UserMeHiddenInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1UserMeUpvotedQueryKey = (options?: Options<GetApiV1UserMeUpvotedData>) =>
+  createQueryKey("getApiV1UserMeUpvoted", options)
+
+/**
+ * Posts the current user has upvoted
+ */
+export const getApiV1UserMeUpvotedOptions = (options?: Options<GetApiV1UserMeUpvotedData>) =>
+  queryOptions<
+    GetApiV1UserMeUpvotedResponse,
+    DefaultError,
+    GetApiV1UserMeUpvotedResponse,
+    ReturnType<typeof getApiV1UserMeUpvotedQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserMeUpvoted({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserMeUpvotedQueryKey(options),
+  })
+
+export const getApiV1UserMeUpvotedInfiniteQueryKey = (
+  options?: Options<GetApiV1UserMeUpvotedData>,
+): QueryKey<Options<GetApiV1UserMeUpvotedData>> =>
+  createQueryKey("getApiV1UserMeUpvoted", options, true)
+
+/**
+ * Posts the current user has upvoted
+ */
+export const getApiV1UserMeUpvotedInfiniteOptions = (
+  options?: Options<GetApiV1UserMeUpvotedData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1UserMeUpvotedResponse,
+    DefaultError,
+    InfiniteData<GetApiV1UserMeUpvotedResponse>,
+    QueryKey<Options<GetApiV1UserMeUpvotedData>>,
+    | string
+    | Pick<QueryKey<Options<GetApiV1UserMeUpvotedData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1UserMeUpvotedData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1UserMeUpvoted({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1UserMeUpvotedInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1UserMeDownvotedQueryKey = (options?: Options<GetApiV1UserMeDownvotedData>) =>
+  createQueryKey("getApiV1UserMeDownvoted", options)
+
+/**
+ * Posts the current user has downvoted
+ */
+export const getApiV1UserMeDownvotedOptions = (options?: Options<GetApiV1UserMeDownvotedData>) =>
+  queryOptions<
+    GetApiV1UserMeDownvotedResponse,
+    DefaultError,
+    GetApiV1UserMeDownvotedResponse,
+    ReturnType<typeof getApiV1UserMeDownvotedQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserMeDownvoted({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserMeDownvotedQueryKey(options),
+  })
+
+export const getApiV1UserMeDownvotedInfiniteQueryKey = (
+  options?: Options<GetApiV1UserMeDownvotedData>,
+): QueryKey<Options<GetApiV1UserMeDownvotedData>> =>
+  createQueryKey("getApiV1UserMeDownvoted", options, true)
+
+/**
+ * Posts the current user has downvoted
+ */
+export const getApiV1UserMeDownvotedInfiniteOptions = (
+  options?: Options<GetApiV1UserMeDownvotedData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1UserMeDownvotedResponse,
+    DefaultError,
+    InfiniteData<GetApiV1UserMeDownvotedResponse>,
+    QueryKey<Options<GetApiV1UserMeDownvotedData>>,
+    | string
+    | Pick<QueryKey<Options<GetApiV1UserMeDownvotedData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1UserMeDownvotedData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1UserMeDownvoted({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1UserMeDownvotedInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
 
 export const getApiV1UserMeQueryKey = (options?: Options<GetApiV1UserMeData>) =>
   createQueryKey("getApiV1UserMe", options)
@@ -1242,40 +1807,6 @@ export const getApiV1ExploreOptions = (options?: Options<GetApiV1ExploreData>) =
     queryKey: getApiV1ExploreQueryKey(options),
   })
 
-const createInfiniteParams = <
-  K extends Pick<QueryKey<Options>[0], "body" | "headers" | "path" | "query">,
->(
-  queryKey: QueryKey<Options>,
-  page: K,
-) => {
-  const params = { ...queryKey[0] }
-  if (page.body) {
-    params.body = {
-      ...(queryKey[0].body as any),
-      ...(page.body as any),
-    }
-  }
-  if (page.headers) {
-    params.headers = {
-      ...queryKey[0].headers,
-      ...page.headers,
-    }
-  }
-  if (page.path) {
-    params.path = {
-      ...(queryKey[0].path as any),
-      ...(page.path as any),
-    }
-  }
-  if (page.query) {
-    params.query = {
-      ...(queryKey[0].query as any),
-      ...(page.query as any),
-    }
-  }
-  return params as unknown as typeof page
-}
-
 export const getApiV1ExploreInfiniteQueryKey = (
   options?: Options<GetApiV1ExploreData>,
 ): QueryKey<Options<GetApiV1ExploreData>> => createQueryKey("getApiV1Explore", options, true)
@@ -2022,3 +2553,1020 @@ export const getApiV1HistoryRecentCommunitiesOptions = (
     },
     queryKey: getApiV1HistoryRecentCommunitiesQueryKey(options),
   })
+
+/**
+ * Confirm a media post's uploads finished, promoting its cleanup job
+ */
+export const postApiV1MediaConfirmMutation = (
+  options?: Partial<Options<PostApiV1MediaConfirmData>>,
+): UseMutationOptions<
+  PostApiV1MediaConfirmResponse,
+  PostApiV1MediaConfirmError,
+  Options<PostApiV1MediaConfirmData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1MediaConfirmResponse,
+    PostApiV1MediaConfirmError,
+    Options<PostApiV1MediaConfirmData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1MediaConfirm({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Presigned upload for the current user's avatar
+ */
+export const postApiV1MediaAvatarUploadMutation = (
+  options?: Partial<Options<PostApiV1MediaAvatarUploadData>>,
+): UseMutationOptions<
+  PostApiV1MediaAvatarUploadResponse,
+  PostApiV1MediaAvatarUploadError,
+  Options<PostApiV1MediaAvatarUploadData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1MediaAvatarUploadResponse,
+    PostApiV1MediaAvatarUploadError,
+    Options<PostApiV1MediaAvatarUploadData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1MediaAvatarUpload({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Confirm an uploaded avatar and set it on the current user
+ */
+export const postApiV1MediaAvatarConfirmMutation = (
+  options?: Partial<Options<PostApiV1MediaAvatarConfirmData>>,
+): UseMutationOptions<
+  PostApiV1MediaAvatarConfirmResponse,
+  PostApiV1MediaAvatarConfirmError,
+  Options<PostApiV1MediaAvatarConfirmData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1MediaAvatarConfirmResponse,
+    PostApiV1MediaAvatarConfirmError,
+    Options<PostApiV1MediaAvatarConfirmData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1MediaAvatarConfirm({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Presigned upload for the current user's profile banner
+ */
+export const postApiV1MediaBannerUploadMutation = (
+  options?: Partial<Options<PostApiV1MediaBannerUploadData>>,
+): UseMutationOptions<
+  PostApiV1MediaBannerUploadResponse,
+  PostApiV1MediaBannerUploadError,
+  Options<PostApiV1MediaBannerUploadData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1MediaBannerUploadResponse,
+    PostApiV1MediaBannerUploadError,
+    Options<PostApiV1MediaBannerUploadData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1MediaBannerUpload({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Confirm an uploaded banner and set it on the current user
+ */
+export const postApiV1MediaBannerConfirmMutation = (
+  options?: Partial<Options<PostApiV1MediaBannerConfirmData>>,
+): UseMutationOptions<
+  PostApiV1MediaBannerConfirmResponse,
+  PostApiV1MediaBannerConfirmError,
+  Options<PostApiV1MediaBannerConfirmData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1MediaBannerConfirmResponse,
+    PostApiV1MediaBannerConfirmError,
+    Options<PostApiV1MediaBannerConfirmData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1MediaBannerConfirm({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Presigned upload for a community icon (mod config permission required)
+ */
+export const postApiV1MediaCommunityIconUploadMutation = (
+  options?: Partial<Options<PostApiV1MediaCommunityIconUploadData>>,
+): UseMutationOptions<
+  PostApiV1MediaCommunityIconUploadResponse,
+  PostApiV1MediaCommunityIconUploadError,
+  Options<PostApiV1MediaCommunityIconUploadData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1MediaCommunityIconUploadResponse,
+    PostApiV1MediaCommunityIconUploadError,
+    Options<PostApiV1MediaCommunityIconUploadData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1MediaCommunityIconUpload({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Confirm an uploaded community icon (mod config permission required)
+ */
+export const postApiV1MediaCommunityIconConfirmMutation = (
+  options?: Partial<Options<PostApiV1MediaCommunityIconConfirmData>>,
+): UseMutationOptions<
+  PostApiV1MediaCommunityIconConfirmResponse,
+  PostApiV1MediaCommunityIconConfirmError,
+  Options<PostApiV1MediaCommunityIconConfirmData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1MediaCommunityIconConfirmResponse,
+    PostApiV1MediaCommunityIconConfirmError,
+    Options<PostApiV1MediaCommunityIconConfirmData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1MediaCommunityIconConfirm({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Presigned upload for a community banner (mod config permission required)
+ */
+export const postApiV1MediaCommunityBannerUploadMutation = (
+  options?: Partial<Options<PostApiV1MediaCommunityBannerUploadData>>,
+): UseMutationOptions<
+  PostApiV1MediaCommunityBannerUploadResponse,
+  PostApiV1MediaCommunityBannerUploadError,
+  Options<PostApiV1MediaCommunityBannerUploadData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1MediaCommunityBannerUploadResponse,
+    PostApiV1MediaCommunityBannerUploadError,
+    Options<PostApiV1MediaCommunityBannerUploadData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1MediaCommunityBannerUpload({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Confirm an uploaded community banner (mod config permission required)
+ */
+export const postApiV1MediaCommunityBannerConfirmMutation = (
+  options?: Partial<Options<PostApiV1MediaCommunityBannerConfirmData>>,
+): UseMutationOptions<
+  PostApiV1MediaCommunityBannerConfirmResponse,
+  PostApiV1MediaCommunityBannerConfirmError,
+  Options<PostApiV1MediaCommunityBannerConfirmData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1MediaCommunityBannerConfirmResponse,
+    PostApiV1MediaCommunityBannerConfirmError,
+    Options<PostApiV1MediaCommunityBannerConfirmData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1MediaCommunityBannerConfirm({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Unsave a post
+ */
+export const deleteApiV1PostActionSaveByPostIdMutation = (
+  options?: Partial<Options<DeleteApiV1PostActionSaveByPostIdData>>,
+): UseMutationOptions<
+  DeleteApiV1PostActionSaveByPostIdResponse,
+  DefaultError,
+  Options<DeleteApiV1PostActionSaveByPostIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1PostActionSaveByPostIdResponse,
+    DefaultError,
+    Options<DeleteApiV1PostActionSaveByPostIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1PostActionSaveByPostId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Save a post
+ */
+export const putApiV1PostActionSaveByPostIdMutation = (
+  options?: Partial<Options<PutApiV1PostActionSaveByPostIdData>>,
+): UseMutationOptions<
+  PutApiV1PostActionSaveByPostIdResponse,
+  PutApiV1PostActionSaveByPostIdError,
+  Options<PutApiV1PostActionSaveByPostIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1PostActionSaveByPostIdResponse,
+    PutApiV1PostActionSaveByPostIdError,
+    Options<PutApiV1PostActionSaveByPostIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1PostActionSaveByPostId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Unhide a post
+ */
+export const deleteApiV1PostActionHideByPostIdMutation = (
+  options?: Partial<Options<DeleteApiV1PostActionHideByPostIdData>>,
+): UseMutationOptions<
+  DeleteApiV1PostActionHideByPostIdResponse,
+  DefaultError,
+  Options<DeleteApiV1PostActionHideByPostIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1PostActionHideByPostIdResponse,
+    DefaultError,
+    Options<DeleteApiV1PostActionHideByPostIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1PostActionHideByPostId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Hide a post from the current user's feeds
+ */
+export const putApiV1PostActionHideByPostIdMutation = (
+  options?: Partial<Options<PutApiV1PostActionHideByPostIdData>>,
+): UseMutationOptions<
+  PutApiV1PostActionHideByPostIdResponse,
+  PutApiV1PostActionHideByPostIdError,
+  Options<PutApiV1PostActionHideByPostIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1PostActionHideByPostIdResponse,
+    PutApiV1PostActionHideByPostIdError,
+    Options<PutApiV1PostActionHideByPostIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1PostActionHideByPostId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Unfollow a post
+ */
+export const deleteApiV1PostActionFollowByPostIdMutation = (
+  options?: Partial<Options<DeleteApiV1PostActionFollowByPostIdData>>,
+): UseMutationOptions<
+  DeleteApiV1PostActionFollowByPostIdResponse,
+  DefaultError,
+  Options<DeleteApiV1PostActionFollowByPostIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1PostActionFollowByPostIdResponse,
+    DefaultError,
+    Options<DeleteApiV1PostActionFollowByPostIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1PostActionFollowByPostId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Follow a post to receive updates
+ */
+export const putApiV1PostActionFollowByPostIdMutation = (
+  options?: Partial<Options<PutApiV1PostActionFollowByPostIdData>>,
+): UseMutationOptions<
+  PutApiV1PostActionFollowByPostIdResponse,
+  PutApiV1PostActionFollowByPostIdError,
+  Options<PutApiV1PostActionFollowByPostIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1PostActionFollowByPostIdResponse,
+    PutApiV1PostActionFollowByPostIdError,
+    Options<PutApiV1PostActionFollowByPostIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1PostActionFollowByPostId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Record a share of a post
+ */
+export const postApiV1PostActionShareByPostIdMutation = (
+  options?: Partial<Options<PostApiV1PostActionShareByPostIdData>>,
+): UseMutationOptions<
+  PostApiV1PostActionShareByPostIdResponse,
+  PostApiV1PostActionShareByPostIdError,
+  Options<PostApiV1PostActionShareByPostIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1PostActionShareByPostIdResponse,
+    PostApiV1PostActionShareByPostIdError,
+    Options<PostApiV1PostActionShareByPostIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1PostActionShareByPostId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Unsave a comment
+ */
+export const deleteApiV1CommentActionSaveByCommentIdMutation = (
+  options?: Partial<Options<DeleteApiV1CommentActionSaveByCommentIdData>>,
+): UseMutationOptions<
+  DeleteApiV1CommentActionSaveByCommentIdResponse,
+  DefaultError,
+  Options<DeleteApiV1CommentActionSaveByCommentIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1CommentActionSaveByCommentIdResponse,
+    DefaultError,
+    Options<DeleteApiV1CommentActionSaveByCommentIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1CommentActionSaveByCommentId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Save a comment
+ */
+export const putApiV1CommentActionSaveByCommentIdMutation = (
+  options?: Partial<Options<PutApiV1CommentActionSaveByCommentIdData>>,
+): UseMutationOptions<
+  PutApiV1CommentActionSaveByCommentIdResponse,
+  PutApiV1CommentActionSaveByCommentIdError,
+  Options<PutApiV1CommentActionSaveByCommentIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1CommentActionSaveByCommentIdResponse,
+    PutApiV1CommentActionSaveByCommentIdError,
+    Options<PutApiV1CommentActionSaveByCommentIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1CommentActionSaveByCommentId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Unfollow a comment thread
+ */
+export const deleteApiV1CommentActionFollowByCommentIdMutation = (
+  options?: Partial<Options<DeleteApiV1CommentActionFollowByCommentIdData>>,
+): UseMutationOptions<
+  DeleteApiV1CommentActionFollowByCommentIdResponse,
+  DefaultError,
+  Options<DeleteApiV1CommentActionFollowByCommentIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1CommentActionFollowByCommentIdResponse,
+    DefaultError,
+    Options<DeleteApiV1CommentActionFollowByCommentIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1CommentActionFollowByCommentId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Follow a comment thread
+ */
+export const putApiV1CommentActionFollowByCommentIdMutation = (
+  options?: Partial<Options<PutApiV1CommentActionFollowByCommentIdData>>,
+): UseMutationOptions<
+  PutApiV1CommentActionFollowByCommentIdResponse,
+  PutApiV1CommentActionFollowByCommentIdError,
+  Options<PutApiV1CommentActionFollowByCommentIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1CommentActionFollowByCommentIdResponse,
+    PutApiV1CommentActionFollowByCommentIdError,
+    Options<PutApiV1CommentActionFollowByCommentIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1CommentActionFollowByCommentId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1UserFollowMineQueryKey = (options?: Options<GetApiV1UserFollowMineData>) =>
+  createQueryKey("getApiV1UserFollowMine", options)
+
+/**
+ * Users the current user follows
+ */
+export const getApiV1UserFollowMineOptions = (options?: Options<GetApiV1UserFollowMineData>) =>
+  queryOptions<
+    GetApiV1UserFollowMineResponse,
+    DefaultError,
+    GetApiV1UserFollowMineResponse,
+    ReturnType<typeof getApiV1UserFollowMineQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserFollowMine({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserFollowMineQueryKey(options),
+  })
+
+/**
+ * Unfollow a user's profile
+ */
+export const deleteApiV1UserFollowByUsernameMutation = (
+  options?: Partial<Options<DeleteApiV1UserFollowByUsernameData>>,
+): UseMutationOptions<
+  DeleteApiV1UserFollowByUsernameResponse,
+  DeleteApiV1UserFollowByUsernameError,
+  Options<DeleteApiV1UserFollowByUsernameData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1UserFollowByUsernameResponse,
+    DeleteApiV1UserFollowByUsernameError,
+    Options<DeleteApiV1UserFollowByUsernameData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1UserFollowByUsername({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Follow a user's profile
+ */
+export const putApiV1UserFollowByUsernameMutation = (
+  options?: Partial<Options<PutApiV1UserFollowByUsernameData>>,
+): UseMutationOptions<
+  PutApiV1UserFollowByUsernameResponse,
+  PutApiV1UserFollowByUsernameError,
+  Options<PutApiV1UserFollowByUsernameData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1UserFollowByUsernameResponse,
+    PutApiV1UserFollowByUsernameError,
+    Options<PutApiV1UserFollowByUsernameData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1UserFollowByUsername({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1UserBlockMineQueryKey = (options?: Options<GetApiV1UserBlockMineData>) =>
+  createQueryKey("getApiV1UserBlockMine", options)
+
+/**
+ * Users the current user has blocked
+ */
+export const getApiV1UserBlockMineOptions = (options?: Options<GetApiV1UserBlockMineData>) =>
+  queryOptions<
+    GetApiV1UserBlockMineResponse,
+    DefaultError,
+    GetApiV1UserBlockMineResponse,
+    ReturnType<typeof getApiV1UserBlockMineQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserBlockMine({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserBlockMineQueryKey(options),
+  })
+
+/**
+ * Unblock a user
+ */
+export const deleteApiV1UserBlockByUsernameMutation = (
+  options?: Partial<Options<DeleteApiV1UserBlockByUsernameData>>,
+): UseMutationOptions<
+  DeleteApiV1UserBlockByUsernameResponse,
+  DeleteApiV1UserBlockByUsernameError,
+  Options<DeleteApiV1UserBlockByUsernameData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1UserBlockByUsernameResponse,
+    DeleteApiV1UserBlockByUsernameError,
+    Options<DeleteApiV1UserBlockByUsernameData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1UserBlockByUsername({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Block a user
+ */
+export const putApiV1UserBlockByUsernameMutation = (
+  options?: Partial<Options<PutApiV1UserBlockByUsernameData>>,
+): UseMutationOptions<
+  PutApiV1UserBlockByUsernameResponse,
+  PutApiV1UserBlockByUsernameError,
+  Options<PutApiV1UserBlockByUsernameData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1UserBlockByUsernameResponse,
+    PutApiV1UserBlockByUsernameError,
+    Options<PutApiV1UserBlockByUsernameData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1UserBlockByUsername({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1MutedCommunityMineQueryKey = (
+  options?: Options<GetApiV1MutedCommunityMineData>,
+) => createQueryKey("getApiV1MutedCommunityMine", options)
+
+/**
+ * Communities the current user has muted
+ */
+export const getApiV1MutedCommunityMineOptions = (
+  options?: Options<GetApiV1MutedCommunityMineData>,
+) =>
+  queryOptions<
+    GetApiV1MutedCommunityMineResponse,
+    DefaultError,
+    GetApiV1MutedCommunityMineResponse,
+    ReturnType<typeof getApiV1MutedCommunityMineQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1MutedCommunityMine({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1MutedCommunityMineQueryKey(options),
+  })
+
+/**
+ * Unmute a community
+ */
+export const deleteApiV1MutedCommunityByCommunityIdMutation = (
+  options?: Partial<Options<DeleteApiV1MutedCommunityByCommunityIdData>>,
+): UseMutationOptions<
+  DeleteApiV1MutedCommunityByCommunityIdResponse,
+  DefaultError,
+  Options<DeleteApiV1MutedCommunityByCommunityIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1MutedCommunityByCommunityIdResponse,
+    DefaultError,
+    Options<DeleteApiV1MutedCommunityByCommunityIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1MutedCommunityByCommunityId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Mute a community
+ */
+export const putApiV1MutedCommunityByCommunityIdMutation = (
+  options?: Partial<Options<PutApiV1MutedCommunityByCommunityIdData>>,
+): UseMutationOptions<
+  PutApiV1MutedCommunityByCommunityIdResponse,
+  PutApiV1MutedCommunityByCommunityIdError,
+  Options<PutApiV1MutedCommunityByCommunityIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1MutedCommunityByCommunityIdResponse,
+    PutApiV1MutedCommunityByCommunityIdError,
+    Options<PutApiV1MutedCommunityByCommunityIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1MutedCommunityByCommunityId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1DraftQueryKey = (options?: Options<GetApiV1DraftData>) =>
+  createQueryKey("getApiV1Draft", options)
+
+/**
+ * List the current user's drafts, newest updated first
+ */
+export const getApiV1DraftOptions = (options?: Options<GetApiV1DraftData>) =>
+  queryOptions<
+    GetApiV1DraftResponse,
+    DefaultError,
+    GetApiV1DraftResponse,
+    ReturnType<typeof getApiV1DraftQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1Draft({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1DraftQueryKey(options),
+  })
+
+/**
+ * Create a draft
+ */
+export const postApiV1DraftMutation = (
+  options?: Partial<Options<PostApiV1DraftData>>,
+): UseMutationOptions<PostApiV1DraftResponse, PostApiV1DraftError, Options<PostApiV1DraftData>> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1DraftResponse,
+    PostApiV1DraftError,
+    Options<PostApiV1DraftData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1Draft({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Delete a draft
+ */
+export const deleteApiV1DraftByIdMutation = (
+  options?: Partial<Options<DeleteApiV1DraftByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1DraftByIdResponse,
+  DeleteApiV1DraftByIdError,
+  Options<DeleteApiV1DraftByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1DraftByIdResponse,
+    DeleteApiV1DraftByIdError,
+    Options<DeleteApiV1DraftByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1DraftById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1DraftByIdQueryKey = (options: Options<GetApiV1DraftByIdData>) =>
+  createQueryKey("getApiV1DraftById", options)
+
+/**
+ * Get a single draft
+ */
+export const getApiV1DraftByIdOptions = (options: Options<GetApiV1DraftByIdData>) =>
+  queryOptions<
+    GetApiV1DraftByIdResponse,
+    GetApiV1DraftByIdError,
+    GetApiV1DraftByIdResponse,
+    ReturnType<typeof getApiV1DraftByIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1DraftById({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1DraftByIdQueryKey(options),
+  })
+
+/**
+ * Update a draft
+ */
+export const patchApiV1DraftByIdMutation = (
+  options?: Partial<Options<PatchApiV1DraftByIdData>>,
+): UseMutationOptions<
+  PatchApiV1DraftByIdResponse,
+  PatchApiV1DraftByIdError,
+  Options<PatchApiV1DraftByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1DraftByIdResponse,
+    PatchApiV1DraftByIdError,
+    Options<PatchApiV1DraftByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1DraftById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1ScheduledPostMineQueryKey = (
+  options?: Options<GetApiV1ScheduledPostMineData>,
+) => createQueryKey("getApiV1ScheduledPostMine", options)
+
+/**
+ * The current user's scheduled posts
+ */
+export const getApiV1ScheduledPostMineOptions = (
+  options?: Options<GetApiV1ScheduledPostMineData>,
+) =>
+  queryOptions<
+    GetApiV1ScheduledPostMineResponse,
+    DefaultError,
+    GetApiV1ScheduledPostMineResponse,
+    ReturnType<typeof getApiV1ScheduledPostMineQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ScheduledPostMine({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ScheduledPostMineQueryKey(options),
+  })
+
+export const getApiV1ScheduledPostCommunityByCommunityIdQueryKey = (
+  options: Options<GetApiV1ScheduledPostCommunityByCommunityIdData>,
+) => createQueryKey("getApiV1ScheduledPostCommunityByCommunityId", options)
+
+/**
+ * Scheduled posts for a community (moderators only)
+ */
+export const getApiV1ScheduledPostCommunityByCommunityIdOptions = (
+  options: Options<GetApiV1ScheduledPostCommunityByCommunityIdData>,
+) =>
+  queryOptions<
+    GetApiV1ScheduledPostCommunityByCommunityIdResponse,
+    GetApiV1ScheduledPostCommunityByCommunityIdError,
+    GetApiV1ScheduledPostCommunityByCommunityIdResponse,
+    ReturnType<typeof getApiV1ScheduledPostCommunityByCommunityIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ScheduledPostCommunityByCommunityId({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ScheduledPostCommunityByCommunityIdQueryKey(options),
+  })
+
+/**
+ * Schedule a post for future publication
+ */
+export const postApiV1ScheduledPostMutation = (
+  options?: Partial<Options<PostApiV1ScheduledPostData>>,
+): UseMutationOptions<
+  PostApiV1ScheduledPostResponse,
+  PostApiV1ScheduledPostError,
+  Options<PostApiV1ScheduledPostData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ScheduledPostResponse,
+    PostApiV1ScheduledPostError,
+    Options<PostApiV1ScheduledPostData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ScheduledPost({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Cancel a scheduled post
+ */
+export const deleteApiV1ScheduledPostByIdMutation = (
+  options?: Partial<Options<DeleteApiV1ScheduledPostByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1ScheduledPostByIdResponse,
+  DeleteApiV1ScheduledPostByIdError,
+  Options<DeleteApiV1ScheduledPostByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1ScheduledPostByIdResponse,
+    DeleteApiV1ScheduledPostByIdError,
+    Options<DeleteApiV1ScheduledPostByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1ScheduledPostById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}

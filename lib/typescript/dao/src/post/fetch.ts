@@ -56,7 +56,69 @@ export type RawPostRow = {
 // biome-ignore lint/suspicious/noExplicitAny: query builder unions across sort branches
 type PostQuery = SelectQueryBuilder<DB, any, RawPostRow>
 
+function withMediaGuard(query: PostQuery): PostQuery {
+  return query.where((eb) =>
+    eb.or([
+      eb("post.type", "!=", "media"),
+      eb.exists(
+        eb
+          .selectFrom("postMedia")
+          .select("postMedia.id")
+          .whereRef("postMedia.postId", "=", "post.id")
+          .where("postMedia.uploadStatus", "=", "completed"),
+      ),
+    ]),
+  )
+}
+
 export function fetchPost(db: Kysely<DB>) {
+  function applyViewerExclusions(query: PostQuery, viewerId: string): PostQuery {
+    return query
+      .where((eb) =>
+        eb.not(
+          eb.exists(
+            eb
+              .selectFrom("postHide")
+              .select("postHide.userId")
+              .whereRef("postHide.postId", "=", "post.id")
+              .where("postHide.userId", "=", viewerId),
+          ),
+        ),
+      )
+      .where((eb) =>
+        eb.not(
+          eb.exists(
+            eb
+              .selectFrom("userMutedCommunity")
+              .select("userMutedCommunity.userId")
+              .whereRef("userMutedCommunity.communityId", "=", "post.communityId")
+              .where("userMutedCommunity.userId", "=", viewerId),
+          ),
+        ),
+      )
+      .where((eb) =>
+        eb.not(
+          eb.exists(
+            eb
+              .selectFrom("userBlock")
+              .select("userBlock.blockerUserId")
+              .where((inner) =>
+                inner.or([
+                  inner.and([
+                    inner("userBlock.blockerUserId", "=", viewerId),
+                    inner("userBlock.blockedUserId", "=", inner.ref("post.authorUserId")),
+                  ]),
+                  inner.and([
+                    inner("userBlock.blockerUserId", "=", inner.ref("post.authorUserId")),
+                    inner("userBlock.blockedUserId", "=", viewerId),
+                  ]),
+                ]),
+              ),
+          ),
+        ),
+      )
+  }
+
   function applyNonRisingSort(
     query: PostQuery,
     sort: Exclude<PostSort, "rising">,
@@ -85,45 +147,66 @@ export function fetchPost(db: Kysely<DB>) {
     sort: PostSort
     windowStart: Date | null
     excludeSticky: boolean
+    viewerId?: string | null
   }): PostQuery {
+    const exclude = (q: PostQuery): PostQuery =>
+      opts.viewerId ? applyViewerExclusions(q, opts.viewerId) : q
     if (opts.sort === "rising") {
-      return db
+      return exclude(
+        withMediaGuard(
+          db
+            .selectFrom("post")
+            .innerJoin("postRising", "postRising.postId", "post.id")
+            .where("post.communityId", "=", opts.communityId)
+            .where("post.removedAt", "is", null)
+            .select(POST_COLUMNS)
+            .orderBy("postRising.score", "desc")
+            .orderBy("post.id", "desc"),
+        ),
+      )
+    }
+    const base = withMediaGuard(
+      db
         .selectFrom("post")
-        .innerJoin("postRising", "postRising.postId", "post.id")
         .where("post.communityId", "=", opts.communityId)
         .where("post.removedAt", "is", null)
-        .select(POST_COLUMNS)
-        .orderBy("postRising.score", "desc")
-        .orderBy("post.id", "desc")
-    }
-    const base = db
-      .selectFrom("post")
-      .where("post.communityId", "=", opts.communityId)
-      .where("post.removedAt", "is", null)
-      .$if(opts.excludeSticky, (qb) => qb.where("post.stickyPosition", "is", null))
-      .select(POST_COLUMNS)
-    return applyNonRisingSort(base, opts.sort, opts.windowStart)
+        .$if(opts.excludeSticky, (qb) => qb.where("post.stickyPosition", "is", null))
+        .select(POST_COLUMNS),
+    )
+    return exclude(applyNonRisingSort(base, opts.sort, opts.windowStart))
   }
 
-  function globalFeed(opts: { sort: PostSort; windowStart: Date | null }): PostQuery {
+  function globalFeed(opts: {
+    sort: PostSort
+    windowStart: Date | null
+    viewerId?: string | null
+  }): PostQuery {
+    const exclude = (q: PostQuery): PostQuery =>
+      opts.viewerId ? applyViewerExclusions(q, opts.viewerId) : q
     if (opts.sort === "rising") {
-      return db
+      return exclude(
+        withMediaGuard(
+          db
+            .selectFrom("post")
+            .innerJoin("postRising", "postRising.postId", "post.id")
+            .innerJoin("community", "community.id", "post.communityId")
+            .where("community.visibility", "in", ["public", "restricted"])
+            .where("post.removedAt", "is", null)
+            .select(POST_COLUMNS)
+            .orderBy("postRising.score", "desc")
+            .orderBy("post.id", "desc"),
+        ),
+      )
+    }
+    const base = withMediaGuard(
+      db
         .selectFrom("post")
-        .innerJoin("postRising", "postRising.postId", "post.id")
         .innerJoin("community", "community.id", "post.communityId")
         .where("community.visibility", "in", ["public", "restricted"])
         .where("post.removedAt", "is", null)
-        .select(POST_COLUMNS)
-        .orderBy("postRising.score", "desc")
-        .orderBy("post.id", "desc")
-    }
-    const base = db
-      .selectFrom("post")
-      .innerJoin("community", "community.id", "post.communityId")
-      .where("community.visibility", "in", ["public", "restricted"])
-      .where("post.removedAt", "is", null)
-      .select(POST_COLUMNS)
-    return applyNonRisingSort(base, opts.sort, opts.windowStart)
+        .select(POST_COLUMNS),
+    )
+    return exclude(applyNonRisingSort(base, opts.sort, opts.windowStart))
   }
 
   function homeFeed(opts: {
@@ -132,59 +215,120 @@ export function fetchPost(db: Kysely<DB>) {
     sort: PostSort
     windowStart: Date | null
     excludeViewed: boolean
+    followedUserIds: string[]
   }): PostQuery {
-    if (opts.sort === "rising") {
-      return db
-        .selectFrom("post")
-        .innerJoin("postRising", "postRising.postId", "post.id")
-        .where("post.communityId", "in", opts.communityIds)
-        .where("post.removedAt", "is", null)
-        .select(POST_COLUMNS)
-        .orderBy("postRising.score", "desc")
-        .orderBy("post.id", "desc")
-    }
-    const base = db
-      .selectFrom("post")
-      .$if(opts.excludeViewed, (qb) =>
-        qb
-          .leftJoin("postView", (join) =>
-            join.onRef("postView.postId", "=", "post.id").on("postView.userId", "=", opts.viewerId),
-          )
-          .where("postView.postId", "is", null),
+    const hasCommunities = opts.communityIds.length > 0
+    const hasFollowed = opts.followedUserIds.length > 0
+    const candidateWhere = (qb: PostQuery): PostQuery =>
+      qb.where((eb) =>
+        eb.or([
+          ...(hasCommunities ? [eb("post.communityId", "in", opts.communityIds)] : []),
+          ...(hasFollowed ? [eb("post.profileUserId", "in", opts.followedUserIds)] : []),
+        ]),
       )
-      .where("post.communityId", "in", opts.communityIds)
-      .where("post.removedAt", "is", null)
-      .select(POST_COLUMNS)
-    return applyNonRisingSort(base, opts.sort, opts.windowStart)
+    if (opts.sort === "rising") {
+      return applyViewerExclusions(
+        candidateWhere(
+          withMediaGuard(
+            db
+              .selectFrom("post")
+              .innerJoin("postRising", "postRising.postId", "post.id")
+              .where("post.removedAt", "is", null)
+              .select(POST_COLUMNS)
+              .orderBy("postRising.score", "desc")
+              .orderBy("post.id", "desc"),
+          ),
+        ),
+        opts.viewerId,
+      )
+    }
+    const base = candidateWhere(
+      withMediaGuard(
+        db
+          .selectFrom("post")
+          .$if(opts.excludeViewed, (qb) =>
+            qb
+              .leftJoin("postView", (join) =>
+                join
+                  .onRef("postView.postId", "=", "post.id")
+                  .on("postView.userId", "=", opts.viewerId),
+              )
+              .where("postView.postId", "is", null),
+          )
+          .where("post.removedAt", "is", null)
+          .select(POST_COLUMNS),
+      ),
+    )
+    return applyViewerExclusions(
+      applyNonRisingSort(base, opts.sort, opts.windowStart),
+      opts.viewerId,
+    )
   }
 
-  function profileFeed(profileUserId: string): PostQuery {
+  function savedPostsFeed(userId: string): PostQuery {
     return db
       .selectFrom("post")
-      .where("post.profileUserId", "=", profileUserId)
+      .innerJoin("postSave", "postSave.postId", "post.id")
+      .where("postSave.userId", "=", userId)
       .where("post.removedAt", "is", null)
       .select(POST_COLUMNS)
-      .orderBy("post.createdAt", "desc")
+      .orderBy("postSave.createdAt", "desc")
       .orderBy("post.id", "desc")
   }
 
-  async function getStickyForCommunity(communityId: string): Promise<RawPostRow[]> {
-    return (await db
+  function hiddenPostsFeed(userId: string): PostQuery {
+    return db
       .selectFrom("post")
-      .where("post.communityId", "=", communityId)
+      .innerJoin("postHide", "postHide.postId", "post.id")
+      .where("postHide.userId", "=", userId)
       .where("post.removedAt", "is", null)
-      .where("post.stickyPosition", "is not", null)
       .select(POST_COLUMNS)
-      .orderBy("post.stickyPosition", "asc")
-      .execute()) as RawPostRow[]
+      .orderBy("postHide.createdAt", "desc")
+      .orderBy("post.id", "desc")
+  }
+
+  function votedPostsFeed(userId: string, value: number): PostQuery {
+    return db
+      .selectFrom("post")
+      .innerJoin("postVote", "postVote.postId", "post.id")
+      .where("postVote.userId", "=", userId)
+      .where("postVote.value", "=", value)
+      .where("post.removedAt", "is", null)
+      .select(POST_COLUMNS)
+      .orderBy("postVote.updatedAt", "desc")
+      .orderBy("post.id", "desc")
+  }
+
+  function profileFeed(profileUserId: string): PostQuery {
+    return withMediaGuard(
+      db
+        .selectFrom("post")
+        .where("post.profileUserId", "=", profileUserId)
+        .where("post.removedAt", "is", null)
+        .select(POST_COLUMNS)
+        .orderBy("post.createdAt", "desc")
+        .orderBy("post.id", "desc"),
+    )
+  }
+
+  async function getStickyForCommunity(communityId: string): Promise<RawPostRow[]> {
+    return await withMediaGuard(
+      db
+        .selectFrom("post")
+        .where("post.communityId", "=", communityId)
+        .where("post.removedAt", "is", null)
+        .where("post.stickyPosition", "is not", null)
+        .select(POST_COLUMNS)
+        .orderBy("post.stickyPosition", "asc"),
+    ).execute()
   }
 
   async function getRawById(id: string): Promise<RawPostRow | undefined> {
-    return (await db
+    return await db
       .selectFrom("post")
       .where("post.id", "=", id)
       .select(POST_COLUMNS)
-      .executeTakeFirst()) as RawPostRow | undefined
+      .executeTakeFirst()
   }
 
   async function getOne<T extends (keyof DB["post"])[]>(
@@ -194,13 +338,25 @@ export function fetchPost(db: Kysely<DB>) {
     return await db.selectFrom("post").select(fields).where("id", "=", id).executeTakeFirst()
   }
 
+  async function getManyByIds<T extends (keyof DB["post"])[]>(
+    ids: string[],
+    fields: T,
+  ): Promise<Pick<Selectable<DB["post"]>, T[number]>[]> {
+    if (ids.length === 0) return []
+    return await db.selectFrom("post").select(fields).where("id", "in", ids).execute()
+  }
+
   return {
     communityFeed,
     globalFeed,
     homeFeed,
+    savedPostsFeed,
+    hiddenPostsFeed,
+    votedPostsFeed,
     profileFeed,
     getStickyForCommunity,
     getRawById,
     getOne,
+    getManyByIds,
   }
 }

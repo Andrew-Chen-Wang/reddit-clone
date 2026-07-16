@@ -6,8 +6,12 @@ import {
   registerRepeatables,
   slowQueue,
 } from "@utils/queues"
-import { Worker } from "bullmq"
+import { type Job, Worker } from "bullmq"
+import { processDraftExpiry } from "./jobs/draftExpiry"
+import { processMediaCleanup } from "./jobs/mediaCleanup"
+import { processRecurringPostScheduler } from "./jobs/recurringPostScheduler"
 import { processRisingRecompute } from "./jobs/risingRecompute"
+import { processScheduledPostPublish } from "./jobs/scheduledPostPublish"
 
 // This process runs the cloud workers (fast/medium/slow). Each worker dispatches on
 // job.name; new milestones add cases here and the matching payload type in @utils/queues.
@@ -31,6 +35,12 @@ function makeMediumWorker() {
       if (job.name === "rising-recompute") {
         await processRisingRecompute(job.data as JobPayloadMap["rising-recompute"])
       }
+      if (job.name === "scheduled-post-publish") {
+        await processScheduledPostPublish(job.data as JobPayloadMap["scheduled-post-publish"])
+      }
+      if (job.name === "recurring-post-scheduler") {
+        await processRecurringPostScheduler(job.data as JobPayloadMap["recurring-post-scheduler"])
+      }
     },
     { connection, concurrency: 5, removeOnComplete: { age: 86400 } },
   )
@@ -39,9 +49,14 @@ function makeMediumWorker() {
 function makeSlowWorker() {
   return new Worker(
     "slow",
-    (job) => {
+    async (job) => {
       console.info(`[slow] starting ${job.name} (id=${job.id})`)
-      return Promise.resolve()
+      if (job.name === "media-cleanup") {
+        await processMediaCleanup(job as Job<JobPayloadMap["media-cleanup"]>)
+      }
+      if (job.name === "draft-expiry") {
+        await processDraftExpiry(job.data as JobPayloadMap["draft-expiry"])
+      }
     },
     { connection, concurrency: 5, removeOnComplete: { age: 86400 } },
   )

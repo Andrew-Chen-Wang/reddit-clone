@@ -130,6 +130,370 @@ export type GetApiV1UserByUsernameByUsernameResponses = {
 export type GetApiV1UserByUsernameByUsernameResponse =
   GetApiV1UserByUsernameByUsernameResponses[keyof GetApiV1UserByUsernameByUsernameResponses]
 
+export type GetApiV1UserByUsernameByUsernameCommentsData = {
+  body?: never
+  path: {
+    username: string
+  }
+  query?: {
+    cursor?: string
+  }
+  url: "/api/v1/user/by-username/{username}/comments"
+}
+
+export type GetApiV1UserByUsernameByUsernameCommentsErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1UserByUsernameByUsernameCommentsError =
+  GetApiV1UserByUsernameByUsernameCommentsErrors[keyof GetApiV1UserByUsernameByUsernameCommentsErrors]
+
+export type GetApiV1UserByUsernameByUsernameCommentsResponses = {
+  /**
+   * User comments
+   */
+  200: {
+    data: Array<{
+      id: string
+      postId: string
+      parentCommentId: string | null
+      depth: number
+      bodyMd: string | null
+      ups: number
+      downs: number
+      score: number
+      isDeleted: boolean
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+      post: {
+        id: string
+        title: string
+        community: {
+          id: string
+          name: string
+        } | null
+      }
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1UserByUsernameByUsernameCommentsResponse =
+  GetApiV1UserByUsernameByUsernameCommentsResponses[keyof GetApiV1UserByUsernameByUsernameCommentsResponses]
+
+export type GetApiV1UserMeSavedData = {
+  body?: never
+  path?: never
+  query?: {
+    type?: "posts" | "comments"
+    cursor?: string
+  }
+  url: "/api/v1/user/me/saved"
+}
+
+export type GetApiV1UserMeSavedResponses = {
+  /**
+   * Saved items
+   */
+  200: {
+    posts: Array<{
+      id: string
+      type: string
+      title: string
+      bodyMd: string | null
+      linkUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      isLocked: boolean
+      stickyPosition: number | null
+      ups: number
+      downs: number
+      score: number
+      commentCount: number
+      viewCount: number
+      shareCount: number
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+      community: {
+        id: string
+        name: string
+        displayName: string | null
+        iconImageKey: string | null
+        isNsfw: boolean
+      } | null
+      flair: {
+        id: string
+        text: string
+        bgColor: string | null
+        textColor: string | null
+      } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
+    }>
+    comments: Array<{
+      id: string
+      postId: string
+      parentCommentId: string | null
+      depth: number
+      bodyMd: string | null
+      ups: number
+      downs: number
+      score: number
+      isDeleted: boolean
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+      post: {
+        id: string
+        title: string
+        community: {
+          id: string
+          name: string
+        } | null
+      }
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1UserMeSavedResponse =
+  GetApiV1UserMeSavedResponses[keyof GetApiV1UserMeSavedResponses]
+
+export type GetApiV1UserMeHiddenData = {
+  body?: never
+  path?: never
+  query?: {
+    cursor?: string
+  }
+  url: "/api/v1/user/me/hidden"
+}
+
+export type GetApiV1UserMeHiddenResponses = {
+  /**
+   * Hidden posts
+   */
+  200: {
+    data: Array<{
+      id: string
+      type: string
+      title: string
+      bodyMd: string | null
+      linkUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      isLocked: boolean
+      stickyPosition: number | null
+      ups: number
+      downs: number
+      score: number
+      commentCount: number
+      viewCount: number
+      shareCount: number
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+      community: {
+        id: string
+        name: string
+        displayName: string | null
+        iconImageKey: string | null
+        isNsfw: boolean
+      } | null
+      flair: {
+        id: string
+        text: string
+        bgColor: string | null
+        textColor: string | null
+      } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1UserMeHiddenResponse =
+  GetApiV1UserMeHiddenResponses[keyof GetApiV1UserMeHiddenResponses]
+
+export type GetApiV1UserMeUpvotedData = {
+  body?: never
+  path?: never
+  query?: {
+    cursor?: string
+  }
+  url: "/api/v1/user/me/upvoted"
+}
+
+export type GetApiV1UserMeUpvotedResponses = {
+  /**
+   * Upvoted posts
+   */
+  200: {
+    data: Array<{
+      id: string
+      type: string
+      title: string
+      bodyMd: string | null
+      linkUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      isLocked: boolean
+      stickyPosition: number | null
+      ups: number
+      downs: number
+      score: number
+      commentCount: number
+      viewCount: number
+      shareCount: number
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+      community: {
+        id: string
+        name: string
+        displayName: string | null
+        iconImageKey: string | null
+        isNsfw: boolean
+      } | null
+      flair: {
+        id: string
+        text: string
+        bgColor: string | null
+        textColor: string | null
+      } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1UserMeUpvotedResponse =
+  GetApiV1UserMeUpvotedResponses[keyof GetApiV1UserMeUpvotedResponses]
+
+export type GetApiV1UserMeDownvotedData = {
+  body?: never
+  path?: never
+  query?: {
+    cursor?: string
+  }
+  url: "/api/v1/user/me/downvoted"
+}
+
+export type GetApiV1UserMeDownvotedResponses = {
+  /**
+   * Downvoted posts
+   */
+  200: {
+    data: Array<{
+      id: string
+      type: string
+      title: string
+      bodyMd: string | null
+      linkUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      isLocked: boolean
+      stickyPosition: number | null
+      ups: number
+      downs: number
+      score: number
+      commentCount: number
+      viewCount: number
+      shareCount: number
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+      community: {
+        id: string
+        name: string
+        displayName: string | null
+        iconImageKey: string | null
+        isNsfw: boolean
+      } | null
+      flair: {
+        id: string
+        text: string
+        bgColor: string | null
+        textColor: string | null
+      } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1UserMeDownvotedResponse =
+  GetApiV1UserMeDownvotedResponses[keyof GetApiV1UserMeDownvotedResponses]
+
 export type GetApiV1UserMeData = {
   body?: never
   path?: never
@@ -1664,6 +2028,12 @@ export type GetApiV1PostByIdResponses = {
       bgColor: string | null
       textColor: string | null
     } | null
+    media: Array<{
+      mediaType: string
+      url: string
+      width: number | null
+      height: number | null
+    }>
   }
 }
 
@@ -1707,6 +2077,14 @@ export type PatchApiV1PostByIdResponses = {
    */
   200: {
     id: string
+    uploads?: Array<{
+      position: number
+      key: string
+      url: string
+      fields: {
+        [key: string]: unknown | string
+      }
+    }>
   }
 }
 
@@ -1716,10 +2094,17 @@ export type PatchApiV1PostByIdResponse =
 export type PostApiV1PostData = {
   body?: {
     communityId?: string
-    type: "text" | "link"
+    type: "text" | "link" | "media"
     title: string
     bodyMd?: string | null
     linkUrl?: string | null
+    media?: Array<{
+      mediaType: "image" | "video"
+      mimeType: string
+      byteSize: number
+      width?: number | null
+      height?: number | null
+    }>
     isNsfw?: boolean
     isSpoiler?: boolean
     isOc?: boolean
@@ -1749,6 +2134,14 @@ export type PostApiV1PostResponses = {
    */
   201: {
     id: string
+    uploads?: Array<{
+      position: number
+      key: string
+      url: string
+      fields: {
+        [key: string]: unknown | string
+      }
+    }>
   }
 }
 
@@ -1862,6 +2255,12 @@ export type GetApiV1FeedCommunityByNameResponses = {
         bgColor: string | null
         textColor: string | null
       } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
     }>
     nextCursor: string | null
   }
@@ -1926,6 +2325,12 @@ export type GetApiV1FeedPopularResponses = {
         bgColor: string | null
         textColor: string | null
       } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
     }>
     nextCursor: string | null
   }
@@ -1990,6 +2395,12 @@ export type GetApiV1FeedHomeResponses = {
         bgColor: string | null
         textColor: string | null
       } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
     }>
     nextCursor: string | null
   }
@@ -2065,6 +2476,12 @@ export type GetApiV1FeedProfileByUsernameResponses = {
         bgColor: string | null
         textColor: string | null
       } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
     }>
     nextCursor: string | null
   }
@@ -2144,3 +2561,1283 @@ export type GetApiV1HistoryRecentCommunitiesResponses = {
 
 export type GetApiV1HistoryRecentCommunitiesResponse =
   GetApiV1HistoryRecentCommunitiesResponses[keyof GetApiV1HistoryRecentCommunitiesResponses]
+
+export type PostApiV1MediaConfirmData = {
+  body?: {
+    postId: string
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/media/confirm"
+}
+
+export type PostApiV1MediaConfirmErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1MediaConfirmError =
+  PostApiV1MediaConfirmErrors[keyof PostApiV1MediaConfirmErrors]
+
+export type PostApiV1MediaConfirmResponses = {
+  /**
+   * Confirmed
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1MediaConfirmResponse =
+  PostApiV1MediaConfirmResponses[keyof PostApiV1MediaConfirmResponses]
+
+export type PostApiV1MediaAvatarUploadData = {
+  body?: {
+    mimeType: "image/jpeg" | "image/png" | "image/gif" | "image/webp"
+    byteSize: number
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/media/avatar-upload"
+}
+
+export type PostApiV1MediaAvatarUploadErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1MediaAvatarUploadError =
+  PostApiV1MediaAvatarUploadErrors[keyof PostApiV1MediaAvatarUploadErrors]
+
+export type PostApiV1MediaAvatarUploadResponses = {
+  /**
+   * Presigned upload
+   */
+  200: {
+    key: string
+    url: string
+    fields: {
+      [key: string]: unknown | string
+    }
+    publicUrl: string
+  }
+}
+
+export type PostApiV1MediaAvatarUploadResponse =
+  PostApiV1MediaAvatarUploadResponses[keyof PostApiV1MediaAvatarUploadResponses]
+
+export type PostApiV1MediaAvatarConfirmData = {
+  body?: {
+    key: string
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/media/avatar-confirm"
+}
+
+export type PostApiV1MediaAvatarConfirmErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1MediaAvatarConfirmError =
+  PostApiV1MediaAvatarConfirmErrors[keyof PostApiV1MediaAvatarConfirmErrors]
+
+export type PostApiV1MediaAvatarConfirmResponses = {
+  /**
+   * Confirmed
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1MediaAvatarConfirmResponse =
+  PostApiV1MediaAvatarConfirmResponses[keyof PostApiV1MediaAvatarConfirmResponses]
+
+export type PostApiV1MediaBannerUploadData = {
+  body?: {
+    mimeType: "image/jpeg" | "image/png" | "image/gif" | "image/webp"
+    byteSize: number
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/media/banner-upload"
+}
+
+export type PostApiV1MediaBannerUploadErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1MediaBannerUploadError =
+  PostApiV1MediaBannerUploadErrors[keyof PostApiV1MediaBannerUploadErrors]
+
+export type PostApiV1MediaBannerUploadResponses = {
+  /**
+   * Presigned upload
+   */
+  200: {
+    key: string
+    url: string
+    fields: {
+      [key: string]: unknown | string
+    }
+    publicUrl: string
+  }
+}
+
+export type PostApiV1MediaBannerUploadResponse =
+  PostApiV1MediaBannerUploadResponses[keyof PostApiV1MediaBannerUploadResponses]
+
+export type PostApiV1MediaBannerConfirmData = {
+  body?: {
+    key: string
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/media/banner-confirm"
+}
+
+export type PostApiV1MediaBannerConfirmErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1MediaBannerConfirmError =
+  PostApiV1MediaBannerConfirmErrors[keyof PostApiV1MediaBannerConfirmErrors]
+
+export type PostApiV1MediaBannerConfirmResponses = {
+  /**
+   * Confirmed
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1MediaBannerConfirmResponse =
+  PostApiV1MediaBannerConfirmResponses[keyof PostApiV1MediaBannerConfirmResponses]
+
+export type PostApiV1MediaCommunityIconUploadData = {
+  body?: {
+    communityId: string
+    mimeType: "image/jpeg" | "image/png" | "image/gif" | "image/webp"
+    byteSize: number
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/media/community-icon-upload"
+}
+
+export type PostApiV1MediaCommunityIconUploadErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1MediaCommunityIconUploadError =
+  PostApiV1MediaCommunityIconUploadErrors[keyof PostApiV1MediaCommunityIconUploadErrors]
+
+export type PostApiV1MediaCommunityIconUploadResponses = {
+  /**
+   * Presigned upload
+   */
+  200: {
+    key: string
+    url: string
+    fields: {
+      [key: string]: unknown | string
+    }
+    publicUrl: string
+  }
+}
+
+export type PostApiV1MediaCommunityIconUploadResponse =
+  PostApiV1MediaCommunityIconUploadResponses[keyof PostApiV1MediaCommunityIconUploadResponses]
+
+export type PostApiV1MediaCommunityIconConfirmData = {
+  body?: {
+    communityId: string
+    key: string
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/media/community-icon-confirm"
+}
+
+export type PostApiV1MediaCommunityIconConfirmErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1MediaCommunityIconConfirmError =
+  PostApiV1MediaCommunityIconConfirmErrors[keyof PostApiV1MediaCommunityIconConfirmErrors]
+
+export type PostApiV1MediaCommunityIconConfirmResponses = {
+  /**
+   * Confirmed
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1MediaCommunityIconConfirmResponse =
+  PostApiV1MediaCommunityIconConfirmResponses[keyof PostApiV1MediaCommunityIconConfirmResponses]
+
+export type PostApiV1MediaCommunityBannerUploadData = {
+  body?: {
+    communityId: string
+    mimeType: "image/jpeg" | "image/png" | "image/gif" | "image/webp"
+    byteSize: number
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/media/community-banner-upload"
+}
+
+export type PostApiV1MediaCommunityBannerUploadErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1MediaCommunityBannerUploadError =
+  PostApiV1MediaCommunityBannerUploadErrors[keyof PostApiV1MediaCommunityBannerUploadErrors]
+
+export type PostApiV1MediaCommunityBannerUploadResponses = {
+  /**
+   * Presigned upload
+   */
+  200: {
+    key: string
+    url: string
+    fields: {
+      [key: string]: unknown | string
+    }
+    publicUrl: string
+  }
+}
+
+export type PostApiV1MediaCommunityBannerUploadResponse =
+  PostApiV1MediaCommunityBannerUploadResponses[keyof PostApiV1MediaCommunityBannerUploadResponses]
+
+export type PostApiV1MediaCommunityBannerConfirmData = {
+  body?: {
+    communityId: string
+    key: string
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/media/community-banner-confirm"
+}
+
+export type PostApiV1MediaCommunityBannerConfirmErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1MediaCommunityBannerConfirmError =
+  PostApiV1MediaCommunityBannerConfirmErrors[keyof PostApiV1MediaCommunityBannerConfirmErrors]
+
+export type PostApiV1MediaCommunityBannerConfirmResponses = {
+  /**
+   * Confirmed
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1MediaCommunityBannerConfirmResponse =
+  PostApiV1MediaCommunityBannerConfirmResponses[keyof PostApiV1MediaCommunityBannerConfirmResponses]
+
+export type DeleteApiV1PostActionSaveByPostIdData = {
+  body?: never
+  path: {
+    postId: string
+  }
+  query?: never
+  url: "/api/v1/post-action/save/{postId}"
+}
+
+export type DeleteApiV1PostActionSaveByPostIdResponses = {
+  /**
+   * Post unsaved
+   */
+  200: {
+    saved: boolean
+  }
+}
+
+export type DeleteApiV1PostActionSaveByPostIdResponse =
+  DeleteApiV1PostActionSaveByPostIdResponses[keyof DeleteApiV1PostActionSaveByPostIdResponses]
+
+export type PutApiV1PostActionSaveByPostIdData = {
+  body?: never
+  path: {
+    postId: string
+  }
+  query?: never
+  url: "/api/v1/post-action/save/{postId}"
+}
+
+export type PutApiV1PostActionSaveByPostIdErrors = {
+  /**
+   * Post not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1PostActionSaveByPostIdError =
+  PutApiV1PostActionSaveByPostIdErrors[keyof PutApiV1PostActionSaveByPostIdErrors]
+
+export type PutApiV1PostActionSaveByPostIdResponses = {
+  /**
+   * Post saved
+   */
+  200: {
+    saved: boolean
+  }
+}
+
+export type PutApiV1PostActionSaveByPostIdResponse =
+  PutApiV1PostActionSaveByPostIdResponses[keyof PutApiV1PostActionSaveByPostIdResponses]
+
+export type DeleteApiV1PostActionHideByPostIdData = {
+  body?: never
+  path: {
+    postId: string
+  }
+  query?: never
+  url: "/api/v1/post-action/hide/{postId}"
+}
+
+export type DeleteApiV1PostActionHideByPostIdResponses = {
+  /**
+   * Post unhidden
+   */
+  200: {
+    hidden: boolean
+  }
+}
+
+export type DeleteApiV1PostActionHideByPostIdResponse =
+  DeleteApiV1PostActionHideByPostIdResponses[keyof DeleteApiV1PostActionHideByPostIdResponses]
+
+export type PutApiV1PostActionHideByPostIdData = {
+  body?: never
+  path: {
+    postId: string
+  }
+  query?: never
+  url: "/api/v1/post-action/hide/{postId}"
+}
+
+export type PutApiV1PostActionHideByPostIdErrors = {
+  /**
+   * Post not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1PostActionHideByPostIdError =
+  PutApiV1PostActionHideByPostIdErrors[keyof PutApiV1PostActionHideByPostIdErrors]
+
+export type PutApiV1PostActionHideByPostIdResponses = {
+  /**
+   * Post hidden
+   */
+  200: {
+    hidden: boolean
+  }
+}
+
+export type PutApiV1PostActionHideByPostIdResponse =
+  PutApiV1PostActionHideByPostIdResponses[keyof PutApiV1PostActionHideByPostIdResponses]
+
+export type DeleteApiV1PostActionFollowByPostIdData = {
+  body?: never
+  path: {
+    postId: string
+  }
+  query?: never
+  url: "/api/v1/post-action/follow/{postId}"
+}
+
+export type DeleteApiV1PostActionFollowByPostIdResponses = {
+  /**
+   * Post unfollowed
+   */
+  200: {
+    following: boolean
+  }
+}
+
+export type DeleteApiV1PostActionFollowByPostIdResponse =
+  DeleteApiV1PostActionFollowByPostIdResponses[keyof DeleteApiV1PostActionFollowByPostIdResponses]
+
+export type PutApiV1PostActionFollowByPostIdData = {
+  body?: never
+  path: {
+    postId: string
+  }
+  query?: never
+  url: "/api/v1/post-action/follow/{postId}"
+}
+
+export type PutApiV1PostActionFollowByPostIdErrors = {
+  /**
+   * Post not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1PostActionFollowByPostIdError =
+  PutApiV1PostActionFollowByPostIdErrors[keyof PutApiV1PostActionFollowByPostIdErrors]
+
+export type PutApiV1PostActionFollowByPostIdResponses = {
+  /**
+   * Post followed
+   */
+  200: {
+    following: boolean
+  }
+}
+
+export type PutApiV1PostActionFollowByPostIdResponse =
+  PutApiV1PostActionFollowByPostIdResponses[keyof PutApiV1PostActionFollowByPostIdResponses]
+
+export type PostApiV1PostActionShareByPostIdData = {
+  body?: never
+  path: {
+    postId: string
+  }
+  query?: never
+  url: "/api/v1/post-action/share/{postId}"
+}
+
+export type PostApiV1PostActionShareByPostIdErrors = {
+  /**
+   * Post not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1PostActionShareByPostIdError =
+  PostApiV1PostActionShareByPostIdErrors[keyof PostApiV1PostActionShareByPostIdErrors]
+
+export type PostApiV1PostActionShareByPostIdResponses = {
+  /**
+   * Share recorded
+   */
+  200: {
+    shareCount: number
+  }
+}
+
+export type PostApiV1PostActionShareByPostIdResponse =
+  PostApiV1PostActionShareByPostIdResponses[keyof PostApiV1PostActionShareByPostIdResponses]
+
+export type DeleteApiV1CommentActionSaveByCommentIdData = {
+  body?: never
+  path: {
+    commentId: string
+  }
+  query?: never
+  url: "/api/v1/comment-action/save/{commentId}"
+}
+
+export type DeleteApiV1CommentActionSaveByCommentIdResponses = {
+  /**
+   * Comment unsaved
+   */
+  200: {
+    saved: boolean
+  }
+}
+
+export type DeleteApiV1CommentActionSaveByCommentIdResponse =
+  DeleteApiV1CommentActionSaveByCommentIdResponses[keyof DeleteApiV1CommentActionSaveByCommentIdResponses]
+
+export type PutApiV1CommentActionSaveByCommentIdData = {
+  body?: never
+  path: {
+    commentId: string
+  }
+  query?: never
+  url: "/api/v1/comment-action/save/{commentId}"
+}
+
+export type PutApiV1CommentActionSaveByCommentIdErrors = {
+  /**
+   * Comment not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1CommentActionSaveByCommentIdError =
+  PutApiV1CommentActionSaveByCommentIdErrors[keyof PutApiV1CommentActionSaveByCommentIdErrors]
+
+export type PutApiV1CommentActionSaveByCommentIdResponses = {
+  /**
+   * Comment saved
+   */
+  200: {
+    saved: boolean
+  }
+}
+
+export type PutApiV1CommentActionSaveByCommentIdResponse =
+  PutApiV1CommentActionSaveByCommentIdResponses[keyof PutApiV1CommentActionSaveByCommentIdResponses]
+
+export type DeleteApiV1CommentActionFollowByCommentIdData = {
+  body?: never
+  path: {
+    commentId: string
+  }
+  query?: never
+  url: "/api/v1/comment-action/follow/{commentId}"
+}
+
+export type DeleteApiV1CommentActionFollowByCommentIdResponses = {
+  /**
+   * Comment unfollowed
+   */
+  200: {
+    following: boolean
+  }
+}
+
+export type DeleteApiV1CommentActionFollowByCommentIdResponse =
+  DeleteApiV1CommentActionFollowByCommentIdResponses[keyof DeleteApiV1CommentActionFollowByCommentIdResponses]
+
+export type PutApiV1CommentActionFollowByCommentIdData = {
+  body?: never
+  path: {
+    commentId: string
+  }
+  query?: never
+  url: "/api/v1/comment-action/follow/{commentId}"
+}
+
+export type PutApiV1CommentActionFollowByCommentIdErrors = {
+  /**
+   * Comment not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1CommentActionFollowByCommentIdError =
+  PutApiV1CommentActionFollowByCommentIdErrors[keyof PutApiV1CommentActionFollowByCommentIdErrors]
+
+export type PutApiV1CommentActionFollowByCommentIdResponses = {
+  /**
+   * Comment followed
+   */
+  200: {
+    following: boolean
+  }
+}
+
+export type PutApiV1CommentActionFollowByCommentIdResponse =
+  PutApiV1CommentActionFollowByCommentIdResponses[keyof PutApiV1CommentActionFollowByCommentIdResponses]
+
+export type GetApiV1UserFollowMineData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/user-follow/mine"
+}
+
+export type GetApiV1UserFollowMineResponses = {
+  /**
+   * Followed users
+   */
+  200: {
+    data: Array<{
+      id: string
+      username: string
+      displayName: string | null
+      avatarImageKey: string | null
+      createdAt: Date
+    }>
+  }
+}
+
+export type GetApiV1UserFollowMineResponse =
+  GetApiV1UserFollowMineResponses[keyof GetApiV1UserFollowMineResponses]
+
+export type DeleteApiV1UserFollowByUsernameData = {
+  body?: never
+  path: {
+    username: string
+  }
+  query?: never
+  url: "/api/v1/user-follow/{username}"
+}
+
+export type DeleteApiV1UserFollowByUsernameErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1UserFollowByUsernameError =
+  DeleteApiV1UserFollowByUsernameErrors[keyof DeleteApiV1UserFollowByUsernameErrors]
+
+export type DeleteApiV1UserFollowByUsernameResponses = {
+  /**
+   * User unfollowed
+   */
+  200: {
+    following: boolean
+  }
+}
+
+export type DeleteApiV1UserFollowByUsernameResponse =
+  DeleteApiV1UserFollowByUsernameResponses[keyof DeleteApiV1UserFollowByUsernameResponses]
+
+export type PutApiV1UserFollowByUsernameData = {
+  body?: never
+  path: {
+    username: string
+  }
+  query?: never
+  url: "/api/v1/user-follow/{username}"
+}
+
+export type PutApiV1UserFollowByUsernameErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1UserFollowByUsernameError =
+  PutApiV1UserFollowByUsernameErrors[keyof PutApiV1UserFollowByUsernameErrors]
+
+export type PutApiV1UserFollowByUsernameResponses = {
+  /**
+   * User followed
+   */
+  200: {
+    following: boolean
+  }
+}
+
+export type PutApiV1UserFollowByUsernameResponse =
+  PutApiV1UserFollowByUsernameResponses[keyof PutApiV1UserFollowByUsernameResponses]
+
+export type GetApiV1UserBlockMineData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/user-block/mine"
+}
+
+export type GetApiV1UserBlockMineResponses = {
+  /**
+   * Blocked users
+   */
+  200: {
+    data: Array<{
+      id: string
+      username: string
+      displayName: string | null
+      avatarImageKey: string | null
+      createdAt: Date
+    }>
+  }
+}
+
+export type GetApiV1UserBlockMineResponse =
+  GetApiV1UserBlockMineResponses[keyof GetApiV1UserBlockMineResponses]
+
+export type DeleteApiV1UserBlockByUsernameData = {
+  body?: never
+  path: {
+    username: string
+  }
+  query?: never
+  url: "/api/v1/user-block/{username}"
+}
+
+export type DeleteApiV1UserBlockByUsernameErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1UserBlockByUsernameError =
+  DeleteApiV1UserBlockByUsernameErrors[keyof DeleteApiV1UserBlockByUsernameErrors]
+
+export type DeleteApiV1UserBlockByUsernameResponses = {
+  /**
+   * User unblocked
+   */
+  200: {
+    blocked: boolean
+  }
+}
+
+export type DeleteApiV1UserBlockByUsernameResponse =
+  DeleteApiV1UserBlockByUsernameResponses[keyof DeleteApiV1UserBlockByUsernameResponses]
+
+export type PutApiV1UserBlockByUsernameData = {
+  body?: never
+  path: {
+    username: string
+  }
+  query?: never
+  url: "/api/v1/user-block/{username}"
+}
+
+export type PutApiV1UserBlockByUsernameErrors = {
+  /**
+   * Invalid request or block limit reached
+   */
+  400: ErrorResponseT
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1UserBlockByUsernameError =
+  PutApiV1UserBlockByUsernameErrors[keyof PutApiV1UserBlockByUsernameErrors]
+
+export type PutApiV1UserBlockByUsernameResponses = {
+  /**
+   * User blocked
+   */
+  200: {
+    blocked: boolean
+  }
+}
+
+export type PutApiV1UserBlockByUsernameResponse =
+  PutApiV1UserBlockByUsernameResponses[keyof PutApiV1UserBlockByUsernameResponses]
+
+export type GetApiV1MutedCommunityMineData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/muted-community/mine"
+}
+
+export type GetApiV1MutedCommunityMineResponses = {
+  /**
+   * Muted communities
+   */
+  200: {
+    data: Array<{
+      id: string
+      name: string
+      displayName: string | null
+      iconImageKey: string | null
+      createdAt: Date
+    }>
+  }
+}
+
+export type GetApiV1MutedCommunityMineResponse =
+  GetApiV1MutedCommunityMineResponses[keyof GetApiV1MutedCommunityMineResponses]
+
+export type DeleteApiV1MutedCommunityByCommunityIdData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/muted-community/{communityId}"
+}
+
+export type DeleteApiV1MutedCommunityByCommunityIdResponses = {
+  /**
+   * Community unmuted
+   */
+  200: {
+    muted: boolean
+  }
+}
+
+export type DeleteApiV1MutedCommunityByCommunityIdResponse =
+  DeleteApiV1MutedCommunityByCommunityIdResponses[keyof DeleteApiV1MutedCommunityByCommunityIdResponses]
+
+export type PutApiV1MutedCommunityByCommunityIdData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/muted-community/{communityId}"
+}
+
+export type PutApiV1MutedCommunityByCommunityIdErrors = {
+  /**
+   * Invalid request or mute limit reached
+   */
+  400: ErrorResponseT
+  /**
+   * Community not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1MutedCommunityByCommunityIdError =
+  PutApiV1MutedCommunityByCommunityIdErrors[keyof PutApiV1MutedCommunityByCommunityIdErrors]
+
+export type PutApiV1MutedCommunityByCommunityIdResponses = {
+  /**
+   * Community muted
+   */
+  200: {
+    muted: boolean
+  }
+}
+
+export type PutApiV1MutedCommunityByCommunityIdResponse =
+  PutApiV1MutedCommunityByCommunityIdResponses[keyof PutApiV1MutedCommunityByCommunityIdResponses]
+
+export type GetApiV1DraftData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/draft"
+}
+
+export type GetApiV1DraftResponses = {
+  /**
+   * Drafts
+   */
+  200: {
+    data: Array<{
+      id: string
+      communityId: string | null
+      isProfile: boolean
+      type: string
+      title: string | null
+      bodyMd: string | null
+      linkUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      flairTemplateId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }>
+    count: number
+    max: number
+  }
+}
+
+export type GetApiV1DraftResponse = GetApiV1DraftResponses[keyof GetApiV1DraftResponses]
+
+export type PostApiV1DraftData = {
+  body?: {
+    communityId?: string | null
+    isProfile?: boolean
+    type?: "text" | "link" | "media"
+    title?: string | null
+    bodyMd?: string | null
+    linkUrl?: string | null
+    isNsfw?: boolean
+    isSpoiler?: boolean
+    isOc?: boolean
+    flairTemplateId?: string | null
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/draft"
+}
+
+export type PostApiV1DraftErrors = {
+  /**
+   * Draft limit reached
+   */
+  400: ErrorResponseT
+}
+
+export type PostApiV1DraftError = PostApiV1DraftErrors[keyof PostApiV1DraftErrors]
+
+export type PostApiV1DraftResponses = {
+  /**
+   * Draft created
+   */
+  201: {
+    id: string
+  }
+}
+
+export type PostApiV1DraftResponse = PostApiV1DraftResponses[keyof PostApiV1DraftResponses]
+
+export type DeleteApiV1DraftByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/draft/{id}"
+}
+
+export type DeleteApiV1DraftByIdErrors = {
+  /**
+   * Draft not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1DraftByIdError = DeleteApiV1DraftByIdErrors[keyof DeleteApiV1DraftByIdErrors]
+
+export type DeleteApiV1DraftByIdResponses = {
+  /**
+   * Draft deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1DraftByIdResponse =
+  DeleteApiV1DraftByIdResponses[keyof DeleteApiV1DraftByIdResponses]
+
+export type GetApiV1DraftByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/draft/{id}"
+}
+
+export type GetApiV1DraftByIdErrors = {
+  /**
+   * Draft not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1DraftByIdError = GetApiV1DraftByIdErrors[keyof GetApiV1DraftByIdErrors]
+
+export type GetApiV1DraftByIdResponses = {
+  /**
+   * Draft
+   */
+  200: {
+    id: string
+    communityId: string | null
+    isProfile: boolean
+    type: string
+    title: string | null
+    bodyMd: string | null
+    linkUrl: string | null
+    isNsfw: boolean
+    isSpoiler: boolean
+    isOc: boolean
+    flairTemplateId: string | null
+    createdAt: Date
+    updatedAt: Date
+  }
+}
+
+export type GetApiV1DraftByIdResponse = GetApiV1DraftByIdResponses[keyof GetApiV1DraftByIdResponses]
+
+export type PatchApiV1DraftByIdData = {
+  body?: {
+    communityId?: string | null
+    isProfile?: boolean
+    type?: "text" | "link" | "media"
+    title?: string | null
+    bodyMd?: string | null
+    linkUrl?: string | null
+    isNsfw?: boolean
+    isSpoiler?: boolean
+    isOc?: boolean
+    flairTemplateId?: string | null
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/draft/{id}"
+}
+
+export type PatchApiV1DraftByIdErrors = {
+  /**
+   * Draft not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1DraftByIdError = PatchApiV1DraftByIdErrors[keyof PatchApiV1DraftByIdErrors]
+
+export type PatchApiV1DraftByIdResponses = {
+  /**
+   * Draft updated
+   */
+  200: {
+    id: string
+    communityId: string | null
+    isProfile: boolean
+    type: string
+    title: string | null
+    bodyMd: string | null
+    linkUrl: string | null
+    isNsfw: boolean
+    isSpoiler: boolean
+    isOc: boolean
+    flairTemplateId: string | null
+    createdAt: Date
+    updatedAt: Date
+  }
+}
+
+export type PatchApiV1DraftByIdResponse =
+  PatchApiV1DraftByIdResponses[keyof PatchApiV1DraftByIdResponses]
+
+export type GetApiV1ScheduledPostMineData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/scheduled-post/mine"
+}
+
+export type GetApiV1ScheduledPostMineResponses = {
+  /**
+   * Scheduled posts
+   */
+  200: {
+    data: Array<{
+      id: string
+      authorUserId: string
+      communityId: string | null
+      isProfile: boolean
+      type: string
+      title: string
+      bodyMd: string | null
+      linkUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      flairTemplateId: string | null
+      scheduledAt: Date
+      recurrence: string | null
+      status: string
+      publishedPostId: string | null
+      createdAt: Date
+    }>
+  }
+}
+
+export type GetApiV1ScheduledPostMineResponse =
+  GetApiV1ScheduledPostMineResponses[keyof GetApiV1ScheduledPostMineResponses]
+
+export type GetApiV1ScheduledPostCommunityByCommunityIdData = {
+  body?: never
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/scheduled-post/community/{communityId}"
+}
+
+export type GetApiV1ScheduledPostCommunityByCommunityIdErrors = {
+  /**
+   * Not a moderator
+   */
+  403: ErrorResponseT
+}
+
+export type GetApiV1ScheduledPostCommunityByCommunityIdError =
+  GetApiV1ScheduledPostCommunityByCommunityIdErrors[keyof GetApiV1ScheduledPostCommunityByCommunityIdErrors]
+
+export type GetApiV1ScheduledPostCommunityByCommunityIdResponses = {
+  /**
+   * Scheduled posts
+   */
+  200: {
+    data: Array<{
+      id: string
+      authorUserId: string
+      communityId: string | null
+      isProfile: boolean
+      type: string
+      title: string
+      bodyMd: string | null
+      linkUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      flairTemplateId: string | null
+      scheduledAt: Date
+      recurrence: string | null
+      status: string
+      publishedPostId: string | null
+      createdAt: Date
+    }>
+  }
+}
+
+export type GetApiV1ScheduledPostCommunityByCommunityIdResponse =
+  GetApiV1ScheduledPostCommunityByCommunityIdResponses[keyof GetApiV1ScheduledPostCommunityByCommunityIdResponses]
+
+export type PostApiV1ScheduledPostData = {
+  body?: {
+    communityId?: string | null
+    isProfile?: boolean
+    type?: "text" | "link" | "media"
+    title: string
+    bodyMd?: string | null
+    linkUrl?: string | null
+    isNsfw?: boolean
+    isSpoiler?: boolean
+    isOc?: boolean
+    flairTemplateId?: string | null
+    scheduledAt: Date
+    recurrence?: "daily" | "weekly" | "monthly" | null
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/scheduled-post"
+}
+
+export type PostApiV1ScheduledPostErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1ScheduledPostError =
+  PostApiV1ScheduledPostErrors[keyof PostApiV1ScheduledPostErrors]
+
+export type PostApiV1ScheduledPostResponses = {
+  /**
+   * Scheduled post created
+   */
+  201: {
+    id: string
+  }
+}
+
+export type PostApiV1ScheduledPostResponse =
+  PostApiV1ScheduledPostResponses[keyof PostApiV1ScheduledPostResponses]
+
+export type DeleteApiV1ScheduledPostByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/scheduled-post/{id}"
+}
+
+export type DeleteApiV1ScheduledPostByIdErrors = {
+  /**
+   * Scheduled post not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1ScheduledPostByIdError =
+  DeleteApiV1ScheduledPostByIdErrors[keyof DeleteApiV1ScheduledPostByIdErrors]
+
+export type DeleteApiV1ScheduledPostByIdResponses = {
+  /**
+   * Scheduled post canceled
+   */
+  200: {
+    id: string
+  }
+}
+
+export type DeleteApiV1ScheduledPostByIdResponse =
+  DeleteApiV1ScheduledPostByIdResponses[keyof DeleteApiV1ScheduledPostByIdResponses]

@@ -183,6 +183,9 @@ importers:
       '@template-nextjs/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@utils/aws':
+        specifier: workspace:*
+        version: link:../../lib/typescript/utils/aws
       '@utils/queues':
         specifier: workspace:*
         version: link:../../lib/typescript/utils/queues
@@ -367,9 +370,15 @@ importers:
       '@template-nextjs/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@utils/aws':
+        specifier: workspace:*
+        version: link:../../lib/typescript/utils/aws
       '@utils/numbers':
         specifier: workspace:*
         version: link:../../lib/typescript/utils/numbers
+      '@utils/queues':
+        specifier: workspace:*
+        version: link:../../lib/typescript/utils/queues
       hono:
         specifier: 'catalog:'
         version: 4.12.30
