@@ -1,3 +1,4 @@
+import { enqueueEsSyncUser } from "@utils/queues"
 import { fetchComment } from "@lib/dao/comment/fetch"
 import { type RawPostRow, fetchPost } from "@lib/dao/post/fetch"
 import { processPosts } from "@lib/dao/post/processPost"
@@ -338,6 +339,7 @@ const app = new Hono()
       const body = c.req.valid("json")
 
       const profile = await crudUser(db).updateUser(user.id, body)
+      await enqueueEsSyncUser(user.id)
 
       if (!profile) return throwNotFound(c, "User not found")
 

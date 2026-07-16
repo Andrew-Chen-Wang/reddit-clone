@@ -17,6 +17,7 @@ import media from "./media"
 import mutedCommunity from "./muted-community"
 import postAction from "./post-action"
 import scheduledPost from "./scheduled-post"
+import search from "./search"
 import userBlock from "./user-block"
 import userFollow from "./user-follow"
 import post from "./post"
@@ -53,5 +54,6 @@ const app = new Hono({
   .route("/muted-community", mutedCommunity)
   .route("/draft", draft)
   .route("/scheduled-post", scheduledPost)
+  .route("/search", search)
 
 export default app
