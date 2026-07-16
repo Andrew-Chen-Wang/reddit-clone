@@ -5,12 +5,10 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query"
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { Button } from "@ui/base/ui/button"
 import { cn } from "@ui/base/lib/utils"
-import { CommunityCard } from "@ui/seo-shared/community/CommunityCard"
 import { PostRow } from "@ui/seo-shared/post/PostRow"
-import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   applyVoteToCache,
   chipClass,
@@ -18,39 +16,33 @@ import {
   nextVoteValue,
   permalinkForPost,
   type PostResult,
-  ProfileResultCard,
   type SearchPageData,
   toRowPost,
 } from "@frontends/dashboard/components/searchResults"
 import { getApiV1Search } from "@lib/api-client/generated/sdk.gen"
 import {
   getApiV1CommunityByNameOptions,
-  postApiV1CommunityMemberByCommunityIdJoinMutation,
   putApiV1PostVoteByPostIdMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { Search as SearchIcon, X } from "lucide-react"
+import { Search as SearchIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
-type SearchType = "posts" | "comments" | "communities" | "media" | "profiles"
+type SearchType = "posts" | "comments" | "media"
 type SearchSort = "relevance" | "hot" | "top" | "new" | "comments"
 type TopWindow = "hour" | "day" | "week" | "month" | "year" | "all"
 
-type SearchParams = {
+type CommunitySearchParams = {
   q: string
   type: SearchType
   sort: SearchSort
   t: TopWindow
-  community?: string
-  author?: string
 }
 
 const TYPES: { value: SearchType; label: string }[] = [
   { value: "posts", label: "Posts" },
   { value: "comments", label: "Comments" },
-  { value: "communities", label: "Communities" },
   { value: "media", label: "Media" },
-  { value: "profiles", label: "Profiles" },
 ]
 
 const SORTS: { value: SearchSort; label: string }[] = [
@@ -80,55 +72,18 @@ function oneOf<T extends string>(value: unknown, allowed: T[], fallback: T): T {
     : fallback
 }
 
-export const Route = createFileRoute("/search")({
-  validateSearch: (search: Record<string, unknown>): SearchParams => ({
+export const Route = createFileRoute("/r_/$name/search")({
+  validateSearch: (search: Record<string, unknown>): CommunitySearchParams => ({
     q: typeof search.q === "string" ? search.q : "",
     type: oneOf(search.type, TYPE_VALUES, "posts"),
     sort: oneOf(search.sort, SORT_VALUES, "relevance"),
     t: oneOf(search.t, WINDOW_VALUES, "all"),
-    community: typeof search.community === "string" ? search.community : undefined,
-    author: typeof search.author === "string" ? search.author : undefined,
   }),
-  component: SearchPage,
+  component: CommunitySearchPage,
 })
 
-function CommunityJoinButton({ communityId }: { communityId: string }) {
-  const [state, setState] = useState<"idle" | "joined" | "requested">("idle")
-  const join = useMutation({
-    ...postApiV1CommunityMemberByCommunityIdJoinMutation(),
-    onSuccess: (result) => {
-      setState(result.requested ? "requested" : "joined")
-    },
-    onError: () => toast.error("Could not join community"),
-  })
-  if (state === "joined") {
-    return (
-      <Button size="sm" variant="outline" disabled>
-        Joined
-      </Button>
-    )
-  }
-  if (state === "requested") {
-    return (
-      <Button size="sm" variant="outline" disabled>
-        Requested
-      </Button>
-    )
-  }
-  return (
-    <Button
-      size="sm"
-      disabled={join.isPending}
-      onClick={() => {
-        join.mutate({ path: { communityId } })
-      }}
-    >
-      Join
-    </Button>
-  )
-}
-
-function SearchPage() {
+function CommunitySearchPage() {
+  const { name } = Route.useParams()
   const params = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const queryClient = useQueryClient()
@@ -137,29 +92,16 @@ function SearchPage() {
     setDraft(params.q)
   }, [params.q])
 
-  const showSort = params.type === "posts" || params.type === "comments" || params.type === "media"
-  const showWindow = showSort && params.sort === "top"
+  const showWindow = params.sort === "top"
 
-  const communityQuery = useQuery({
-    ...getApiV1CommunityByNameOptions({ path: { name: params.community ?? "" } }),
-    enabled: !!params.community,
-  })
+  const communityQuery = useQuery(getApiV1CommunityByNameOptions({ path: { name } }))
   const communityId = communityQuery.data?.id ?? null
-  const communityResolved = !params.community || communityId != null
 
-  const queryKey = [
-    "search",
-    params.q,
-    params.type,
-    params.sort,
-    params.t,
-    communityId,
-    params.author ?? null,
-  ]
+  const queryKey = ["community-search", name, params.q, params.type, params.sort, params.t]
 
   const search = useInfiniteQuery({
     queryKey,
-    enabled: params.q.trim().length > 0 && communityResolved,
+    enabled: params.q.trim().length > 0 && communityId != null,
     initialPageParam: undefined as string | undefined,
     queryFn: async ({ pageParam }) => {
       const { data } = await getApiV1Search({
@@ -169,7 +111,6 @@ function SearchPage() {
           sort: params.sort,
           t: params.t,
           communityId: communityId ?? undefined,
-          authorUsername: params.author,
           cursor: pageParam,
         },
         throwOnError: true,
@@ -195,7 +136,7 @@ function SearchPage() {
     voteMutation.mutate({ path: { postId: post.id }, body: { value: newVote } })
   }
 
-  function update(patch: Partial<SearchParams>) {
+  function update(patch: Partial<CommunitySearchParams>) {
     void navigate({ search: (prev) => ({ ...prev, ...patch }) })
   }
 
@@ -203,16 +144,8 @@ function SearchPage() {
   const total = pages[0]?.total ?? 0
   const posts = pages.flatMap((p) => p.posts)
   const comments = pages.flatMap((p) => p.comments)
-  const communities = pages.flatMap((p) => p.communities)
-  const profiles = pages.flatMap((p) => p.profiles)
 
   const hasQuery = params.q.trim().length > 0
-  const isGrid = params.type === "communities"
-  const scopeLabel = params.community
-    ? `r/${params.community}`
-    : params.author
-      ? `u/${params.author}`
-      : null
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-6">
@@ -221,35 +154,33 @@ function SearchPage() {
           e.preventDefault()
           update({ q: draft.trim() })
         }}
-        className="relative mb-3 flex items-center gap-2 rounded-md border bg-background pl-3 focus-within:ring-1 focus-within:ring-ring"
+        className="relative mb-2 flex items-center gap-2 rounded-md border bg-background pl-3 focus-within:ring-1 focus-within:ring-ring"
       >
         <SearchIcon className="pointer-events-none size-4 shrink-0 text-muted-foreground" />
-        {scopeLabel ? (
-          <span className="flex shrink-0 items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
-            {scopeLabel}
-            <button
-              type="button"
-              aria-label="Remove scope"
-              className="rounded-full hover:bg-background"
-              onClick={() => {
-                update({ community: undefined, author: undefined })
-              }}
-            >
-              <X className="size-3" />
-            </button>
-          </span>
-        ) : null}
+        <span className="flex shrink-0 items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
+          r/{name}
+        </span>
         <input
           type="search"
           value={draft}
           onChange={(e) => {
             setDraft(e.target.value)
           }}
-          placeholder={scopeLabel ? `Search in ${scopeLabel}` : "Search ReadIt"}
-          aria-label="Search"
+          placeholder={`Search in r/${name}`}
+          aria-label={`Search in r/${name}`}
           className="min-w-0 flex-1 bg-transparent py-2 pr-3 text-sm outline-none"
         />
       </form>
+
+      {hasQuery ? (
+        <Link
+          to="/search"
+          search={{ q: params.q, type: "posts", sort: "relevance", t: "all" }}
+          className="mb-3 inline-block text-xs font-medium text-primary hover:underline"
+        >
+          Show results from all of ReadIt →
+        </Link>
+      ) : null}
 
       <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
         {TYPES.map((tp) => (
@@ -266,22 +197,20 @@ function SearchPage() {
         ))}
       </div>
 
-      {showSort ? (
-        <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
-          {SORTS.map((s) => (
-            <button
-              key={s.value}
-              type="button"
-              onClick={() => {
-                update({ sort: s.value })
-              }}
-              className={chipClass(params.sort === s.value)}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-      ) : null}
+      <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+        {SORTS.map((s) => (
+          <button
+            key={s.value}
+            type="button"
+            onClick={() => {
+              update({ sort: s.value })
+            }}
+            className={chipClass(params.sort === s.value)}
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
 
       {showWindow ? (
         <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto pb-1">
@@ -302,55 +231,42 @@ function SearchPage() {
 
       <div className="mt-5">
         {!hasQuery ? (
-          <p className="text-sm text-muted-foreground">Enter a search term to get started.</p>
+          <p className="text-sm text-muted-foreground">Search within r/{name}.</p>
         ) : search.isLoading ? (
           <p className="text-sm text-muted-foreground">Searching…</p>
         ) : total === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No {params.type} found for “{params.q}”.
+            No {params.type} found in r/{name} for “{params.q}”.
           </p>
         ) : (
           <>
             <p className="mb-3 text-xs text-muted-foreground">
-              {total} {total === 1 ? "result" : "results"}
+              {total} {total === 1 ? "result" : "results"} in r/{name}
             </p>
-            <div className={cn(isGrid ? "grid gap-3 sm:grid-cols-2" : "flex flex-col gap-3")}>
-              {(params.type === "posts" || params.type === "media") &&
-                posts.map((post) => (
-                  <PostRow
-                    key={post.id}
-                    post={toRowPost(post)}
-                    href={permalinkForPost(post)}
-                    communityHref={post.community ? `/r/${post.community.name}` : undefined}
-                    authorHref={post.author ? `/user/${post.author.username}` : undefined}
-                    onUpvote={() => {
-                      vote(post, 1)
-                    }}
-                    onDownvote={() => {
-                      vote(post, -1)
-                    }}
-                  />
-                ))}
-              {params.type === "comments" &&
-                comments.map((result) => (
-                  <CommentResultCard key={result.comment.id} result={result} />
-                ))}
-              {params.type === "communities" &&
-                communities.map((community) => (
-                  <CommunityCard
-                    key={community.id}
-                    community={{
-                      name: community.name,
-                      displayName: community.displayName,
-                      description: community.description,
-                      iconUrl: mediaUrl(community.iconImageKey),
-                      memberCount: community.memberCount,
-                    }}
-                    joinSlot={<CommunityJoinButton communityId={community.id} />}
-                  />
-                ))}
-              {params.type === "profiles" &&
-                profiles.map((profile) => <ProfileResultCard key={profile.id} profile={profile} />)}
+            <div className="flex flex-col gap-3">
+              {params.type === "posts" || params.type === "media"
+                ? posts.map((post) => (
+                    <PostRow
+                      key={post.id}
+                      post={toRowPost(post)}
+                      href={permalinkForPost(post)}
+                      communityHref={post.community ? `/r/${post.community.name}` : undefined}
+                      authorHref={post.author ? `/user/${post.author.username}` : undefined}
+                      showCommunity={false}
+                      onUpvote={() => {
+                        vote(post, 1)
+                      }}
+                      onDownvote={() => {
+                        vote(post, -1)
+                      }}
+                    />
+                  ))
+                : null}
+              {params.type === "comments"
+                ? comments.map((result) => (
+                    <CommentResultCard key={result.comment.id} result={result} />
+                  ))
+                : null}
             </div>
             {search.hasNextPage ? (
               <div className="mt-4 flex justify-center">

@@ -66,7 +66,7 @@ export function SearchSuggest() {
     setOpen(false)
     const base = { q, type: "posts", sort: "relevance", t: "all" } as const
     if (scope?.kind === "community") {
-      void navigate({ to: "/search", search: { ...base, community: scope.name } })
+      void navigate({ to: "/r/$name/search", params: { name: scope.name }, search: base })
     } else if (scope?.kind === "profile") {
       void navigate({ to: "/search", search: { ...base, author: scope.username } })
     } else {
