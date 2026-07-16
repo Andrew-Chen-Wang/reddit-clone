@@ -3245,6 +3245,8 @@ export type GetApiV1PostInsightsByPostIdResponses = {
    * Post insights
    */
   200: {
+    postTitle: string
+    communityName: string | null
     viewsTotal: number
     views48h: Array<{
       bucket: Date
