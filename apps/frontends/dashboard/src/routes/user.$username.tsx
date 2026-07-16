@@ -225,8 +225,7 @@ function ProfilePage() {
             <ProfileActions username={data.username} />
           )
         }
-      />
-      <div className="mx-auto mt-4 w-full max-w-3xl px-4">
+      >
         <Tabs
           value={activeTab}
           onValueChange={(next) => {
@@ -276,7 +275,7 @@ function ProfilePage() {
             </>
           ) : null}
         </Tabs>
-      </div>
+      </ProfileHeader>
     </div>
   )
 }

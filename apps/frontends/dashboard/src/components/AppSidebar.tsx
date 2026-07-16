@@ -393,7 +393,7 @@ export function AppSidebar() {
   const hasInvites = (invites?.data ?? []).length > 0
 
   return (
-    <Sidebar collapsible="icon" className="top-14! h-[calc(100svh-3.5rem)]!">
+    <Sidebar collapsible="offcanvas" className="top-14! h-[calc(100svh-3.5rem)]!">
       <SidebarContent>
         {/* Main nav */}
         <SidebarGroup>
@@ -436,10 +436,7 @@ export function AppSidebar() {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                      <SidebarMenuButton
-                        render={<Link to="/mod/$name" params={{ name: "mod" }} />}
-                        tooltip="r/Mod"
-                      >
+                      <SidebarMenuButton render={<Link to="/r/mod" />} tooltip="r/Mod">
                         <ShieldCheck />
                         <span>r/Mod</span>
                       </SidebarMenuButton>
