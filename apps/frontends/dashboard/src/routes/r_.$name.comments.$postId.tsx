@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
-import { Card, CardContent } from "@ui/base/ui/card"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
 import { PostDetailCard } from "@ui/seo-shared/post/PostDetailCard"
+import type { CommentSortValue } from "@ui/seo-shared/comment/types"
+import { CommentSection } from "@frontends/dashboard/components/CommentSection"
 import {
   getApiV1CommunityByNameOptions,
   getApiV1PostByIdOptions,
@@ -10,7 +11,21 @@ import {
 import { putApiV1PostVoteByPostId } from "@lib/api-client/generated/sdk.gen"
 import { toast } from "sonner"
 
+const COMMENT_SORTS: CommentSortValue[] = ["best", "top", "new", "old", "controversial"]
+
+function asCommentSort(value: unknown): CommentSortValue | undefined {
+  return typeof value === "string" && (COMMENT_SORTS as string[]).includes(value)
+    ? (value as CommentSortValue)
+    : undefined
+}
+
+type CommentSearch = { sort?: CommentSortValue; comment?: string }
+
 export const Route = createFileRoute("/r_/$name/comments/$postId")({
+  validateSearch: (search: Record<string, unknown>): CommentSearch => ({
+    sort: asCommentSort(search.sort),
+    comment: typeof search.comment === "string" ? search.comment : undefined,
+  }),
   component: PostDetailPage,
 })
 
@@ -27,6 +42,8 @@ function nextVoteValue(current: number, direction: 1 | -1): 1 | 0 | -1 {
 
 function PostDetailPage() {
   const { name, postId } = Route.useParams()
+  const search = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
   const queryClient = useQueryClient()
   const postQuery = usePost(postId)
   const communityQuery = useQuery(getApiV1CommunityByNameOptions({ path: { name } }))
@@ -71,6 +88,8 @@ function PostDetailPage() {
   }
 
   const community = communityQuery.data
+  const sort: CommentSortValue =
+    search.sort ?? asCommentSort(community?.defaultCommentSort) ?? "best"
 
   return (
     <div className="mx-auto mt-4 flex w-full max-w-5xl flex-col gap-6 px-4 pb-10 lg:flex-row">
@@ -92,14 +111,20 @@ function PostDetailPage() {
           }}
         />
 
-        <Card className="mt-4">
-          <CardContent className="py-10 text-center">
-            <p className="text-sm font-medium text-muted-foreground">Comments coming soon</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Threaded discussion lands in a future update.
-            </p>
-          </CardContent>
-        </Card>
+        <CommentSection
+          postId={postId}
+          communityName={name}
+          sort={sort}
+          focusCommentId={search.comment}
+          commentCount={post.commentCount}
+          locked={post.isLocked}
+          onSortChange={(next) => {
+            void navigate({ search: (prev) => ({ ...prev, sort: next }), replace: true })
+          }}
+          onExitPermalink={() => {
+            void navigate({ search: (prev) => ({ ...prev, comment: undefined }), replace: true })
+          }}
+        />
       </div>
 
       {community ? (
