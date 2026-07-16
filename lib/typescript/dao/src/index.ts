@@ -2,7 +2,16 @@ export { crudAccount } from "./account/crud"
 export { fetchAccount } from "./account/fetch"
 export { crudComment, MAX_COMMENT_DEPTH } from "./comment/crud"
 export type { CreateCommentResult, DeleteCommentResult } from "./comment/crud"
-export { commentComparator, fetchComment, ROOT_PAGE_SIZE, CHILD_PAGE_SIZE, MAX_DEPTH, INITIAL_CHILDREN, DESC_FETCH_CAP, NODE_BUDGET } from "./comment/fetch"
+export {
+  commentComparator,
+  fetchComment,
+  ROOT_PAGE_SIZE,
+  CHILD_PAGE_SIZE,
+  MAX_DEPTH,
+  INITIAL_CHILDREN,
+  DESC_FETCH_CAP,
+  NODE_BUDGET,
+} from "./comment/fetch"
 export type { CommentSort, RawCommentRow, ModCommentRow } from "./comment/fetch"
 export { crudCommentFollow } from "./commentFollow/crud"
 export { fetchCommentFollow } from "./commentFollow/fetch"

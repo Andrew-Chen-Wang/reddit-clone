@@ -1,6 +1,7 @@
 import { Hono } from "hono"
 import { RegExpRouter } from "hono/router/reg-exp-router"
 import auth from "./auth"
+import chat from "./chat"
 import comment from "./comment"
 import commentAction from "./comment-action"
 import commentVote from "./comment-vote"
@@ -15,6 +16,7 @@ import history from "./history"
 import draft from "./draft"
 import media from "./media"
 import modLog from "./mod-log"
+import modmail from "./modmail"
 import modQueue from "./mod-queue"
 import modSavedResponse from "./mod-saved-response"
 import modTeam from "./mod-team"
@@ -69,5 +71,7 @@ const app = new Hono({
   .route("/mod-log", modLog)
   .route("/mod-saved-response", modSavedResponse)
   .route("/removal-reason", removalReason)
+  .route("/chat", chat)
+  .route("/modmail", modmail)
 
 export default app

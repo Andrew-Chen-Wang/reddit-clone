@@ -70,6 +70,8 @@ export type PostRowProps = {
   voteDisabled?: boolean
   /** When provided, renders a Share button that copies/props out the permalink. */
   onShare?: () => void
+  /** Replaces the default share button (e.g. a share dropdown). Takes precedence over onShare. */
+  shareSlot?: ReactNode
   /** Show the community identity line (icon + r/name). Defaults to true. */
   showCommunity?: boolean
   /** Right-aligned action menu (e.g. overflow dropdown). */
@@ -174,6 +176,7 @@ function Footer({
   onDownvote,
   voteDisabled,
   onShare,
+  shareSlot,
 }: {
   post: PostRowPost
   href: string
@@ -181,6 +184,7 @@ function Footer({
   onDownvote: () => void
   voteDisabled?: boolean
   onShare?: () => void
+  shareSlot?: ReactNode
 }) {
   return (
     <div className="flex items-center gap-1.5">
@@ -198,16 +202,17 @@ function Footer({
         <MessageSquare className="size-4" />
         {formatCompactNumber(post.commentCount)}
       </SeoLink>
-      {onShare ? (
-        <button
-          type="button"
-          onClick={onShare}
-          className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/70"
-        >
-          <Share2 className="size-4" />
-          Share
-        </button>
-      ) : null}
+      {shareSlot ??
+        (onShare ? (
+          <button
+            type="button"
+            onClick={onShare}
+            className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/70"
+          >
+            <Share2 className="size-4" />
+            Share
+          </button>
+        ) : null)}
     </div>
   )
 }
@@ -228,6 +233,7 @@ export function PostRow({
   onDownvote,
   voteDisabled,
   onShare,
+  shareSlot,
   showCommunity = true,
   menuSlot,
 }: PostRowProps) {
@@ -332,6 +338,7 @@ export function PostRow({
         onDownvote={onDownvote}
         voteDisabled={voteDisabled}
         onShare={onShare}
+        shareSlot={shareSlot}
       />
     </article>
   )

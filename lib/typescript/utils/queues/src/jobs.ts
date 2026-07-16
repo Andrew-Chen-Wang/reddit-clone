@@ -1,5 +1,5 @@
 import type { JobsOptions, Queue } from "bullmq"
-import { mediumQueue, slowQueue } from "./queues"
+import { fastQueue, mediumQueue, slowQueue } from "./queues"
 
 // Maps each job name to its payload shape. New jobs are added here and wired into the
 // worker switch in apps/bullground. `rising-recompute` is the seed job; M3 fills it in.
@@ -9,6 +9,11 @@ export interface JobPayloadMap {
   "scheduled-post-publish": { scheduledPostId: string }
   "recurring-post-scheduler": Record<string, never>
   "draft-expiry": Record<string, never>
+  "es-sync-post": { postId: string }
+  "es-sync-comment": { commentId: string }
+  "es-sync-community": { communityId: string }
+  "es-sync-user": { userId: string }
+  "es-backfill": Record<string, never>
 }
 
 export type JobName = keyof JobPayloadMap
@@ -19,6 +24,11 @@ const jobQueues: { [K in JobName]: Queue } = {
   "scheduled-post-publish": mediumQueue,
   "recurring-post-scheduler": mediumQueue,
   "draft-expiry": slowQueue,
+  "es-sync-post": fastQueue,
+  "es-sync-comment": fastQueue,
+  "es-sync-community": fastQueue,
+  "es-sync-user": fastQueue,
+  "es-backfill": slowQueue,
 }
 
 export async function enqueue<K extends JobName>(
@@ -95,6 +105,42 @@ export async function removeScheduledPostJob(jobId: string): Promise<boolean> {
   } catch {
     return false
   }
+}
+
+async function enqueueEsSync<K extends JobName>(
+  name: K,
+  payload: JobPayloadMap[K],
+  entityId: string,
+): Promise<void> {
+  await enqueue(name, payload, {
+    jobId: `${name}__${entityId}`,
+    removeOnComplete: true,
+    removeOnFail: 100,
+  })
+}
+
+export async function enqueueEsSyncPost(postId: string): Promise<void> {
+  await enqueueEsSync("es-sync-post", { postId }, postId)
+}
+
+export async function enqueueEsSyncComment(commentId: string): Promise<void> {
+  await enqueueEsSync("es-sync-comment", { commentId }, commentId)
+}
+
+export async function enqueueEsSyncCommunity(communityId: string): Promise<void> {
+  await enqueueEsSync("es-sync-community", { communityId }, communityId)
+}
+
+export async function enqueueEsSyncUser(userId: string): Promise<void> {
+  await enqueueEsSync("es-sync-user", { userId }, userId)
+}
+
+export async function enqueueEsBackfill(): Promise<void> {
+  await enqueue(
+    "es-backfill",
+    {},
+    { jobId: "es-backfill", removeOnComplete: true, removeOnFail: 100 },
+  )
 }
 
 const RISING_RECOMPUTE_INTERVAL_MS = 90 * 1000

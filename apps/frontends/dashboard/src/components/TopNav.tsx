@@ -107,6 +107,7 @@ function DisplayModeDialog({
 export function TopNav() {
   const navigate = useNavigate()
   const [displayOpen, setDisplayOpen] = useState(false)
+  const [searchDraft, setSearchDraft] = useState("")
   const { data: user } = useQuery(getApiV1UserMeOptions())
 
   const logout = useMutation({
@@ -124,16 +125,30 @@ export function TopNav() {
         <Link to="/" className="text-lg font-bold text-primary">
           ReadIt
         </Link>
-        <div className="relative flex-1 max-w-md">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            const q = searchDraft.trim()
+            if (q.length === 0) return
+            void navigate({
+              to: "/search",
+              search: { q, type: "posts", sort: "relevance", t: "all" },
+            })
+          }}
+          className="relative flex-1 max-w-md"
+        >
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search ReadIt"
             aria-label="Search"
             className="pl-9"
-            disabled
+            value={searchDraft}
+            onChange={(e) => {
+              setSearchDraft(e.target.value)
+            }}
           />
-        </div>
+        </form>
         <Link
           to="/submit"
           className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "ml-auto gap-1.5")}

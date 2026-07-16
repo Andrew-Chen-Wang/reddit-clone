@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { cn } from "@ui/base/lib/utils"
 import { Button } from "@ui/base/ui/button"
@@ -14,10 +14,18 @@ import { Markdown } from "@ui/seo-shared/Markdown"
 import { MarkdownEditor } from "@ui/spa-shared/MarkdownEditor"
 import {
   getApiV1CommunityMemberMineOptions,
+  getApiV1DraftOptions,
   getApiV1FlairByCommunityIdPostTemplatesOptions,
+  postApiV1DraftMutation,
   postApiV1PostMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { postApiV1MediaConfirm, postApiV1Post } from "@lib/api-client/generated/sdk.gen"
+import {
+  deleteApiV1DraftById,
+  postApiV1MediaConfirm,
+  postApiV1Post,
+} from "@lib/api-client/generated/sdk.gen"
+import { DraftsDialog, type DraftItem } from "@frontends/dashboard/components/DraftsDialog"
+import { ScheduleDialog } from "@frontends/dashboard/components/ScheduleDialog"
 import {
   MAX_MEDIA_FILES,
   mediaTypeOf,
@@ -26,7 +34,19 @@ import {
   validateMediaFile,
   type MediaDraft,
 } from "@frontends/dashboard/lib/mediaUpload"
-import { Film, Image, Link2, Loader2, TagIcon, Type, Upload, X } from "lucide-react"
+import {
+  Clock,
+  Film,
+  FileText,
+  Image,
+  Link2,
+  Loader2,
+  Save,
+  TagIcon,
+  Type,
+  Upload,
+  X,
+} from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 
@@ -244,6 +264,46 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
   const [mediaDrafts, setMediaDrafts] = useState<MediaDraft[]>([])
   const [uploading, setUploading] = useState(false)
 
+  const queryClient = useQueryClient()
+  const [loadedDraftId, setLoadedDraftId] = useState<string | null>(null)
+  const [draftsOpen, setDraftsOpen] = useState(false)
+  const [scheduleOpen, setScheduleOpen] = useState(false)
+
+  function loadDraft(draft: DraftItem) {
+    const draftType = (draft.type ?? "text") as PostType
+    setType(draftType === "media" ? "text" : draftType)
+    setTitle(draft.title ?? "")
+    setBodyMd(draft.bodyMd ?? "")
+    setLinkUrl(draft.linkUrl ?? "")
+    setIsNsfw(draft.isNsfw)
+    setIsSpoiler(draft.isSpoiler)
+    setIsOc(draft.isOc)
+    setFlairTemplateId(draft.flairTemplateId)
+    if (!fixedCommunity && draft.communityId) setPickedId(draft.communityId)
+    setLoadedDraftId(draft.id)
+    toast.success("Draft loaded")
+  }
+
+  function clearLoadedDraft() {
+    if (loadedDraftId) {
+      void deleteApiV1DraftById({ path: { id: loadedDraftId } }).catch(() => {
+        // Best-effort cleanup; the post already succeeded.
+      })
+      setLoadedDraftId(null)
+    }
+  }
+
+  const saveDraft = useMutation({
+    ...postApiV1DraftMutation(),
+    onSuccess: async () => {
+      const fresh = await queryClient.fetchQuery(getApiV1DraftOptions())
+      toast.success(`Draft saved (${fresh.count}/${fresh.max})`)
+    },
+    onError: () => {
+      toast.error("Could not save draft")
+    },
+  })
+
   // Revoke object URLs on unmount so previews don't leak.
   const draftsRef = useRef(mediaDrafts)
   draftsRef.current = mediaDrafts
@@ -281,7 +341,9 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
       void readImageDimensions(file).then((dims) => {
         if (!dims) return
         setMediaDrafts((prev) =>
-          prev.map((d) => (d.id === draft.id ? { ...d, width: dims.width, height: dims.height } : d)),
+          prev.map((d) =>
+            d.id === draft.id ? { ...d, width: dims.width, height: dims.height } : d,
+          ),
         )
       })
     }
@@ -303,6 +365,7 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
   const createPost = useMutation({
     ...postApiV1PostMutation(),
     onSuccess: (result) => {
+      clearLoadedDraft()
       if (community) {
         void navigate({
           to: "/r/$name/comments/$postId",
@@ -368,6 +431,7 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
       )
 
       await postApiV1MediaConfirm({ body: { postId: data.id }, throwOnError: true })
+      clearLoadedDraft()
       void navigate({
         to: "/r/$name/comments/$postId",
         params: { name: community.name, postId: data.id },
@@ -403,9 +467,55 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
 
   const tagCount = [isNsfw, isSpoiler, isOc].filter(Boolean).length
 
+  function saveDraftNow() {
+    saveDraft.mutate({
+      body: {
+        communityId: community?.id ?? null,
+        isProfile: false,
+        type,
+        title: title.trim() || null,
+        bodyMd: type === "text" ? bodyMd : null,
+        linkUrl: type === "link" ? linkUrl.trim() : null,
+        isNsfw,
+        isSpoiler,
+        isOc,
+        flairTemplateId,
+      },
+    })
+  }
+
+  function buildSchedulePayload() {
+    if (!community || !titleValid || type === "media") return null
+    return {
+      communityId: community.id,
+      isProfile: false,
+      type,
+      title: title.trim(),
+      bodyMd: type === "text" ? bodyMd : undefined,
+      linkUrl: type === "link" ? linkUrl.trim() : undefined,
+      isNsfw,
+      isSpoiler,
+      isOc,
+      flairTemplateId,
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
-      <h1 className="mb-4 text-xl font-bold">Create post</h1>
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <h1 className="text-xl font-bold">Create post</h1>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            setDraftsOpen(true)
+          }}
+        >
+          <FileText className="size-4" />
+          Drafts
+        </Button>
+      </div>
 
       {fixedCommunity ? (
         <div className="mb-4 flex items-center gap-2 rounded-md border bg-card p-3">
@@ -542,12 +652,41 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
           />
         ) : null}
 
-        <div className="flex justify-end">
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={saveDraft.isPending || busy}
+            onClick={saveDraftNow}
+          >
+            <Save className="size-4" />
+            Save draft
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={busy || type === "media" || !community || !titleValid}
+            onClick={() => {
+              setScheduleOpen(true)
+            }}
+          >
+            <Clock className="size-4" />
+            Schedule
+          </Button>
           <LoadingButton loading={busy} disabled={!canSubmit} onClick={submit}>
             Post
           </LoadingButton>
         </div>
       </div>
+
+      <DraftsDialog open={draftsOpen} onOpenChange={setDraftsOpen} onLoad={loadDraft} />
+      <ScheduleDialog
+        open={scheduleOpen}
+        onOpenChange={setScheduleOpen}
+        getPayload={buildSchedulePayload}
+      />
     </div>
   )
 }

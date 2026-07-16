@@ -4,6 +4,8 @@ import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
 import { PostDetailCard } from "@ui/seo-shared/post/PostDetailCard"
 import type { CommentSortValue } from "@ui/seo-shared/comment/types"
 import { CommentSection } from "@frontends/dashboard/components/CommentSection"
+import { PostActionsMenu } from "@frontends/dashboard/components/PostActionsMenu"
+import { PostShareMenu } from "@frontends/dashboard/components/PostShareMenu"
 import {
   getApiV1CommunityByNameOptions,
   getApiV1PostByIdOptions,
@@ -116,10 +118,43 @@ function PostDetailPage() {
           onDownvote={() => {
             vote(-1)
           }}
-          onShare={() => {
-            void navigator.clipboard.writeText(window.location.href)
-            toast.success("Link copied")
-          }}
+          shareSlot={
+            <PostShareMenu
+              post={{
+                id: post.id,
+                title: post.title,
+                community: post.community ? { name: post.community.name } : null,
+              }}
+              permalink={`/r/${name}/comments/${postId}`}
+            />
+          }
+          menuSlot={
+            <PostActionsMenu
+              post={{
+                id: post.id,
+                type: post.type,
+                bodyMd: post.bodyMd,
+                isNsfw: post.isNsfw,
+                isSpoiler: post.isSpoiler,
+                isOc: post.isOc,
+                isAuthor: post.isAuthor,
+                author: post.author ? { username: post.author.username } : null,
+                community: post.community
+                  ? { id: post.community.id, name: post.community.name }
+                  : null,
+                flair: post.flair ? { id: post.flair.id } : null,
+              }}
+              onHidden={() => {
+                void navigate({ to: "/r/$name", params: { name } })
+              }}
+              onDeleted={() => {
+                void navigate({ to: "/r/$name", params: { name } })
+              }}
+              onEdited={() => {
+                void queryClient.invalidateQueries({ queryKey: postKey })
+              }}
+            />
+          }
         />
 
         <CommentSection
