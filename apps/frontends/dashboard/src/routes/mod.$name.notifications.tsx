@@ -58,7 +58,7 @@ function NotificationsSettingsPage() {
               </div>
               <Switch
                 id={`toggle-${toggle.key}`}
-                checked={Boolean(community[toggle.key])}
+                checked={community[toggle.key]}
                 onCheckedChange={(checked) => {
                   save({ [toggle.key]: checked })
                 }}

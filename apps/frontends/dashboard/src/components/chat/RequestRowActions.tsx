@@ -27,6 +27,11 @@ import { peerOf } from "@frontends/dashboard/components/chat/types"
  * Block confirms via an AlertDialog, then blocks the sender and ignores the
  * conversation.
  */
+function stop(e: { preventDefault: () => void; stopPropagation: () => void }) {
+  e.preventDefault()
+  e.stopPropagation()
+}
+
 export function RequestRowActions({
   conversation,
   currentUserId,
@@ -72,11 +77,6 @@ export function RequestRowActions({
       toast.error("Could not block user")
     },
   })
-
-  const stop = (e: { preventDefault: () => void; stopPropagation: () => void }) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }
 
   return (
     <div className="mt-2 flex flex-wrap gap-1.5">

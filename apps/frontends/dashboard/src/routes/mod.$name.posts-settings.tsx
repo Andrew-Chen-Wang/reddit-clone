@@ -216,7 +216,7 @@ function PostsSettingsInner({ community }: { community: CommunityWithSettings })
               </div>
               <Switch
                 id={`toggle-${toggle.key}`}
-                checked={Boolean(community[toggle.key])}
+                checked={community[toggle.key]}
                 onCheckedChange={(checked) => {
                   save({ [toggle.key]: checked })
                 }}
@@ -229,7 +229,7 @@ function PostsSettingsInner({ community }: { community: CommunityWithSettings })
               <Label>Media in comments</Label>
               <p className="text-sm text-muted-foreground">Allow images and GIFs in comments.</p>
             </div>
-            <Switch checked={Boolean(community.mediaInComments)} disabled />
+            <Switch checked={community.mediaInComments} disabled />
           </div>
           <p className="-mt-3 text-xs text-muted-foreground">Media in comments is coming soon.</p>
         </CardContent>

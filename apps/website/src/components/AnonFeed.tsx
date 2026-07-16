@@ -18,6 +18,12 @@ export type AnonFeedSource =
 
 type FeedPage = { data: PostRowPost[]; nextCursor: string | null }
 
+function permalinkFor(post: PostRowPost): string {
+  if (post.community) return `/r/${post.community.name}/comments/${post.id}`
+  if (post.author) return `/user/${post.author.username}`
+  return "/"
+}
+
 async function fetchPage(
   source: AnonFeedSource,
   sort: string,
@@ -101,12 +107,6 @@ export function AnonFeed({
 
   function openLogin() {
     setLoginOpen(true)
-  }
-
-  function permalinkFor(post: PostRowPost): string {
-    if (post.community) return `/r/${post.community.name}/comments/${post.id}`
-    if (post.author) return `/user/${post.author.username}`
-    return "/"
   }
 
   return (

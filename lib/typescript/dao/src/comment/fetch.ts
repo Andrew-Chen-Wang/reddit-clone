@@ -170,6 +170,18 @@ function assemble(
   return result
 }
 
+function hasPendingReport(
+  eb: ExpressionBuilder<DB, "comment" | "post">,
+): ExpressionWrapper<DB, "comment" | "post", SqlBool> {
+  return eb.exists(
+    eb
+      .selectFrom("commentReport")
+      .select("commentReport.id")
+      .whereRef("commentReport.commentId", "=", "comment.id")
+      .where("commentReport.status", "=", "pending"),
+  )
+}
+
 export function fetchComment(db: Kysely<DB>) {
   async function getOne<T extends (keyof DB["comment"])[]>(
     id: string,
@@ -365,16 +377,6 @@ export function fetchComment(db: Kysely<DB>) {
     limit: number
   }): Promise<ModCommentRow[]> {
     if (opts.communityIds.length === 0) return []
-    const hasPendingReport = (
-      eb: ExpressionBuilder<DB, "comment" | "post">,
-    ): ExpressionWrapper<DB, "comment" | "post", SqlBool> =>
-      eb.exists(
-        eb
-          .selectFrom("commentReport")
-          .select("commentReport.id")
-          .whereRef("commentReport.commentId", "=", "comment.id")
-          .where("commentReport.status", "=", "pending"),
-      )
     let query = db
       .selectFrom("comment")
       .innerJoin("post", "post.id", "comment.postId")

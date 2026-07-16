@@ -62,6 +62,10 @@ export type CommunityRightRailProps = {
   postTypesSlot?: ReactNode
 }
 
+const EMPTY_BOOKMARKS: CommunityRightRailBookmark[] = []
+const EMPTY_WIDGETS: CommunityRightRailWidget[] = []
+const EMPTY_RELATED: CommunityRightRailRelated[] = []
+
 function formatCreated(value: string | Date): string {
   return new Date(value).toLocaleDateString("en-US", {
     month: "short",
@@ -80,9 +84,9 @@ export function CommunityRightRail({
   createdAt,
   rules,
   moderators,
-  bookmarks = [],
-  widgets = [],
-  related = [],
+  bookmarks = EMPTY_BOOKMARKS,
+  widgets = EMPTY_WIDGETS,
+  related = EMPTY_RELATED,
   userFlairSlot,
   postTypesSlot,
 }: CommunityRightRailProps) {

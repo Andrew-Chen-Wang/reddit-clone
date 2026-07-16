@@ -157,15 +157,15 @@ export default async function SearchPage({
               ) : null}
 
               {type === "communities"
-                ? result.communities.map((community) => (
+                ? result.communities.map((communityItem) => (
                     <CommunityCard
-                      key={community.id}
+                      key={communityItem.id}
                       community={{
-                        name: community.name,
-                        displayName: community.displayName,
-                        description: community.description,
+                        name: communityItem.name,
+                        displayName: communityItem.displayName,
+                        description: communityItem.description,
                         iconUrl: null,
-                        memberCount: community.memberCount,
+                        memberCount: communityItem.memberCount,
                       }}
                       joinSlot={
                         <Link href="/login" className={buttonVariants({ size: "sm" })}>

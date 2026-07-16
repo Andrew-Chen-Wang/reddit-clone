@@ -83,7 +83,7 @@ export function ModToolsNav({ name, aggregate = false }: { name: string; aggrega
                 matchRoute({
                   to: item.to,
                   params: { name },
-                  fuzzy: item.exact ? false : true,
+                  fuzzy: !item.exact,
                 }),
               )
             const className = cn(

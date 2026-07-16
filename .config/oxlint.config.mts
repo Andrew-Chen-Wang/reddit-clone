@@ -11,7 +11,10 @@ export default defineConfig({
     "jsdoc",
     "import",
     "jsx-a11y",
-    "react-perf",
+    // react-perf intentionally omitted: its jsx-no-new-*-as-prop rules flag every
+    // inline handler/object/JSX prop in render, which only matters for React.memo'd
+    // children. Enforcing it would mean wrapping hundreds of handlers in
+    // useCallback/useMemo — noise that hurts readability with no real gain here.
     "unicorn",
   ],
   categories: {
@@ -98,6 +101,15 @@ export default defineConfig({
     "typescript/prefer-regexp-exec": "error",
     "typescript/prefer-string-starts-ends-with": "error",
     "import/no-unassigned-import": ["warn", { allow: ["**/*.css"] }],
+    // Elasticsearch/OpenSearch responses use underscore-prefixed fields
+    // (_source, _id, _score); we don't control that naming.
+    "no-underscore-dangle": "off",
+    // Sequential awaits in a loop are correct across this codebase: ordered DB
+    // writes, cursor pagination, ES bulk batches, and seed scripts. Converting
+    // them to Promise.all would risk connection-pool exhaustion and write-order
+    // bugs. A handful of API read paths could be parallelized deliberately, but
+    // that's a per-case optimization, not a blanket rule.
+    "no-await-in-loop": "off",
   },
   overrides: [
     {
@@ -117,6 +129,20 @@ export default defineConfig({
       ],
       rules: {
         "react/react-in-jsx-scope": "off",
+      },
+    },
+    {
+      // Vendored shadcn/base-ui primitives. Their nested render components
+      // (react-day-picker slots), constructed context values, index keys, and
+      // prop shadowing are upstream patterns; editing them only creates
+      // divergence we lose when a component is re-pulled from shadcn.
+      files: ["**/lib/typescript/ui/base/src/ui/**"],
+      rules: {
+        "react/no-unstable-nested-components": "off",
+        "react/jsx-no-constructed-context-values": "off",
+        "react/no-array-index-key": "off",
+        "no-shadow": "off",
+        "typescript/no-unnecessary-type-conversion": "off",
       },
     },
     {

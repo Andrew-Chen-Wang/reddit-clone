@@ -1,4 +1,4 @@
-import Markdoc from "@markdoc/markdoc"
+import { parse, transform, renderers } from "@markdoc/markdoc"
 import DOMPurify from "isomorphic-dompurify"
 
 import { cn } from "@ui/base/lib/utils"
@@ -10,9 +10,9 @@ export type MarkdownProps = {
 
 export function renderMarkdownToSafeHtml(content: string | null | undefined): string {
   if (!content) return ""
-  const ast = Markdoc.parse(content)
-  const transformed = Markdoc.transform(ast)
-  return DOMPurify.sanitize(Markdoc.renderers.html(transformed))
+  const ast = parse(content)
+  const transformed = transform(ast)
+  return DOMPurify.sanitize(renderers.html(transformed))
 }
 
 export function Markdown({ content, className }: MarkdownProps) {

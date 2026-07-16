@@ -71,6 +71,10 @@ export function ModInsightsRail({
   )
 }
 
+function has(e: { action: string }, needle: string): boolean {
+  return e.action.toLowerCase().includes(needle)
+}
+
 function Last7DaysSection({
   communities,
   selected,
@@ -91,8 +95,6 @@ function Last7DaysSection({
   const recent = (data?.data ?? []).filter((e) => new Date(e.createdAt).getTime() >= cutoff)
 
   const activeMods = new Set(recent.map((e) => e.modUserId).filter(Boolean)).size
-  const has = (e: (typeof recent)[number], needle: string) =>
-    e.action.toLowerCase().includes(needle)
   const publishedPosts = recent.filter((e) => has(e, "approve") && e.targetPostId).length
   const publishedComments = recent.filter((e) => has(e, "approve") && e.targetCommentId).length
   const reports = recent.filter((e) => has(e, "remove") || has(e, "report")).length

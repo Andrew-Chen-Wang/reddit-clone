@@ -48,6 +48,22 @@ const decodeCursor = (cursor: string | null): Date | null => {
   }
 }
 
+const toItem = (m: {
+  id: string
+  conversationId: string
+  senderUserId: string | null
+  body: string
+  deletedAt: Date | null
+  createdAt: Date
+}) => ({
+  id: m.id,
+  conversationId: m.conversationId,
+  senderUserId: m.senderUserId,
+  body: m.deletedAt ? null : m.body,
+  isDeleted: m.deletedAt !== null,
+  createdAt: m.createdAt.toISOString(),
+})
+
 async function serializeConversations(
   userId: string,
   rows: Awaited<ReturnType<ReturnType<typeof fetchChatConversation>["listForUser"]>>,
@@ -303,22 +319,6 @@ const app = new Hono()
 
       const participant = await fetchChatParticipant(db).getOne(conversationId, user.id, ["id"])
       if (!participant) return throwForbidden(c, "You are not a participant in this conversation")
-
-      const toItem = (m: {
-        id: string
-        conversationId: string
-        senderUserId: string | null
-        body: string
-        deletedAt: Date | null
-        createdAt: Date
-      }) => ({
-        id: m.id,
-        conversationId: m.conversationId,
-        senderUserId: m.senderUserId,
-        body: m.deletedAt ? null : m.body,
-        isDeleted: m.deletedAt !== null,
-        createdAt: m.createdAt.toISOString(),
-      })
 
       if (query.after) {
         const anchor = await fetchChatMessage(db).getOne(query.after, [
