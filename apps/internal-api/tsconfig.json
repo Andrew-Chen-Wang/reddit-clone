@@ -27,5 +27,9 @@
   },
   "include": ["**/*.ts", "**/*.json"],
   "exclude": ["node_modules", "build"],
-  "references": [{ "path": "../../packages/db" }, { "path": "../../lib/typescript/dao" }]
+  "references": [
+    { "path": "../../packages/db" },
+    { "path": "../../lib/typescript/dao" },
+    { "path": "../../packages/search" }
+  ]
 }

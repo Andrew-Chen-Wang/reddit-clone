@@ -67,6 +67,9 @@ export const postCardSchema = Type.Object({
   editedAt: Nullable(Type.String({ format: "date-time" })),
   userVote: Type.Number(),
   isAuthor: Type.Boolean(),
+  removed: Type.Optional(Type.Boolean()),
+  removedByMod: Type.Optional(Type.Boolean()),
+  removalReasonId: Type.Optional(Nullable(UUID7String)),
   author: Nullable(
     Type.Object({
       id: UUID7String,

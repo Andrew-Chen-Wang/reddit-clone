@@ -28,6 +28,28 @@ export function getCommunityAuthz(db: Kysely<DB>) {
     return row !== undefined
   }
 
+  async function isBanned(communityId: string, userId: string): Promise<boolean> {
+    const now = new Date()
+    const row = await db
+      .selectFrom("communityBan")
+      .where("communityId", "=", communityId)
+      .where("userId", "=", userId)
+      .where((eb) => eb.or([eb("expiresAt", "is", null), eb("expiresAt", ">", now)]))
+      .select("id")
+      .executeTakeFirst()
+    return row !== undefined
+  }
+
+  async function isApproved(communityId: string, userId: string): Promise<boolean> {
+    const row = await db
+      .selectFrom("communityApprovedUser")
+      .where("communityId", "=", communityId)
+      .where("userId", "=", userId)
+      .select("id")
+      .executeTakeFirst()
+    return row !== undefined
+  }
+
   async function resolveCommunity(
     ref: CommunityRef,
   ): Promise<{ id: string; visibility: string } | undefined> {
@@ -55,9 +77,24 @@ export function getCommunityAuthz(db: Kysely<DB>) {
     if (!userId) return { ok: false, reason: "NOT_AUTHENTICATED" }
     const community = await resolveCommunity(ref)
     if (!community) return { ok: false, reason: "NOT_FOUND" }
+    if (await isBanned(community.id, userId)) return { ok: false, reason: "BANNED" }
     if (community.visibility === "public") return { ok: true }
     if (await isMember(community.id, userId)) return { ok: true }
+    if (await isApproved(community.id, userId)) return { ok: true }
     return { ok: false, reason: "NOT_A_MEMBER" }
+  }
+
+  async function canComment(ref: CommunityRef, userId: string | null): Promise<AuthzResult> {
+    if (!userId) return { ok: false, reason: "NOT_AUTHENTICATED" }
+    const community = await resolveCommunity(ref)
+    if (!community) return { ok: false, reason: "NOT_FOUND" }
+    if (await isBanned(community.id, userId)) return { ok: false, reason: "BANNED" }
+    if (community.visibility === "public" || community.visibility === "restricted") {
+      return { ok: true }
+    }
+    if (await isModerator(community.id, userId)) return { ok: true }
+    if (await isMember(community.id, userId)) return { ok: true }
+    return { ok: false, reason: "PRIVATE" }
   }
 
   async function canModerate(
@@ -95,5 +132,14 @@ export function getCommunityAuthz(db: Kysely<DB>) {
     return { ok: false, reason: "INSUFFICIENT_PERMISSIONS" }
   }
 
-  return { canView, canPost, canModerate, isMember, isModerator }
+  return {
+    canView,
+    canPost,
+    canComment,
+    canModerate,
+    isMember,
+    isModerator,
+    isBanned,
+    isApproved,
+  }
 }

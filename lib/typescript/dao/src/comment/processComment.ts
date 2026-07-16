@@ -23,6 +23,7 @@ export interface ProcessedComment {
   fetchedChildCount: number
   isSticky: boolean
   isDeleted: boolean
+  removedByMod: boolean
   createdAt: string
   editedAt: string | null
   userVote: number
@@ -38,6 +39,7 @@ export async function processComments(
   db: Kysely<DB>,
   rows: RawCommentRow[],
   viewerId: string | null,
+  viewerIsMod = false,
 ): Promise<ProcessedComment[]> {
   if (rows.length === 0) return []
 
@@ -72,14 +74,16 @@ export async function processComments(
   }
 
   return rows.map((r) => {
+    const removedByMod = r.removedAt !== null
     const author = r.authorUserId ? (authorById.get(r.authorUserId) ?? null) : null
+    const bodyMd = removedByMod && !viewerIsMod ? null : r.bodyMd
     return {
       id: r.id,
       postId: r.postId,
       parentCommentId: r.parentCommentId,
       depth: r.depth,
       path: r.path,
-      bodyMd: r.bodyMd,
+      bodyMd,
       ups: r.ups,
       downs: r.downs,
       score: r.score,
@@ -87,6 +91,7 @@ export async function processComments(
       fetchedChildCount: fetchedChildCount.get(r.id) ?? 0,
       isSticky: r.isSticky,
       isDeleted: r.isDeleted,
+      removedByMod,
       createdAt: r.createdAt.toISOString(),
       editedAt: r.editedAt ? r.editedAt.toISOString() : null,
       userVote: voteByComment.get(r.id) ?? 0,

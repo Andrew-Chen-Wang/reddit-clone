@@ -1,5 +1,14 @@
 import type { DB } from "@template-nextjs/db"
-import { type Kysely, type Selectable, type SelectQueryBuilder, sql } from "kysely"
+import {
+  type ExpressionBuilder,
+  type ExpressionWrapper,
+  type Kysely,
+  type Selectable,
+  type SelectQueryBuilder,
+  sql,
+  type SqlBool,
+} from "kysely"
+import type { ModQueueTab } from "../post/fetch"
 
 export type CommentSort = "best" | "top" | "new" | "old" | "controversial"
 
@@ -51,6 +60,22 @@ const COMMENT_COLUMNS = [
   "comment.editedAt",
   "comment.removedAt",
 ] as const
+
+const MOD_COMMENT_COLUMNS = [
+  ...COMMENT_COLUMNS,
+  "comment.removedByUserId",
+  "comment.removalReasonId",
+  "comment.isSpam",
+  "comment.approvedAt",
+] as const
+
+export type ModCommentRow = RawCommentRow & {
+  removedByUserId: string | null
+  removalReasonId: string | null
+  isSpam: boolean
+  approvedAt: Date | null
+  postCommunityId: string | null
+}
 
 // biome-ignore lint/suspicious/noExplicitAny: query builder unions across sort branches
 type CommentQuery = SelectQueryBuilder<DB, any, RawCommentRow>
@@ -334,6 +359,68 @@ export function fetchComment(db: Kysely<DB>) {
     return { focus, rows, ancestors, hasMore }
   }
 
+  async function moderationQueue(opts: {
+    communityIds: string[]
+    tab: ModQueueTab
+    limit: number
+  }): Promise<ModCommentRow[]> {
+    if (opts.communityIds.length === 0) return []
+    const hasPendingReport = (
+      eb: ExpressionBuilder<DB, "comment" | "post">,
+    ): ExpressionWrapper<DB, "comment" | "post", SqlBool> =>
+      eb.exists(
+        eb
+          .selectFrom("commentReport")
+          .select("commentReport.id")
+          .whereRef("commentReport.commentId", "=", "comment.id")
+          .where("commentReport.status", "=", "pending"),
+      )
+    let query = db
+      .selectFrom("comment")
+      .innerJoin("post", "post.id", "comment.postId")
+      .where("post.communityId", "in", opts.communityIds)
+      .where("comment.isDeleted", "=", false)
+      .select(MOD_COMMENT_COLUMNS)
+      .select("post.communityId as postCommunityId")
+    if (opts.tab === "needs_review") {
+      query = query.where((eb) =>
+        eb.or([
+          hasPendingReport(eb),
+          eb.and([
+            eb("comment.removedAt", "is not", null),
+            eb("comment.removedByUserId", "is", null),
+          ]),
+        ]),
+      )
+    } else if (opts.tab === "reported") {
+      query = query.where("comment.removedAt", "is", null).where((eb) => hasPendingReport(eb))
+    } else if (opts.tab === "removed") {
+      query = query
+        .where("comment.removedAt", "is not", null)
+        .where("comment.removedByUserId", "is not", null)
+    } else if (opts.tab === "edited") {
+      query = query.where("comment.removedAt", "is", null).where("comment.editedAt", "is not", null)
+    } else {
+      query = query
+        .where("comment.removedAt", "is", null)
+        .where((eb) =>
+          eb.not(
+            eb.exists(
+              eb
+                .selectFrom("modAction")
+                .select("modAction.id")
+                .whereRef("modAction.targetCommentId", "=", "comment.id"),
+            ),
+          ),
+        )
+    }
+    return await query
+      .orderBy("comment.createdAt", "desc")
+      .orderBy("comment.id", "desc")
+      .limit(opts.limit)
+      .execute()
+  }
+
   return {
     getOne,
     getRawById,
@@ -343,5 +430,6 @@ export function fetchComment(db: Kysely<DB>) {
     getTreePage,
     getChildrenPage,
     getSubtreeWithAncestors,
+    moderationQueue,
   }
 }

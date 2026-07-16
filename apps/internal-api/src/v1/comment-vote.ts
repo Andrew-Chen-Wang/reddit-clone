@@ -1,5 +1,6 @@
 import { getCommunityAuthz } from "@lib/dao/authz/community/get"
 import { fetchComment } from "@lib/dao/comment/fetch"
+import { fetchCommunity } from "@lib/dao/community/fetch"
 import { crudCommentVote } from "@lib/dao/commentVote/crud"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { db } from "@template-nextjs/db"
@@ -14,6 +15,8 @@ import {
   commentVoteSchemaRequest,
   commentVoteSchemaResponse,
 } from "./comment.serializer"
+
+const ARCHIVE_AGE_MS = 180 * 24 * 60 * 60 * 1000
 
 const app = new Hono().use(authMiddleware).put(
   "/:commentId",
@@ -48,11 +51,16 @@ const app = new Hono().use(authMiddleware).put(
       "communityId",
       "isLocked",
       "removedAt",
+      "createdAt",
     ])
     if (!post || post.removedAt) return throwNotFound(c, "Comment not found")
     if (post.communityId) {
       const view = await getCommunityAuthz(db).canView(post.communityId, user.id)
       if (!view.ok) return throwNotFound(c, "Comment not found")
+      const community = await fetchCommunity(db).getOne(post.communityId, ["archiveOldPosts"])
+      if (community?.archiveOldPosts && post.createdAt.getTime() < Date.now() - ARCHIVE_AGE_MS) {
+        return throwForbidden(c, "This post has been archived")
+      }
     }
     if (post.isLocked) return throwForbidden(c, "This post is locked")
 

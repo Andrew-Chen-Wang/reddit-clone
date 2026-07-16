@@ -1,7 +1,16 @@
 import type { DB } from "@template-nextjs/db"
-import type { Kysely, Selectable, SelectQueryBuilder } from "kysely"
+import type {
+  ExpressionBuilder,
+  ExpressionWrapper,
+  Kysely,
+  Selectable,
+  SelectQueryBuilder,
+  SqlBool,
+} from "kysely"
 
 export type PostSort = "hot" | "new" | "top" | "controversial" | "rising"
+
+export type ModQueueTab = "needs_review" | "reported" | "removed" | "edited" | "unmoderated"
 
 export const POST_COLUMNS = [
   "post.id",
@@ -51,6 +60,23 @@ export type RawPostRow = {
   shareCount: number
   createdAt: Date
   editedAt: Date | null
+}
+
+export const MOD_POST_COLUMNS = [
+  ...POST_COLUMNS,
+  "post.removedAt",
+  "post.removedByUserId",
+  "post.removalReasonId",
+  "post.isSpam",
+  "post.approvedAt",
+] as const
+
+export type ModPostRow = RawPostRow & {
+  removedAt: Date | null
+  removedByUserId: string | null
+  removalReasonId: string | null
+  isSpam: boolean
+  approvedAt: Date | null
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: query builder unions across sort branches
@@ -129,13 +155,13 @@ export function fetchPost(db: Kysely<DB>) {
     }
     if (sort === "top") {
       return query
-        .$if(windowStart !== null, (qb) => qb.where("post.createdAt", ">=", windowStart as Date))
+        .$if(windowStart !== null, (qb) => qb.where("post.createdAt", ">=", windowStart!))
         .orderBy("post.score", "desc")
         .orderBy("post.id", "desc")
     }
     if (sort === "controversial") {
       return query
-        .$if(windowStart !== null, (qb) => qb.where("post.createdAt", ">=", windowStart as Date))
+        .$if(windowStart !== null, (qb) => qb.where("post.createdAt", ">=", windowStart!))
         .orderBy("post.controversialScore", "desc")
         .orderBy("post.id", "desc")
     }
@@ -346,6 +372,62 @@ export function fetchPost(db: Kysely<DB>) {
     return await db.selectFrom("post").select(fields).where("id", "in", ids).execute()
   }
 
+  async function moderationQueue(opts: {
+    communityIds: string[]
+    tab: ModQueueTab
+    limit: number
+  }): Promise<ModPostRow[]> {
+    if (opts.communityIds.length === 0) return []
+    const hasPendingReport = (
+      eb: ExpressionBuilder<DB, "post">,
+    ): ExpressionWrapper<DB, "post", SqlBool> =>
+      eb.exists(
+        eb
+          .selectFrom("postReport")
+          .select("postReport.id")
+          .whereRef("postReport.postId", "=", "post.id")
+          .where("postReport.status", "=", "pending"),
+      )
+    let query = db
+      .selectFrom("post")
+      .where("post.communityId", "in", opts.communityIds)
+      .select(MOD_POST_COLUMNS)
+    if (opts.tab === "needs_review") {
+      query = query.where((eb) =>
+        eb.or([
+          hasPendingReport(eb),
+          eb.and([eb("post.removedAt", "is not", null), eb("post.removedByUserId", "is", null)]),
+        ]),
+      )
+    } else if (opts.tab === "reported") {
+      query = query.where("post.removedAt", "is", null).where((eb) => hasPendingReport(eb))
+    } else if (opts.tab === "removed") {
+      query = query
+        .where("post.removedAt", "is not", null)
+        .where("post.removedByUserId", "is not", null)
+    } else if (opts.tab === "edited") {
+      query = query.where("post.removedAt", "is", null).where("post.editedAt", "is not", null)
+    } else {
+      query = query
+        .where("post.removedAt", "is", null)
+        .where((eb) =>
+          eb.not(
+            eb.exists(
+              eb
+                .selectFrom("modAction")
+                .select("modAction.id")
+                .whereRef("modAction.targetPostId", "=", "post.id"),
+            ),
+          ),
+        )
+    }
+    return await query
+      .orderBy("post.createdAt", "desc")
+      .orderBy("post.id", "desc")
+      .limit(opts.limit)
+      .execute()
+  }
+
   return {
     communityFeed,
     globalFeed,
@@ -358,5 +440,6 @@ export function fetchPost(db: Kysely<DB>) {
     getRawById,
     getOne,
     getManyByIds,
+    moderationQueue,
   }
 }
