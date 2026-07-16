@@ -26,6 +26,11 @@ export const Route = createFileRoute("/r_/$name/wiki/$")({
 function WikiIndex({ name }: { name: string }) {
   const { data } = useQuery(getApiV1WikiByCommunityNameOptions({ path: { communityName: name } }))
   const pages = data?.data ?? []
+  const hasIndex = pages.some((page) => page.slug === "index")
+  const { data: indexPage } = useQuery({
+    ...getApiV1WikiByCommunityNameBySlugOptions({ path: { communityName: name, slug: "index" } }),
+    enabled: hasIndex,
+  })
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-6">
@@ -42,6 +47,13 @@ function WikiIndex({ name }: { name: string }) {
           </Link>
         ) : null}
       </div>
+      {indexPage?.bodyMd ? (
+        <Card className="mb-4">
+          <CardContent className="py-6">
+            <Markdown content={indexPage.bodyMd} />
+          </CardContent>
+        </Card>
+      ) : null}
       {pages.length === 0 ? (
         <Card>
           <CardContent className="p-10 text-center">
@@ -54,7 +66,7 @@ function WikiIndex({ name }: { name: string }) {
             {pages.map((page) => (
               <Link
                 key={page.id}
-                to="/r_/$name/wiki/$"
+                to="/r/$name/wiki/$"
                 params={{ name, _splat: page.slug }}
                 className="rounded-md px-3 py-2 text-sm hover:bg-accent"
               >
@@ -101,13 +113,14 @@ function RevisionHistory({ name, slug }: { name: string; slug: string }) {
           <p className="text-sm text-muted-foreground">No revisions.</p>
         ) : (
           revisions.map((revision, index) => (
-            <div key={revision.id} className="flex items-center gap-2 rounded-md border p-2 text-sm">
+            <div
+              key={revision.id}
+              className="flex items-center gap-2 rounded-md border p-2 text-sm"
+            >
               <div className="min-w-0 flex-1">
                 <p className="truncate">
                   {revision.note ?? "Edited"}
-                  {index === 0 ? (
-                    <span className="ml-2 text-xs text-primary">current</span>
-                  ) : null}
+                  {index === 0 ? <span className="ml-2 text-xs text-primary">current</span> : null}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {revision.author ? `u/${revision.author.username} · ` : ""}
@@ -172,7 +185,7 @@ function WikiPageView({ name, slug }: { name: string; slug: string }) {
       <div className="flex min-h-[40vh] flex-col items-center justify-center gap-2 text-center">
         <h1 className="text-xl font-semibold">Page not found</h1>
         <Link
-          to="/r_/$name/wiki/$"
+          to="/r/$name/wiki/$"
           params={{ name, _splat: "" }}
           className="text-sm text-primary hover:underline"
         >

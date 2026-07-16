@@ -351,10 +351,7 @@ function CustomFeedsSection() {
                     <SidebarMenuItem key={feed.id}>
                       <SidebarMenuButton
                         render={
-                          <Link
-                            to="/feed/$username/$slug"
-                            params={{ username, slug: feed.slug }}
-                          />
+                          <Link to="/feed/$username/$slug" params={{ username, slug: feed.slug }} />
                         }
                         tooltip={feed.name}
                       >

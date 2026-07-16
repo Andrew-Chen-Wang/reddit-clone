@@ -6,6 +6,7 @@ import type {
   GetApiV1CommentPostByPostIdResponse,
   GetApiV1CommunityByNameResponse,
   GetApiV1CommunityJoinRequestByCommunityIdPendingResponse,
+  GetApiV1CustomFeedByUsernameBySlugPostsResponse,
   GetApiV1DraftByIdResponse,
   GetApiV1DraftResponse,
   GetApiV1FeedCommunityByNameResponse,
@@ -30,6 +31,7 @@ import type {
   GetApiV1MutedCommunityMineResponse,
   GetApiV1NotificationResponse,
   GetApiV1PostByIdResponse,
+  GetApiV1PostInsightsByPostIdResponse,
   GetApiV1ScheduledPostCommunityByCommunityIdResponse,
   GetApiV1ScheduledPostMineResponse,
   GetApiV1SearchResponse,
@@ -42,6 +44,8 @@ import type {
   GetApiV1UserMeResponse,
   GetApiV1UserMeSavedResponse,
   GetApiV1UserMeUpvotedResponse,
+  GetApiV1WikiByCommunityNameBySlugResponse,
+  GetApiV1WikiByCommunityNameBySlugRevisionsResponse,
   PatchApiV1DraftByIdResponse,
   PatchApiV1UserMeResponse,
   PostApiV1ChatByConversationIdMessagesResponse,
@@ -157,6 +161,38 @@ export const getApiV1CommunityJoinRequestByCommunityIdPendingResponseTransformer
   return data
 }
 
+export const getApiV1CustomFeedByUsernameBySlugPostsResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1CustomFeedByUsernameBySlugPostsResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1WikiByCommunityNameBySlugResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1WikiByCommunityNameBySlugResponse> => {
+  if (data.updatedAt) {
+    data.updatedAt = new Date(data.updatedAt)
+  }
+  return data
+}
+
+export const getApiV1WikiByCommunityNameBySlugRevisionsResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1WikiByCommunityNameBySlugRevisionsResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
 export const getApiV1CommentPostByPostIdResponseTransformer = async (
   data: any,
 ): Promise<GetApiV1CommentPostByPostIdResponse> => {
@@ -184,6 +220,16 @@ export const getApiV1PostByIdResponseTransformer = async (
   if (data.editedAt) {
     data.editedAt = new Date(data.editedAt)
   }
+  return data
+}
+
+export const getApiV1PostInsightsByPostIdResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1PostInsightsByPostIdResponse> => {
+  data.views48h = data.views48h.map((item: any) => {
+    item.bucket = new Date(item.bucket)
+    return item
+  })
   return data
 }
 

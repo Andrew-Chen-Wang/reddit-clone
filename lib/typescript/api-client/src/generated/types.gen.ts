@@ -23,6 +23,7 @@ export type ErrorObjectT = {
     | "InternalServerError"
     | "ServiceUnavailable"
     | "InsufficientPermissions"
+    | "Suspended"
     | "ValidationFailed"
     | "InvalidInput"
     | "MissingRequiredField"
@@ -826,6 +827,7 @@ export type GetApiV1CommunityByNameResponses = {
     bannerImageKey: string | null
     memberCount: number
     defaultCommentSort: string
+    welcomeMessage: string | null
     createdAt: Date
     rules: Array<{
       id: string
@@ -1312,6 +1314,372 @@ export type PutApiV1CommunityRuleByCommunityIdReorderResponses = {
 export type PutApiV1CommunityRuleByCommunityIdReorderResponse =
   PutApiV1CommunityRuleByCommunityIdReorderResponses[keyof PutApiV1CommunityRuleByCommunityIdReorderResponses]
 
+export type GetApiV1CommunityWidgetByCommunityNameData = {
+  body?: never
+  path: {
+    communityName: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/{communityName}"
+}
+
+export type GetApiV1CommunityWidgetByCommunityNameErrors = {
+  /**
+   * Community not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1CommunityWidgetByCommunityNameError =
+  GetApiV1CommunityWidgetByCommunityNameErrors[keyof GetApiV1CommunityWidgetByCommunityNameErrors]
+
+export type GetApiV1CommunityWidgetByCommunityNameResponses = {
+  /**
+   * Community widgets
+   */
+  200: {
+    bookmarks: Array<{
+      id: string
+      label: string
+      url: string
+      position: number
+    }>
+    widgets: Array<{
+      id: string
+      title: string
+      bodyMd: string
+      position: number
+    }>
+    related: Array<{
+      id: string
+      name: string
+      displayName: string | null
+      iconImageKey: string | null
+      memberCount: number
+    }>
+  }
+}
+
+export type GetApiV1CommunityWidgetByCommunityNameResponse =
+  GetApiV1CommunityWidgetByCommunityNameResponses[keyof GetApiV1CommunityWidgetByCommunityNameResponses]
+
+export type PostApiV1CommunityWidgetByCommunityIdBookmarkData = {
+  body?: {
+    label: string
+    url: string
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/{communityId}/bookmark"
+}
+
+export type PostApiV1CommunityWidgetByCommunityIdBookmarkErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1CommunityWidgetByCommunityIdBookmarkError =
+  PostApiV1CommunityWidgetByCommunityIdBookmarkErrors[keyof PostApiV1CommunityWidgetByCommunityIdBookmarkErrors]
+
+export type PostApiV1CommunityWidgetByCommunityIdBookmarkResponses = {
+  /**
+   * Bookmark created
+   */
+  201: {
+    id: string
+  }
+}
+
+export type PostApiV1CommunityWidgetByCommunityIdBookmarkResponse =
+  PostApiV1CommunityWidgetByCommunityIdBookmarkResponses[keyof PostApiV1CommunityWidgetByCommunityIdBookmarkResponses]
+
+export type DeleteApiV1CommunityWidgetBookmarkByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/bookmark/{id}"
+}
+
+export type DeleteApiV1CommunityWidgetBookmarkByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Bookmark not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1CommunityWidgetBookmarkByIdError =
+  DeleteApiV1CommunityWidgetBookmarkByIdErrors[keyof DeleteApiV1CommunityWidgetBookmarkByIdErrors]
+
+export type DeleteApiV1CommunityWidgetBookmarkByIdResponses = {
+  /**
+   * Bookmark deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1CommunityWidgetBookmarkByIdResponse =
+  DeleteApiV1CommunityWidgetBookmarkByIdResponses[keyof DeleteApiV1CommunityWidgetBookmarkByIdResponses]
+
+export type PatchApiV1CommunityWidgetBookmarkByIdData = {
+  body?: {
+    label?: string
+    url?: string
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/bookmark/{id}"
+}
+
+export type PatchApiV1CommunityWidgetBookmarkByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Bookmark not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1CommunityWidgetBookmarkByIdError =
+  PatchApiV1CommunityWidgetBookmarkByIdErrors[keyof PatchApiV1CommunityWidgetBookmarkByIdErrors]
+
+export type PatchApiV1CommunityWidgetBookmarkByIdResponses = {
+  /**
+   * Bookmark updated
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PatchApiV1CommunityWidgetBookmarkByIdResponse =
+  PatchApiV1CommunityWidgetBookmarkByIdResponses[keyof PatchApiV1CommunityWidgetBookmarkByIdResponses]
+
+export type PutApiV1CommunityWidgetByCommunityIdBookmarkReorderData = {
+  body?: {
+    orderedIds: Array<string>
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/{communityId}/bookmark/reorder"
+}
+
+export type PutApiV1CommunityWidgetByCommunityIdBookmarkReorderErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PutApiV1CommunityWidgetByCommunityIdBookmarkReorderError =
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderErrors[keyof PutApiV1CommunityWidgetByCommunityIdBookmarkReorderErrors]
+
+export type PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponses = {
+  /**
+   * Bookmarks reordered
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponse =
+  PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponses[keyof PutApiV1CommunityWidgetByCommunityIdBookmarkReorderResponses]
+
+export type PostApiV1CommunityWidgetByCommunityIdWidgetData = {
+  body?: {
+    title: string
+    body: string
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/{communityId}/widget"
+}
+
+export type PostApiV1CommunityWidgetByCommunityIdWidgetErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PostApiV1CommunityWidgetByCommunityIdWidgetError =
+  PostApiV1CommunityWidgetByCommunityIdWidgetErrors[keyof PostApiV1CommunityWidgetByCommunityIdWidgetErrors]
+
+export type PostApiV1CommunityWidgetByCommunityIdWidgetResponses = {
+  /**
+   * Widget created
+   */
+  201: {
+    id: string
+  }
+}
+
+export type PostApiV1CommunityWidgetByCommunityIdWidgetResponse =
+  PostApiV1CommunityWidgetByCommunityIdWidgetResponses[keyof PostApiV1CommunityWidgetByCommunityIdWidgetResponses]
+
+export type DeleteApiV1CommunityWidgetWidgetByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/widget/{id}"
+}
+
+export type DeleteApiV1CommunityWidgetWidgetByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Widget not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1CommunityWidgetWidgetByIdError =
+  DeleteApiV1CommunityWidgetWidgetByIdErrors[keyof DeleteApiV1CommunityWidgetWidgetByIdErrors]
+
+export type DeleteApiV1CommunityWidgetWidgetByIdResponses = {
+  /**
+   * Widget deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1CommunityWidgetWidgetByIdResponse =
+  DeleteApiV1CommunityWidgetWidgetByIdResponses[keyof DeleteApiV1CommunityWidgetWidgetByIdResponses]
+
+export type PatchApiV1CommunityWidgetWidgetByIdData = {
+  body?: {
+    title?: string
+    body?: string
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/widget/{id}"
+}
+
+export type PatchApiV1CommunityWidgetWidgetByIdErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Widget not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1CommunityWidgetWidgetByIdError =
+  PatchApiV1CommunityWidgetWidgetByIdErrors[keyof PatchApiV1CommunityWidgetWidgetByIdErrors]
+
+export type PatchApiV1CommunityWidgetWidgetByIdResponses = {
+  /**
+   * Widget updated
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PatchApiV1CommunityWidgetWidgetByIdResponse =
+  PatchApiV1CommunityWidgetWidgetByIdResponses[keyof PatchApiV1CommunityWidgetWidgetByIdResponses]
+
+export type PutApiV1CommunityWidgetByCommunityIdWidgetReorderData = {
+  body?: {
+    orderedIds: Array<string>
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/{communityId}/widget/reorder"
+}
+
+export type PutApiV1CommunityWidgetByCommunityIdWidgetReorderErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PutApiV1CommunityWidgetByCommunityIdWidgetReorderError =
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderErrors[keyof PutApiV1CommunityWidgetByCommunityIdWidgetReorderErrors]
+
+export type PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponses = {
+  /**
+   * Widgets reordered
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponse =
+  PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponses[keyof PutApiV1CommunityWidgetByCommunityIdWidgetReorderResponses]
+
+export type PutApiV1CommunityWidgetByCommunityIdRelatedData = {
+  body?: {
+    communityIds: Array<string>
+  }
+  path: {
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/community-widget/{communityId}/related"
+}
+
+export type PutApiV1CommunityWidgetByCommunityIdRelatedErrors = {
+  /**
+   * Invalid related communities
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+}
+
+export type PutApiV1CommunityWidgetByCommunityIdRelatedError =
+  PutApiV1CommunityWidgetByCommunityIdRelatedErrors[keyof PutApiV1CommunityWidgetByCommunityIdRelatedErrors]
+
+export type PutApiV1CommunityWidgetByCommunityIdRelatedResponses = {
+  /**
+   * Related communities set
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PutApiV1CommunityWidgetByCommunityIdRelatedResponse =
+  PutApiV1CommunityWidgetByCommunityIdRelatedResponses[keyof PutApiV1CommunityWidgetByCommunityIdRelatedResponses]
+
 export type GetApiV1CommunityJoinRequestByCommunityIdPendingData = {
   body?: never
   path: {
@@ -1419,6 +1787,589 @@ export type PostApiV1CommunityJoinRequestByIdDenyResponses = {
 
 export type PostApiV1CommunityJoinRequestByIdDenyResponse =
   PostApiV1CommunityJoinRequestByIdDenyResponses[keyof PostApiV1CommunityJoinRequestByIdDenyResponses]
+
+export type GetApiV1CustomFeedByUsernameBySlugData = {
+  body?: never
+  path: {
+    username: string
+    slug: string
+  }
+  query?: never
+  url: "/api/v1/custom-feed/{username}/{slug}"
+}
+
+export type GetApiV1CustomFeedByUsernameBySlugErrors = {
+  /**
+   * Feed not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1CustomFeedByUsernameBySlugError =
+  GetApiV1CustomFeedByUsernameBySlugErrors[keyof GetApiV1CustomFeedByUsernameBySlugErrors]
+
+export type GetApiV1CustomFeedByUsernameBySlugResponses = {
+  /**
+   * Custom feed detail
+   */
+  200: {
+    id: string
+    name: string
+    slug: string
+    description: string | null
+    isFavorite: boolean
+    isOwner: boolean
+    owner: {
+      username: string
+    }
+    communities: Array<{
+      id: string
+      name: string
+      displayName: string | null
+      iconImageKey: string | null
+      visibility: string
+    }>
+  }
+}
+
+export type GetApiV1CustomFeedByUsernameBySlugResponse =
+  GetApiV1CustomFeedByUsernameBySlugResponses[keyof GetApiV1CustomFeedByUsernameBySlugResponses]
+
+export type GetApiV1CustomFeedByUsernameBySlugPostsData = {
+  body?: never
+  path: {
+    username: string
+    slug: string
+  }
+  query?: {
+    sort?: "hot" | "new" | "top" | "controversial" | "rising"
+    t?: "hour" | "day" | "week" | "month" | "year" | "all"
+    cursor?: string
+  }
+  url: "/api/v1/custom-feed/{username}/{slug}/posts"
+}
+
+export type GetApiV1CustomFeedByUsernameBySlugPostsErrors = {
+  /**
+   * Feed not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1CustomFeedByUsernameBySlugPostsError =
+  GetApiV1CustomFeedByUsernameBySlugPostsErrors[keyof GetApiV1CustomFeedByUsernameBySlugPostsErrors]
+
+export type GetApiV1CustomFeedByUsernameBySlugPostsResponses = {
+  /**
+   * Custom feed posts
+   */
+  200: {
+    data: Array<{
+      id: string
+      type: string
+      title: string
+      bodyMd: string | null
+      linkUrl: string | null
+      isNsfw: boolean
+      isSpoiler: boolean
+      isOc: boolean
+      isLocked: boolean
+      stickyPosition: number | null
+      ups: number
+      downs: number
+      score: number
+      commentCount: number
+      viewCount: number
+      shareCount: number
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      removed?: boolean
+      removedByMod?: boolean
+      removalReasonId?: string | null
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+      community: {
+        id: string
+        name: string
+        displayName: string | null
+        iconImageKey: string | null
+        isNsfw: boolean
+        isMember: boolean
+      } | null
+      flair: {
+        id: string
+        text: string
+        bgColor: string | null
+        textColor: string | null
+      } | null
+      media: Array<{
+        mediaType: string
+        url: string
+        width: number | null
+        height: number | null
+      }>
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1CustomFeedByUsernameBySlugPostsResponse =
+  GetApiV1CustomFeedByUsernameBySlugPostsResponses[keyof GetApiV1CustomFeedByUsernameBySlugPostsResponses]
+
+export type GetApiV1CustomFeedMineData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/v1/custom-feed/mine"
+}
+
+export type GetApiV1CustomFeedMineResponses = {
+  /**
+   * Custom feeds
+   */
+  200: {
+    data: Array<{
+      id: string
+      name: string
+      slug: string
+      description: string | null
+      isFavorite: boolean
+      communityCount: number
+      communities: Array<{
+        name: string
+        iconImageKey: string | null
+      }>
+    }>
+  }
+}
+
+export type GetApiV1CustomFeedMineResponse =
+  GetApiV1CustomFeedMineResponses[keyof GetApiV1CustomFeedMineResponses]
+
+export type PostApiV1CustomFeedData = {
+  body?: {
+    name: string
+    description?: string | null
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/custom-feed"
+}
+
+export type PostApiV1CustomFeedErrors = {
+  /**
+   * Feed limit reached
+   */
+  400: ErrorResponseT
+}
+
+export type PostApiV1CustomFeedError = PostApiV1CustomFeedErrors[keyof PostApiV1CustomFeedErrors]
+
+export type PostApiV1CustomFeedResponses = {
+  /**
+   * Feed created
+   */
+  201: {
+    id: string
+    slug: string
+  }
+}
+
+export type PostApiV1CustomFeedResponse =
+  PostApiV1CustomFeedResponses[keyof PostApiV1CustomFeedResponses]
+
+export type DeleteApiV1CustomFeedByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/custom-feed/{id}"
+}
+
+export type DeleteApiV1CustomFeedByIdErrors = {
+  /**
+   * Not the owner
+   */
+  403: ErrorResponseT
+  /**
+   * Feed not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1CustomFeedByIdError =
+  DeleteApiV1CustomFeedByIdErrors[keyof DeleteApiV1CustomFeedByIdErrors]
+
+export type DeleteApiV1CustomFeedByIdResponses = {
+  /**
+   * Feed deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1CustomFeedByIdResponse =
+  DeleteApiV1CustomFeedByIdResponses[keyof DeleteApiV1CustomFeedByIdResponses]
+
+export type PatchApiV1CustomFeedByIdData = {
+  body?: {
+    name?: string
+    description?: string | null
+    isFavorite?: boolean
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/custom-feed/{id}"
+}
+
+export type PatchApiV1CustomFeedByIdErrors = {
+  /**
+   * Not the owner
+   */
+  403: ErrorResponseT
+  /**
+   * Feed not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1CustomFeedByIdError =
+  PatchApiV1CustomFeedByIdErrors[keyof PatchApiV1CustomFeedByIdErrors]
+
+export type PatchApiV1CustomFeedByIdResponses = {
+  /**
+   * Feed updated
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PatchApiV1CustomFeedByIdResponse =
+  PatchApiV1CustomFeedByIdResponses[keyof PatchApiV1CustomFeedByIdResponses]
+
+export type DeleteApiV1CustomFeedByIdCommunityByCommunityIdData = {
+  body?: never
+  path: {
+    id: string
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/custom-feed/{id}/community/{communityId}"
+}
+
+export type DeleteApiV1CustomFeedByIdCommunityByCommunityIdErrors = {
+  /**
+   * Not the owner
+   */
+  403: ErrorResponseT
+  /**
+   * Feed not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1CustomFeedByIdCommunityByCommunityIdError =
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdErrors[keyof DeleteApiV1CustomFeedByIdCommunityByCommunityIdErrors]
+
+export type DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponses = {
+  /**
+   * Community removed
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponse =
+  DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponses[keyof DeleteApiV1CustomFeedByIdCommunityByCommunityIdResponses]
+
+export type PutApiV1CustomFeedByIdCommunityByCommunityIdData = {
+  body?: never
+  path: {
+    id: string
+    communityId: string
+  }
+  query?: never
+  url: "/api/v1/custom-feed/{id}/community/{communityId}"
+}
+
+export type PutApiV1CustomFeedByIdCommunityByCommunityIdErrors = {
+  /**
+   * Community limit reached
+   */
+  400: ErrorResponseT
+  /**
+   * Not the owner or cannot view community
+   */
+  403: ErrorResponseT
+  /**
+   * Feed or community not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1CustomFeedByIdCommunityByCommunityIdError =
+  PutApiV1CustomFeedByIdCommunityByCommunityIdErrors[keyof PutApiV1CustomFeedByIdCommunityByCommunityIdErrors]
+
+export type PutApiV1CustomFeedByIdCommunityByCommunityIdResponses = {
+  /**
+   * Community added
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PutApiV1CustomFeedByIdCommunityByCommunityIdResponse =
+  PutApiV1CustomFeedByIdCommunityByCommunityIdResponses[keyof PutApiV1CustomFeedByIdCommunityByCommunityIdResponses]
+
+export type GetApiV1WikiByCommunityNameData = {
+  body?: never
+  path: {
+    communityName: string
+  }
+  query?: never
+  url: "/api/v1/wiki/{communityName}"
+}
+
+export type GetApiV1WikiByCommunityNameErrors = {
+  /**
+   * Community not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1WikiByCommunityNameError =
+  GetApiV1WikiByCommunityNameErrors[keyof GetApiV1WikiByCommunityNameErrors]
+
+export type GetApiV1WikiByCommunityNameResponses = {
+  /**
+   * Wiki page index
+   */
+  200: {
+    canEdit: boolean
+    data: Array<{
+      id: string
+      slug: string
+      title: string
+    }>
+  }
+}
+
+export type GetApiV1WikiByCommunityNameResponse =
+  GetApiV1WikiByCommunityNameResponses[keyof GetApiV1WikiByCommunityNameResponses]
+
+export type PostApiV1WikiByCommunityNameData = {
+  body?: {
+    slug: string
+    title: string
+    body: string
+  }
+  path: {
+    communityName: string
+  }
+  query?: never
+  url: "/api/v1/wiki/{communityName}"
+}
+
+export type PostApiV1WikiByCommunityNameErrors = {
+  /**
+   * A page with that slug already exists
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Community not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1WikiByCommunityNameError =
+  PostApiV1WikiByCommunityNameErrors[keyof PostApiV1WikiByCommunityNameErrors]
+
+export type PostApiV1WikiByCommunityNameResponses = {
+  /**
+   * Page created
+   */
+  201: {
+    id: string
+    slug: string
+  }
+}
+
+export type PostApiV1WikiByCommunityNameResponse =
+  PostApiV1WikiByCommunityNameResponses[keyof PostApiV1WikiByCommunityNameResponses]
+
+export type GetApiV1WikiByCommunityNameBySlugData = {
+  body?: never
+  path: {
+    communityName: string
+    slug: string
+  }
+  query?: never
+  url: "/api/v1/wiki/{communityName}/{slug}"
+}
+
+export type GetApiV1WikiByCommunityNameBySlugErrors = {
+  /**
+   * Page not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1WikiByCommunityNameBySlugError =
+  GetApiV1WikiByCommunityNameBySlugErrors[keyof GetApiV1WikiByCommunityNameBySlugErrors]
+
+export type GetApiV1WikiByCommunityNameBySlugResponses = {
+  /**
+   * Wiki page
+   */
+  200: {
+    id: string
+    slug: string
+    title: string
+    bodyMd: string | null
+    currentRevisionId: string | null
+    canEdit: boolean
+    updatedAt: Date | null
+    author: {
+      username: string
+    } | null
+  }
+}
+
+export type GetApiV1WikiByCommunityNameBySlugResponse =
+  GetApiV1WikiByCommunityNameBySlugResponses[keyof GetApiV1WikiByCommunityNameBySlugResponses]
+
+export type PutApiV1WikiByCommunityNameBySlugData = {
+  body?: {
+    body: string
+    note?: string | null
+  }
+  path: {
+    communityName: string
+    slug: string
+  }
+  query?: never
+  url: "/api/v1/wiki/{communityName}/{slug}"
+}
+
+export type PutApiV1WikiByCommunityNameBySlugErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Page not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1WikiByCommunityNameBySlugError =
+  PutApiV1WikiByCommunityNameBySlugErrors[keyof PutApiV1WikiByCommunityNameBySlugErrors]
+
+export type PutApiV1WikiByCommunityNameBySlugResponses = {
+  /**
+   * Revision saved
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PutApiV1WikiByCommunityNameBySlugResponse =
+  PutApiV1WikiByCommunityNameBySlugResponses[keyof PutApiV1WikiByCommunityNameBySlugResponses]
+
+export type GetApiV1WikiByCommunityNameBySlugRevisionsData = {
+  body?: never
+  path: {
+    communityName: string
+    slug: string
+  }
+  query?: never
+  url: "/api/v1/wiki/{communityName}/{slug}/revisions"
+}
+
+export type GetApiV1WikiByCommunityNameBySlugRevisionsErrors = {
+  /**
+   * Page not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1WikiByCommunityNameBySlugRevisionsError =
+  GetApiV1WikiByCommunityNameBySlugRevisionsErrors[keyof GetApiV1WikiByCommunityNameBySlugRevisionsErrors]
+
+export type GetApiV1WikiByCommunityNameBySlugRevisionsResponses = {
+  /**
+   * Revision history
+   */
+  200: {
+    data: Array<{
+      id: string
+      note: string | null
+      createdAt: Date
+      author: {
+        username: string
+      } | null
+    }>
+  }
+}
+
+export type GetApiV1WikiByCommunityNameBySlugRevisionsResponse =
+  GetApiV1WikiByCommunityNameBySlugRevisionsResponses[keyof GetApiV1WikiByCommunityNameBySlugRevisionsResponses]
+
+export type PostApiV1WikiByCommunityNameBySlugRevertData = {
+  body?: {
+    revisionId: string
+  }
+  path: {
+    communityName: string
+    slug: string
+  }
+  query?: never
+  url: "/api/v1/wiki/{communityName}/{slug}/revert"
+}
+
+export type PostApiV1WikiByCommunityNameBySlugRevertErrors = {
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Page or revision not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiV1WikiByCommunityNameBySlugRevertError =
+  PostApiV1WikiByCommunityNameBySlugRevertErrors[keyof PostApiV1WikiByCommunityNameBySlugRevertErrors]
+
+export type PostApiV1WikiByCommunityNameBySlugRevertResponses = {
+  /**
+   * Page reverted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiV1WikiByCommunityNameBySlugRevertResponse =
+  PostApiV1WikiByCommunityNameBySlugRevertResponses[keyof PostApiV1WikiByCommunityNameBySlugRevertResponses]
 
 export type GetApiV1FlairByCommunityIdPostTemplatesData = {
   body?: never
@@ -2265,6 +3216,59 @@ export type PostApiV1PostResponses = {
 }
 
 export type PostApiV1PostResponse = PostApiV1PostResponses[keyof PostApiV1PostResponses]
+
+export type GetApiV1PostInsightsByPostIdData = {
+  body?: never
+  path: {
+    postId: string
+  }
+  query?: never
+  url: "/api/v1/post-insights/{postId}"
+}
+
+export type GetApiV1PostInsightsByPostIdErrors = {
+  /**
+   * Not the author
+   */
+  403: ErrorResponseT
+  /**
+   * Post not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1PostInsightsByPostIdError =
+  GetApiV1PostInsightsByPostIdErrors[keyof GetApiV1PostInsightsByPostIdErrors]
+
+export type GetApiV1PostInsightsByPostIdResponses = {
+  /**
+   * Post insights
+   */
+  200: {
+    viewsTotal: number
+    views48h: Array<{
+      bucket: Date
+      count: number
+    }>
+    ups: number
+    downs: number
+    upvoteRatio: number
+    commentCount: number
+    shareCount: number
+    crosspostCount: number
+    topComments: Array<{
+      id: string
+      snippet: string
+      score: number
+      authorUsername: string | null
+    }>
+    rankAllTime: number
+    rankInCommunityToday: number | null
+  }
+}
+
+export type GetApiV1PostInsightsByPostIdResponse =
+  GetApiV1PostInsightsByPostIdResponses[keyof GetApiV1PostInsightsByPostIdResponses]
 
 export type PutApiV1PostVoteByPostIdData = {
   body?: {

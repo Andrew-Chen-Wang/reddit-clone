@@ -33,6 +33,7 @@ import {
 import { LogOut, Monitor, Moon, Plus, Settings, Sun, User } from "lucide-react"
 import { useState } from "react"
 import { ChatButton } from "@frontends/dashboard/components/ChatButton"
+import { NotificationBell } from "@frontends/dashboard/components/NotificationBell"
 import { toast } from "sonner"
 
 type DisplayMode = "auto" | "light" | "dark"
@@ -128,6 +129,7 @@ export function TopNav() {
         <SearchSuggest />
         <div className="ml-auto flex items-center gap-1">
           <ChatButton />
+          <NotificationBell />
         </div>
         <Link
           to="/submit"

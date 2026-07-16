@@ -9,6 +9,9 @@ import community from "./community"
 import communityJoinRequest from "./community-join-request"
 import communityMember from "./community-member"
 import communityRule from "./community-rule"
+import communityWidget from "./community-widget"
+import customFeed from "./custom-feed"
+import wiki from "./wiki"
 import explore from "./explore"
 import feed from "./feed"
 import flair from "./flair"
@@ -31,6 +34,7 @@ import search from "./search"
 import userBlock from "./user-block"
 import userFollow from "./user-follow"
 import post from "./post"
+import postInsights from "./post-insights"
 import postVote from "./post-vote"
 import topic from "./topic"
 import user from "./user"
@@ -47,12 +51,16 @@ const app = new Hono({
   .route("/community", community)
   .route("/community-member", communityMember)
   .route("/community-rule", communityRule)
+  .route("/community-widget", communityWidget)
   .route("/community-join-request", communityJoinRequest)
+  .route("/custom-feed", customFeed)
+  .route("/wiki", wiki)
   .route("/flair", flair)
   .route("/explore", explore)
   .route("/comment", comment)
   .route("/comment-vote", commentVote)
   .route("/post", post)
+  .route("/post-insights", postInsights)
   .route("/post-vote", postVote)
   .route("/feed", feed)
   .route("/history", history)

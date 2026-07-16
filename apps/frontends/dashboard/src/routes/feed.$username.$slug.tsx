@@ -135,7 +135,9 @@ function CustomFeedPage() {
     return (
       <div className="mx-auto flex min-h-[50vh] max-w-5xl flex-col items-center justify-center gap-2 px-4 text-center">
         <h1 className="text-xl font-semibold">Feed not found</h1>
-        <p className="text-sm text-muted-foreground">This custom feed is private or doesn&apos;t exist.</p>
+        <p className="text-sm text-muted-foreground">
+          This custom feed is private or doesn&apos;t exist.
+        </p>
       </div>
     )
   }
@@ -149,7 +151,11 @@ function CustomFeedPage() {
           <h1 className="text-2xl font-bold">{feed.name}</h1>
           <p className="text-sm text-muted-foreground">
             Custom feed by{" "}
-            <Link to="/u/$username" params={{ username: feed.owner.username }} className="hover:underline">
+            <Link
+              to="/u/$username"
+              params={{ username: feed.owner.username }}
+              className="hover:underline"
+            >
               u/{feed.owner.username}
             </Link>
           </p>
@@ -198,7 +204,9 @@ function CustomFeedPage() {
 
       {feed.communities.length === 0 ? (
         <div className="rounded-lg border bg-card p-10 text-center">
-          <p className="text-sm font-medium text-muted-foreground">This feed has no communities yet</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            This feed has no communities yet
+          </p>
           {feed.isOwner ? (
             <p className="mt-1 text-xs text-muted-foreground">
               Add communities above to start building your feed.
@@ -212,7 +220,9 @@ function CustomFeedPage() {
           defaultSort="hot"
           showJoin
           permalinkFor={(post: FeedPost) =>
-            post.community ? `/r/${post.community.name}/comments/${post.id}` : `/comments/${post.id}`
+            post.community
+              ? `/r/${post.community.name}/comments/${post.id}`
+              : `/comments/${post.id}`
           }
           emptyTitle="No posts yet"
           emptyDescription="The communities in this feed haven't posted anything recently."

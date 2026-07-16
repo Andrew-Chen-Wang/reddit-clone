@@ -2,9 +2,11 @@ import { Link, useMatchRoute } from "@tanstack/react-router"
 import { cn } from "@ui/base/lib/utils"
 import {
   Bell,
+  BookOpen,
   CalendarClock,
   FileText,
   Gavel,
+  LayoutGrid,
   ListChecks,
   Mail,
   MessageSquareText,
@@ -40,6 +42,7 @@ const SECTIONS: NavSection[] = [
     heading: "Moderation",
     items: [
       { label: "Rules", icon: Gavel, to: "/mod/$name/rules" },
+      { label: "Wiki", icon: BookOpen, to: "/mod/$name/wiki" },
       { label: "Saved Responses", icon: MessageSquareText, to: "/mod/$name/saved-responses" },
       { label: "Mod Log", icon: ScrollText, to: "/mod/$name/log" },
     ],
@@ -49,6 +52,7 @@ const SECTIONS: NavSection[] = [
     items: [
       { label: "General", icon: Settings, to: "/mod/$name/settings" },
       { label: "Posts & Comments", icon: FileText, to: "/mod/$name/posts-settings" },
+      { label: "Widgets", icon: LayoutGrid, to: "/mod/$name/widgets" },
       { label: "Notifications", icon: Bell, to: "/mod/$name/notifications" },
     ],
   },

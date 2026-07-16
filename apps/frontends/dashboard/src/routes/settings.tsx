@@ -24,14 +24,17 @@ import { Separator } from "@ui/base/ui/separator"
 import { Switch } from "@ui/base/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui/base/ui/tabs"
 import { Textarea } from "@ui/base/ui/textarea"
+import { ToggleGroup, ToggleGroupItem } from "@ui/base/ui/toggle-group"
 import { useTheme, type Theme } from "@ui/spa-shared/theme"
 import { formatCompactNumber } from "@ui/seo-shared/format-number"
 import {
   deleteApiV1UserMeDeleteMutation,
+  getApiV1NotificationPreferencesOptions,
   getApiV1UserMeOptions,
   getApiV1UserMeSettingsOptions,
   patchApiV1UserMeMutation,
   patchApiV1UserMeSettingsMutation,
+  putApiV1NotificationPreferencesMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import {
   postApiV1MediaAvatarConfirm,
@@ -40,6 +43,7 @@ import {
   postApiV1MediaBannerUpload,
 } from "@lib/api-client/generated/sdk.gen"
 import type { PatchApiV1UserMeSettingsData } from "@lib/api-client/generated/types.gen"
+import { PREFERENCE_TYPES } from "@frontends/dashboard/components/notifications/meta"
 import { AccountEngagementCards } from "@frontends/dashboard/components/AccountEngagementCards"
 import { ImageCropDialog } from "@frontends/dashboard/components/ImageCropDialog"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
@@ -558,6 +562,90 @@ function PreferencesTab() {
   )
 }
 
+type NotificationLevel = "off" | "inbox" | "all"
+
+const NOTIFICATION_LEVELS: { value: NotificationLevel; label: string }[] = [
+  { value: "off", label: "Off" },
+  { value: "inbox", label: "Inbox" },
+  { value: "all", label: "All" },
+]
+
+function NotificationsTab() {
+  const queryClient = useQueryClient()
+  const { data } = useQuery(getApiV1NotificationPreferencesOptions())
+  // Optimistic overrides so the segmented control reflects a change instantly,
+  // before the preferences query refetches.
+  const [overrides, setOverrides] = useState<Record<string, NotificationLevel>>({})
+
+  const mutation = useMutation({
+    ...putApiV1NotificationPreferencesMutation(),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: getApiV1NotificationPreferencesOptions().queryKey,
+      })
+    },
+    onError: () => {
+      toast.error("Could not save notification preference")
+    },
+  })
+
+  const serverLevels: Record<string, NotificationLevel> = {}
+  for (const pref of data?.data ?? []) {
+    serverLevels[pref.type] = pref.level
+  }
+
+  const levelFor = (type: string): NotificationLevel =>
+    overrides[type] ?? serverLevels[type] ?? "inbox"
+
+  const setLevel = (type: string, level: NotificationLevel) => {
+    setOverrides((prev) => ({ ...prev, [type]: level }))
+    mutation.mutate({ body: { type, level } })
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Notifications</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-1">
+        <p className="mb-2 text-sm text-muted-foreground">
+          Choose how each type of notification reaches you. “All” currently behaves like “Inbox” —
+          push delivery isn’t available yet.
+        </p>
+        {PREFERENCE_TYPES.map((pref, index) => (
+          <div key={pref.type}>
+            {index > 0 ? <Separator className="my-1" /> : null}
+            <div className="flex items-center justify-between gap-4 py-2">
+              <div className="min-w-0">
+                <Label>{pref.label}</Label>
+                <p className="text-sm text-muted-foreground">{pref.description}</p>
+              </div>
+              <ToggleGroup
+                value={[levelFor(pref.type)]}
+                spacing={0}
+                variant="outline"
+                size="sm"
+                className="shrink-0"
+                aria-label={`${pref.label} delivery`}
+                onValueChange={(values) => {
+                  const next = values[0] as NotificationLevel | undefined
+                  if (next) setLevel(pref.type, next)
+                }}
+              >
+                {NOTIFICATION_LEVELS.map((level) => (
+                  <ToggleGroupItem key={level.value} value={level.value} className="px-3">
+                    {level.label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  )
+}
+
 function SettingsPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8">
@@ -567,6 +655,7 @@ function SettingsPage() {
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="preferences">Preferences</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
         </TabsList>
         <TabsContent value="account" className="mt-6">
           <AccountTab />
@@ -576,6 +665,9 @@ function SettingsPage() {
         </TabsContent>
         <TabsContent value="preferences" className="mt-6">
           <PreferencesTab />
+        </TabsContent>
+        <TabsContent value="notifications" className="mt-6">
+          <NotificationsTab />
         </TabsContent>
       </Tabs>
     </div>
