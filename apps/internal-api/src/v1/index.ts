@@ -1,6 +1,8 @@
 import { Hono } from "hono"
 import { RegExpRouter } from "hono/router/reg-exp-router"
 import auth from "./auth"
+import comment from "./comment"
+import commentVote from "./comment-vote"
 import community from "./community"
 import communityJoinRequest from "./community-join-request"
 import communityMember from "./community-member"
@@ -29,6 +31,8 @@ const app = new Hono({
   .route("/community-join-request", communityJoinRequest)
   .route("/flair", flair)
   .route("/explore", explore)
+  .route("/comment", comment)
+  .route("/comment-vote", commentVote)
   .route("/post", post)
   .route("/post-vote", postVote)
   .route("/feed", feed)

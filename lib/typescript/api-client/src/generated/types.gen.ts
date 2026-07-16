@@ -1332,6 +1332,246 @@ export type GetApiV1ExploreResponses = {
 
 export type GetApiV1ExploreResponse = GetApiV1ExploreResponses[keyof GetApiV1ExploreResponses]
 
+export type GetApiV1CommentPostByPostIdData = {
+  body?: never
+  path: {
+    postId: string
+  }
+  query?: {
+    sort?: "best" | "top" | "new" | "old" | "controversial"
+    parentId?: string
+    cursor?: string
+  }
+  url: "/api/v1/comment/post/{postId}"
+}
+
+export type GetApiV1CommentPostByPostIdErrors = {
+  /**
+   * Post not found
+   */
+  404: ErrorResponseT
+}
+
+export type GetApiV1CommentPostByPostIdError =
+  GetApiV1CommentPostByPostIdErrors[keyof GetApiV1CommentPostByPostIdErrors]
+
+export type GetApiV1CommentPostByPostIdResponses = {
+  /**
+   * Comment tree page
+   */
+  200: {
+    data: Array<{
+      id: string
+      postId: string
+      parentCommentId: string | null
+      depth: number
+      path: Array<string>
+      bodyMd: string | null
+      ups: number
+      downs: number
+      score: number
+      childCount: number
+      fetchedChildCount: number
+      isSticky: boolean
+      isDeleted: boolean
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+    }>
+    ancestors: Array<{
+      id: string
+      postId: string
+      parentCommentId: string | null
+      depth: number
+      path: Array<string>
+      bodyMd: string | null
+      ups: number
+      downs: number
+      score: number
+      childCount: number
+      fetchedChildCount: number
+      isSticky: boolean
+      isDeleted: boolean
+      createdAt: Date
+      editedAt: Date | null
+      userVote: number
+      isAuthor: boolean
+      author: {
+        id: string
+        username: string
+        displayName: string | null
+        avatarImageKey: string | null
+      } | null
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiV1CommentPostByPostIdResponse =
+  GetApiV1CommentPostByPostIdResponses[keyof GetApiV1CommentPostByPostIdResponses]
+
+export type PostApiV1CommentData = {
+  body?: {
+    postId: string
+    parentCommentId?: string | null
+    bodyMd: string
+  }
+  path?: never
+  query?: never
+  url: "/api/v1/comment"
+}
+
+export type PostApiV1CommentErrors = {
+  /**
+   * Invalid request
+   */
+  400: ErrorResponseT
+  /**
+   * Not permitted
+   */
+  403: ErrorResponseT
+  /**
+   * Post not found
+   */
+  404: ErrorResponseT
+  /**
+   * Daily comment limit reached
+   */
+  429: ErrorResponseT
+}
+
+export type PostApiV1CommentError = PostApiV1CommentErrors[keyof PostApiV1CommentErrors]
+
+export type PostApiV1CommentResponses = {
+  /**
+   * Comment created
+   */
+  201: {
+    id: string
+  }
+}
+
+export type PostApiV1CommentResponse = PostApiV1CommentResponses[keyof PostApiV1CommentResponses]
+
+export type DeleteApiV1CommentByIdData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/comment/{id}"
+}
+
+export type DeleteApiV1CommentByIdErrors = {
+  /**
+   * Not the author
+   */
+  403: ErrorResponseT
+  /**
+   * Comment not found
+   */
+  404: ErrorResponseT
+}
+
+export type DeleteApiV1CommentByIdError =
+  DeleteApiV1CommentByIdErrors[keyof DeleteApiV1CommentByIdErrors]
+
+export type DeleteApiV1CommentByIdResponses = {
+  /**
+   * Comment deleted
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type DeleteApiV1CommentByIdResponse =
+  DeleteApiV1CommentByIdResponses[keyof DeleteApiV1CommentByIdResponses]
+
+export type PatchApiV1CommentByIdData = {
+  body?: {
+    bodyMd: string
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/v1/comment/{id}"
+}
+
+export type PatchApiV1CommentByIdErrors = {
+  /**
+   * Not the author
+   */
+  403: ErrorResponseT
+  /**
+   * Comment not found
+   */
+  404: ErrorResponseT
+}
+
+export type PatchApiV1CommentByIdError =
+  PatchApiV1CommentByIdErrors[keyof PatchApiV1CommentByIdErrors]
+
+export type PatchApiV1CommentByIdResponses = {
+  /**
+   * Comment updated
+   */
+  200: {
+    id: string
+  }
+}
+
+export type PatchApiV1CommentByIdResponse =
+  PatchApiV1CommentByIdResponses[keyof PatchApiV1CommentByIdResponses]
+
+export type PutApiV1CommentVoteByCommentIdData = {
+  body?: {
+    value: -1 | 0 | 1
+  }
+  path: {
+    commentId: string
+  }
+  query?: never
+  url: "/api/v1/comment-vote/{commentId}"
+}
+
+export type PutApiV1CommentVoteByCommentIdErrors = {
+  /**
+   * Post is locked
+   */
+  403: ErrorResponseT
+  /**
+   * Comment not found
+   */
+  404: ErrorResponseT
+}
+
+export type PutApiV1CommentVoteByCommentIdError =
+  PutApiV1CommentVoteByCommentIdErrors[keyof PutApiV1CommentVoteByCommentIdErrors]
+
+export type PutApiV1CommentVoteByCommentIdResponses = {
+  /**
+   * Updated vote counts
+   */
+  200: {
+    ups: number
+    downs: number
+    score: number
+    userVote: number
+  }
+}
+
+export type PutApiV1CommentVoteByCommentIdResponse =
+  PutApiV1CommentVoteByCommentIdResponses[keyof PutApiV1CommentVoteByCommentIdResponses]
+
 export type DeleteApiV1PostByIdData = {
   body?: never
   path: {

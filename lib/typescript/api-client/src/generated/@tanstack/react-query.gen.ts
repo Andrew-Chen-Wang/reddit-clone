@@ -10,6 +10,7 @@ import {
 
 import { client } from "../client.gen"
 import {
+  deleteApiV1CommentById,
   deleteApiV1CommunityRuleById,
   deleteApiV1FlairPostTemplatesById,
   deleteApiV1FlairUserTemplatesById,
@@ -17,6 +18,7 @@ import {
   deleteApiV1PostById,
   deleteApiV1UserMeDelete,
   getApiV1AuthMe,
+  getApiV1CommentPostByPostId,
   getApiV1CommunityByName,
   getApiV1CommunityJoinRequestByCommunityIdPending,
   getApiV1CommunityMemberMine,
@@ -39,6 +41,7 @@ import {
   getApiV1UserMeSettings,
   getApiV1UserUsernameAvailable,
   type Options,
+  patchApiV1CommentById,
   patchApiV1CommunityById,
   patchApiV1CommunityMemberByCommunityIdMembership,
   patchApiV1CommunityRuleById,
@@ -48,6 +51,7 @@ import {
   patchApiV1UserMe,
   patchApiV1UserMeSettings,
   postApiV1AuthLogout,
+  postApiV1Comment,
   postApiV1Community,
   postApiV1CommunityJoinRequestByIdApprove,
   postApiV1CommunityJoinRequestByIdDeny,
@@ -57,11 +61,15 @@ import {
   postApiV1FlairByCommunityIdPostTemplates,
   postApiV1FlairByCommunityIdUserTemplates,
   postApiV1Post,
+  putApiV1CommentVoteByCommentId,
   putApiV1CommunityRuleByCommunityIdReorder,
   putApiV1FlairByCommunityIdMyFlair,
   putApiV1PostVoteByPostId,
 } from "../sdk.gen"
 import type {
+  DeleteApiV1CommentByIdData,
+  DeleteApiV1CommentByIdError,
+  DeleteApiV1CommentByIdResponse,
   DeleteApiV1CommunityRuleByIdData,
   DeleteApiV1CommunityRuleByIdError,
   DeleteApiV1CommunityRuleByIdResponse,
@@ -81,6 +89,9 @@ import type {
   DeleteApiV1UserMeDeleteResponse,
   GetApiV1AuthMeData,
   GetApiV1AuthMeResponse,
+  GetApiV1CommentPostByPostIdData,
+  GetApiV1CommentPostByPostIdError,
+  GetApiV1CommentPostByPostIdResponse,
   GetApiV1CommunityByNameData,
   GetApiV1CommunityByNameError,
   GetApiV1CommunityByNameResponse,
@@ -132,6 +143,9 @@ import type {
   GetApiV1UserUsernameAvailableData,
   GetApiV1UserUsernameAvailableError,
   GetApiV1UserUsernameAvailableResponse,
+  PatchApiV1CommentByIdData,
+  PatchApiV1CommentByIdError,
+  PatchApiV1CommentByIdResponse,
   PatchApiV1CommunityByIdData,
   PatchApiV1CommunityByIdError,
   PatchApiV1CommunityByIdResponse,
@@ -159,6 +173,9 @@ import type {
   PostApiV1AuthLogoutData,
   PostApiV1AuthLogoutError,
   PostApiV1AuthLogoutResponse,
+  PostApiV1CommentData,
+  PostApiV1CommentError,
+  PostApiV1CommentResponse,
   PostApiV1CommunityData,
   PostApiV1CommunityError,
   PostApiV1CommunityJoinRequestByIdApproveData,
@@ -185,6 +202,9 @@ import type {
   PostApiV1PostData,
   PostApiV1PostError,
   PostApiV1PostResponse,
+  PutApiV1CommentVoteByCommentIdData,
+  PutApiV1CommentVoteByCommentIdError,
+  PutApiV1CommentVoteByCommentIdResponse,
   PutApiV1CommunityRuleByCommunityIdReorderData,
   PutApiV1CommunityRuleByCommunityIdReorderError,
   PutApiV1CommunityRuleByCommunityIdReorderResponse,
@@ -1299,6 +1319,194 @@ export const getApiV1ExploreInfiniteOptions = (options?: Options<GetApiV1Explore
     },
   )
   return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1CommentPostByPostIdQueryKey = (
+  options: Options<GetApiV1CommentPostByPostIdData>,
+) => createQueryKey("getApiV1CommentPostByPostId", options)
+
+/**
+ * Fetch a page of the comment tree for a post
+ */
+export const getApiV1CommentPostByPostIdOptions = (
+  options: Options<GetApiV1CommentPostByPostIdData>,
+) =>
+  queryOptions<
+    GetApiV1CommentPostByPostIdResponse,
+    GetApiV1CommentPostByPostIdError,
+    GetApiV1CommentPostByPostIdResponse,
+    ReturnType<typeof getApiV1CommentPostByPostIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1CommentPostByPostId({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1CommentPostByPostIdQueryKey(options),
+  })
+
+export const getApiV1CommentPostByPostIdInfiniteQueryKey = (
+  options: Options<GetApiV1CommentPostByPostIdData>,
+): QueryKey<Options<GetApiV1CommentPostByPostIdData>> =>
+  createQueryKey("getApiV1CommentPostByPostId", options, true)
+
+/**
+ * Fetch a page of the comment tree for a post
+ */
+export const getApiV1CommentPostByPostIdInfiniteOptions = (
+  options: Options<GetApiV1CommentPostByPostIdData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1CommentPostByPostIdResponse,
+    GetApiV1CommentPostByPostIdError,
+    InfiniteData<GetApiV1CommentPostByPostIdResponse>,
+    QueryKey<Options<GetApiV1CommentPostByPostIdData>>,
+    | string
+    | Pick<
+        QueryKey<Options<GetApiV1CommentPostByPostIdData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1CommentPostByPostIdData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1CommentPostByPostId({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1CommentPostByPostIdInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+/**
+ * Create a comment on a post
+ */
+export const postApiV1CommentMutation = (
+  options?: Partial<Options<PostApiV1CommentData>>,
+): UseMutationOptions<
+  PostApiV1CommentResponse,
+  PostApiV1CommentError,
+  Options<PostApiV1CommentData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1CommentResponse,
+    PostApiV1CommentError,
+    Options<PostApiV1CommentData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1Comment({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Delete a comment (author only)
+ */
+export const deleteApiV1CommentByIdMutation = (
+  options?: Partial<Options<DeleteApiV1CommentByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1CommentByIdResponse,
+  DeleteApiV1CommentByIdError,
+  Options<DeleteApiV1CommentByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1CommentByIdResponse,
+    DeleteApiV1CommentByIdError,
+    Options<DeleteApiV1CommentByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1CommentById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Edit a comment (author only)
+ */
+export const patchApiV1CommentByIdMutation = (
+  options?: Partial<Options<PatchApiV1CommentByIdData>>,
+): UseMutationOptions<
+  PatchApiV1CommentByIdResponse,
+  PatchApiV1CommentByIdError,
+  Options<PatchApiV1CommentByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1CommentByIdResponse,
+    PatchApiV1CommentByIdError,
+    Options<PatchApiV1CommentByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1CommentById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Upvote, downvote, or clear a vote on a comment
+ */
+export const putApiV1CommentVoteByCommentIdMutation = (
+  options?: Partial<Options<PutApiV1CommentVoteByCommentIdData>>,
+): UseMutationOptions<
+  PutApiV1CommentVoteByCommentIdResponse,
+  PutApiV1CommentVoteByCommentIdError,
+  Options<PutApiV1CommentVoteByCommentIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1CommentVoteByCommentIdResponse,
+    PutApiV1CommentVoteByCommentIdError,
+    Options<PutApiV1CommentVoteByCommentIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1CommentVoteByCommentId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
 }
 
 /**
