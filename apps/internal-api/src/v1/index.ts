@@ -6,7 +6,11 @@ import communityJoinRequest from "./community-join-request"
 import communityMember from "./community-member"
 import communityRule from "./community-rule"
 import explore from "./explore"
+import feed from "./feed"
 import flair from "./flair"
+import history from "./history"
+import post from "./post"
+import postVote from "./post-vote"
 import topic from "./topic"
 import user from "./user"
 import userSettings from "./user-settings"
@@ -25,5 +29,9 @@ const app = new Hono({
   .route("/community-join-request", communityJoinRequest)
   .route("/flair", flair)
   .route("/explore", explore)
+  .route("/post", post)
+  .route("/post-vote", postVote)
+  .route("/feed", feed)
+  .route("/history", history)
 
 export default app

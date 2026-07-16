@@ -3,6 +3,13 @@
 import type {
   GetApiV1CommunityByNameResponse,
   GetApiV1CommunityJoinRequestByCommunityIdPendingResponse,
+  GetApiV1FeedCommunityByNameResponse,
+  GetApiV1FeedHomeResponse,
+  GetApiV1FeedPopularResponse,
+  GetApiV1FeedProfileByUsernameResponse,
+  GetApiV1HistoryRecentCommunitiesResponse,
+  GetApiV1HistoryRecentPostsResponse,
+  GetApiV1PostByIdResponse,
   GetApiV1UserByUsernameByUsernameResponse,
   GetApiV1UserMeResponse,
   PatchApiV1UserMeResponse,
@@ -41,6 +48,88 @@ export const getApiV1CommunityJoinRequestByCommunityIdPendingResponseTransformer
 ): Promise<GetApiV1CommunityJoinRequestByCommunityIdPendingResponse> => {
   data.data = data.data.map((item: any) => {
     item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1PostByIdResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1PostByIdResponse> => {
+  data.createdAt = new Date(data.createdAt)
+  if (data.editedAt) {
+    data.editedAt = new Date(data.editedAt)
+  }
+  return data
+}
+
+export const getApiV1FeedCommunityByNameResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1FeedCommunityByNameResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1FeedPopularResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1FeedPopularResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1FeedHomeResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1FeedHomeResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1FeedProfileByUsernameResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1FeedProfileByUsernameResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1HistoryRecentPostsResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1HistoryRecentPostsResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.viewedAt = new Date(item.viewedAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1HistoryRecentCommunitiesResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1HistoryRecentCommunitiesResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.lastVisitedAt = new Date(item.lastVisitedAt)
     return item
   })
   return data

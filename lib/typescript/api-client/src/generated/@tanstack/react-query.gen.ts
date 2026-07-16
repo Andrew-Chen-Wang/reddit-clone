@@ -13,6 +13,8 @@ import {
   deleteApiV1CommunityRuleById,
   deleteApiV1FlairPostTemplatesById,
   deleteApiV1FlairUserTemplatesById,
+  deleteApiV1HistoryRecentPosts,
+  deleteApiV1PostById,
   deleteApiV1UserMeDelete,
   getApiV1AuthMe,
   getApiV1CommunityByName,
@@ -22,8 +24,15 @@ import {
   getApiV1CommunityNameAvailable,
   getApiV1CommunityRuleByCommunityId,
   getApiV1Explore,
+  getApiV1FeedCommunityByName,
+  getApiV1FeedHome,
+  getApiV1FeedPopular,
+  getApiV1FeedProfileByUsername,
   getApiV1FlairByCommunityIdPostTemplates,
   getApiV1FlairByCommunityIdUserTemplates,
+  getApiV1HistoryRecentCommunities,
+  getApiV1HistoryRecentPosts,
+  getApiV1PostById,
   getApiV1Topic,
   getApiV1UserByUsernameByUsername,
   getApiV1UserMe,
@@ -35,6 +44,7 @@ import {
   patchApiV1CommunityRuleById,
   patchApiV1FlairPostTemplatesById,
   patchApiV1FlairUserTemplatesById,
+  patchApiV1PostById,
   patchApiV1UserMe,
   patchApiV1UserMeSettings,
   postApiV1AuthLogout,
@@ -46,8 +56,10 @@ import {
   postApiV1CommunityRuleByCommunityId,
   postApiV1FlairByCommunityIdPostTemplates,
   postApiV1FlairByCommunityIdUserTemplates,
+  postApiV1Post,
   putApiV1CommunityRuleByCommunityIdReorder,
   putApiV1FlairByCommunityIdMyFlair,
+  putApiV1PostVoteByPostId,
 } from "../sdk.gen"
 import type {
   DeleteApiV1CommunityRuleByIdData,
@@ -59,6 +71,11 @@ import type {
   DeleteApiV1FlairUserTemplatesByIdData,
   DeleteApiV1FlairUserTemplatesByIdError,
   DeleteApiV1FlairUserTemplatesByIdResponse,
+  DeleteApiV1HistoryRecentPostsData,
+  DeleteApiV1HistoryRecentPostsResponse,
+  DeleteApiV1PostByIdData,
+  DeleteApiV1PostByIdError,
+  DeleteApiV1PostByIdResponse,
   DeleteApiV1UserMeDeleteData,
   DeleteApiV1UserMeDeleteError,
   DeleteApiV1UserMeDeleteResponse,
@@ -81,10 +98,27 @@ import type {
   GetApiV1CommunityRuleByCommunityIdResponse,
   GetApiV1ExploreData,
   GetApiV1ExploreResponse,
+  GetApiV1FeedCommunityByNameData,
+  GetApiV1FeedCommunityByNameError,
+  GetApiV1FeedCommunityByNameResponse,
+  GetApiV1FeedHomeData,
+  GetApiV1FeedHomeResponse,
+  GetApiV1FeedPopularData,
+  GetApiV1FeedPopularResponse,
+  GetApiV1FeedProfileByUsernameData,
+  GetApiV1FeedProfileByUsernameError,
+  GetApiV1FeedProfileByUsernameResponse,
   GetApiV1FlairByCommunityIdPostTemplatesData,
   GetApiV1FlairByCommunityIdPostTemplatesResponse,
   GetApiV1FlairByCommunityIdUserTemplatesData,
   GetApiV1FlairByCommunityIdUserTemplatesResponse,
+  GetApiV1HistoryRecentCommunitiesData,
+  GetApiV1HistoryRecentCommunitiesResponse,
+  GetApiV1HistoryRecentPostsData,
+  GetApiV1HistoryRecentPostsResponse,
+  GetApiV1PostByIdData,
+  GetApiV1PostByIdError,
+  GetApiV1PostByIdResponse,
   GetApiV1TopicData,
   GetApiV1TopicResponse,
   GetApiV1UserByUsernameByUsernameData,
@@ -113,6 +147,9 @@ import type {
   PatchApiV1FlairUserTemplatesByIdData,
   PatchApiV1FlairUserTemplatesByIdError,
   PatchApiV1FlairUserTemplatesByIdResponse,
+  PatchApiV1PostByIdData,
+  PatchApiV1PostByIdError,
+  PatchApiV1PostByIdResponse,
   PatchApiV1UserMeData,
   PatchApiV1UserMeError,
   PatchApiV1UserMeResponse,
@@ -145,12 +182,18 @@ import type {
   PostApiV1FlairByCommunityIdUserTemplatesData,
   PostApiV1FlairByCommunityIdUserTemplatesError,
   PostApiV1FlairByCommunityIdUserTemplatesResponse,
+  PostApiV1PostData,
+  PostApiV1PostError,
+  PostApiV1PostResponse,
   PutApiV1CommunityRuleByCommunityIdReorderData,
   PutApiV1CommunityRuleByCommunityIdReorderError,
   PutApiV1CommunityRuleByCommunityIdReorderResponse,
   PutApiV1FlairByCommunityIdMyFlairData,
   PutApiV1FlairByCommunityIdMyFlairError,
   PutApiV1FlairByCommunityIdMyFlairResponse,
+  PutApiV1PostVoteByPostIdData,
+  PutApiV1PostVoteByPostIdError,
+  PutApiV1PostVoteByPostIdResponse,
 } from "../types.gen"
 
 export type QueryKey<TOptions extends Options> = [
@@ -1257,3 +1300,517 @@ export const getApiV1ExploreInfiniteOptions = (options?: Options<GetApiV1Explore
   )
   return opts as Omit<typeof opts, "initialData">
 }
+
+/**
+ * Delete a post (author only)
+ */
+export const deleteApiV1PostByIdMutation = (
+  options?: Partial<Options<DeleteApiV1PostByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1PostByIdResponse,
+  DeleteApiV1PostByIdError,
+  Options<DeleteApiV1PostByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1PostByIdResponse,
+    DeleteApiV1PostByIdError,
+    Options<DeleteApiV1PostByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1PostById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1PostByIdQueryKey = (options: Options<GetApiV1PostByIdData>) =>
+  createQueryKey("getApiV1PostById", options)
+
+/**
+ * Get a single post with viewer overlay
+ */
+export const getApiV1PostByIdOptions = (options: Options<GetApiV1PostByIdData>) =>
+  queryOptions<
+    GetApiV1PostByIdResponse,
+    GetApiV1PostByIdError,
+    GetApiV1PostByIdResponse,
+    ReturnType<typeof getApiV1PostByIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1PostById({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1PostByIdQueryKey(options),
+  })
+
+/**
+ * Edit a post (author only)
+ */
+export const patchApiV1PostByIdMutation = (
+  options?: Partial<Options<PatchApiV1PostByIdData>>,
+): UseMutationOptions<
+  PatchApiV1PostByIdResponse,
+  PatchApiV1PostByIdError,
+  Options<PatchApiV1PostByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1PostByIdResponse,
+    PatchApiV1PostByIdError,
+    Options<PatchApiV1PostByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1PostById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Create a text or link post
+ */
+export const postApiV1PostMutation = (
+  options?: Partial<Options<PostApiV1PostData>>,
+): UseMutationOptions<PostApiV1PostResponse, PostApiV1PostError, Options<PostApiV1PostData>> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1PostResponse,
+    PostApiV1PostError,
+    Options<PostApiV1PostData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1Post({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Upvote, downvote, or clear a vote on a post
+ */
+export const putApiV1PostVoteByPostIdMutation = (
+  options?: Partial<Options<PutApiV1PostVoteByPostIdData>>,
+): UseMutationOptions<
+  PutApiV1PostVoteByPostIdResponse,
+  PutApiV1PostVoteByPostIdError,
+  Options<PutApiV1PostVoteByPostIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PutApiV1PostVoteByPostIdResponse,
+    PutApiV1PostVoteByPostIdError,
+    Options<PutApiV1PostVoteByPostIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await putApiV1PostVoteByPostId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1FeedCommunityByNameQueryKey = (
+  options: Options<GetApiV1FeedCommunityByNameData>,
+) => createQueryKey("getApiV1FeedCommunityByName", options)
+
+/**
+ * Feed of posts for a community
+ */
+export const getApiV1FeedCommunityByNameOptions = (
+  options: Options<GetApiV1FeedCommunityByNameData>,
+) =>
+  queryOptions<
+    GetApiV1FeedCommunityByNameResponse,
+    GetApiV1FeedCommunityByNameError,
+    GetApiV1FeedCommunityByNameResponse,
+    ReturnType<typeof getApiV1FeedCommunityByNameQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1FeedCommunityByName({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1FeedCommunityByNameQueryKey(options),
+  })
+
+export const getApiV1FeedCommunityByNameInfiniteQueryKey = (
+  options: Options<GetApiV1FeedCommunityByNameData>,
+): QueryKey<Options<GetApiV1FeedCommunityByNameData>> =>
+  createQueryKey("getApiV1FeedCommunityByName", options, true)
+
+/**
+ * Feed of posts for a community
+ */
+export const getApiV1FeedCommunityByNameInfiniteOptions = (
+  options: Options<GetApiV1FeedCommunityByNameData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1FeedCommunityByNameResponse,
+    GetApiV1FeedCommunityByNameError,
+    InfiniteData<GetApiV1FeedCommunityByNameResponse>,
+    QueryKey<Options<GetApiV1FeedCommunityByNameData>>,
+    | string
+    | Pick<
+        QueryKey<Options<GetApiV1FeedCommunityByNameData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1FeedCommunityByNameData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1FeedCommunityByName({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1FeedCommunityByNameInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1FeedPopularQueryKey = (options?: Options<GetApiV1FeedPopularData>) =>
+  createQueryKey("getApiV1FeedPopular", options)
+
+/**
+ * Popular feed across all public and restricted communities
+ */
+export const getApiV1FeedPopularOptions = (options?: Options<GetApiV1FeedPopularData>) =>
+  queryOptions<
+    GetApiV1FeedPopularResponse,
+    DefaultError,
+    GetApiV1FeedPopularResponse,
+    ReturnType<typeof getApiV1FeedPopularQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1FeedPopular({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1FeedPopularQueryKey(options),
+  })
+
+export const getApiV1FeedPopularInfiniteQueryKey = (
+  options?: Options<GetApiV1FeedPopularData>,
+): QueryKey<Options<GetApiV1FeedPopularData>> =>
+  createQueryKey("getApiV1FeedPopular", options, true)
+
+/**
+ * Popular feed across all public and restricted communities
+ */
+export const getApiV1FeedPopularInfiniteOptions = (options?: Options<GetApiV1FeedPopularData>) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1FeedPopularResponse,
+    DefaultError,
+    InfiniteData<GetApiV1FeedPopularResponse>,
+    QueryKey<Options<GetApiV1FeedPopularData>>,
+    | string
+    | Pick<QueryKey<Options<GetApiV1FeedPopularData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1FeedPopularData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1FeedPopular({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1FeedPopularInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1FeedHomeQueryKey = (options?: Options<GetApiV1FeedHomeData>) =>
+  createQueryKey("getApiV1FeedHome", options)
+
+/**
+ * Personalized home feed from joined communities
+ */
+export const getApiV1FeedHomeOptions = (options?: Options<GetApiV1FeedHomeData>) =>
+  queryOptions<
+    GetApiV1FeedHomeResponse,
+    DefaultError,
+    GetApiV1FeedHomeResponse,
+    ReturnType<typeof getApiV1FeedHomeQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1FeedHome({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1FeedHomeQueryKey(options),
+  })
+
+export const getApiV1FeedHomeInfiniteQueryKey = (
+  options?: Options<GetApiV1FeedHomeData>,
+): QueryKey<Options<GetApiV1FeedHomeData>> => createQueryKey("getApiV1FeedHome", options, true)
+
+/**
+ * Personalized home feed from joined communities
+ */
+export const getApiV1FeedHomeInfiniteOptions = (options?: Options<GetApiV1FeedHomeData>) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1FeedHomeResponse,
+    DefaultError,
+    InfiniteData<GetApiV1FeedHomeResponse>,
+    QueryKey<Options<GetApiV1FeedHomeData>>,
+    string | Pick<QueryKey<Options<GetApiV1FeedHomeData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1FeedHomeData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1FeedHome({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1FeedHomeInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1FeedProfileByUsernameQueryKey = (
+  options: Options<GetApiV1FeedProfileByUsernameData>,
+) => createQueryKey("getApiV1FeedProfileByUsername", options)
+
+/**
+ * A user's profile posts
+ */
+export const getApiV1FeedProfileByUsernameOptions = (
+  options: Options<GetApiV1FeedProfileByUsernameData>,
+) =>
+  queryOptions<
+    GetApiV1FeedProfileByUsernameResponse,
+    GetApiV1FeedProfileByUsernameError,
+    GetApiV1FeedProfileByUsernameResponse,
+    ReturnType<typeof getApiV1FeedProfileByUsernameQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1FeedProfileByUsername({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1FeedProfileByUsernameQueryKey(options),
+  })
+
+export const getApiV1FeedProfileByUsernameInfiniteQueryKey = (
+  options: Options<GetApiV1FeedProfileByUsernameData>,
+): QueryKey<Options<GetApiV1FeedProfileByUsernameData>> =>
+  createQueryKey("getApiV1FeedProfileByUsername", options, true)
+
+/**
+ * A user's profile posts
+ */
+export const getApiV1FeedProfileByUsernameInfiniteOptions = (
+  options: Options<GetApiV1FeedProfileByUsernameData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1FeedProfileByUsernameResponse,
+    GetApiV1FeedProfileByUsernameError,
+    InfiniteData<GetApiV1FeedProfileByUsernameResponse>,
+    QueryKey<Options<GetApiV1FeedProfileByUsernameData>>,
+    | string
+    | Pick<
+        QueryKey<Options<GetApiV1FeedProfileByUsernameData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1FeedProfileByUsernameData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1FeedProfileByUsername({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1FeedProfileByUsernameInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+/**
+ * Clear the current user's recently viewed posts
+ */
+export const deleteApiV1HistoryRecentPostsMutation = (
+  options?: Partial<Options<DeleteApiV1HistoryRecentPostsData>>,
+): UseMutationOptions<
+  DeleteApiV1HistoryRecentPostsResponse,
+  DefaultError,
+  Options<DeleteApiV1HistoryRecentPostsData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1HistoryRecentPostsResponse,
+    DefaultError,
+    Options<DeleteApiV1HistoryRecentPostsData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1HistoryRecentPosts({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1HistoryRecentPostsQueryKey = (
+  options?: Options<GetApiV1HistoryRecentPostsData>,
+) => createQueryKey("getApiV1HistoryRecentPosts", options)
+
+/**
+ * Recently viewed posts for the current user
+ */
+export const getApiV1HistoryRecentPostsOptions = (
+  options?: Options<GetApiV1HistoryRecentPostsData>,
+) =>
+  queryOptions<
+    GetApiV1HistoryRecentPostsResponse,
+    DefaultError,
+    GetApiV1HistoryRecentPostsResponse,
+    ReturnType<typeof getApiV1HistoryRecentPostsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1HistoryRecentPosts({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1HistoryRecentPostsQueryKey(options),
+  })
+
+export const getApiV1HistoryRecentCommunitiesQueryKey = (
+  options?: Options<GetApiV1HistoryRecentCommunitiesData>,
+) => createQueryKey("getApiV1HistoryRecentCommunities", options)
+
+/**
+ * Recently visited communities for the current user
+ */
+export const getApiV1HistoryRecentCommunitiesOptions = (
+  options?: Options<GetApiV1HistoryRecentCommunitiesData>,
+) =>
+  queryOptions<
+    GetApiV1HistoryRecentCommunitiesResponse,
+    DefaultError,
+    GetApiV1HistoryRecentCommunitiesResponse,
+    ReturnType<typeof getApiV1HistoryRecentCommunitiesQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1HistoryRecentCommunities({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1HistoryRecentCommunitiesQueryKey(options),
+  })
