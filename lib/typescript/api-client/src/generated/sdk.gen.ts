@@ -3,6 +3,9 @@
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from "./client"
 import { client } from "./client.gen"
 import type {
+  DeleteApiV1CommentByIdData,
+  DeleteApiV1CommentByIdErrors,
+  DeleteApiV1CommentByIdResponses,
   DeleteApiV1CommunityRuleByIdData,
   DeleteApiV1CommunityRuleByIdErrors,
   DeleteApiV1CommunityRuleByIdResponses,
@@ -22,6 +25,9 @@ import type {
   DeleteApiV1UserMeDeleteResponses,
   GetApiV1AuthMeData,
   GetApiV1AuthMeResponses,
+  GetApiV1CommentPostByPostIdData,
+  GetApiV1CommentPostByPostIdErrors,
+  GetApiV1CommentPostByPostIdResponses,
   GetApiV1CommunityByNameData,
   GetApiV1CommunityByNameErrors,
   GetApiV1CommunityByNameResponses,
@@ -73,6 +79,9 @@ import type {
   GetApiV1UserUsernameAvailableData,
   GetApiV1UserUsernameAvailableErrors,
   GetApiV1UserUsernameAvailableResponses,
+  PatchApiV1CommentByIdData,
+  PatchApiV1CommentByIdErrors,
+  PatchApiV1CommentByIdResponses,
   PatchApiV1CommunityByIdData,
   PatchApiV1CommunityByIdErrors,
   PatchApiV1CommunityByIdResponses,
@@ -100,6 +109,9 @@ import type {
   PostApiV1AuthLogoutData,
   PostApiV1AuthLogoutErrors,
   PostApiV1AuthLogoutResponses,
+  PostApiV1CommentData,
+  PostApiV1CommentErrors,
+  PostApiV1CommentResponses,
   PostApiV1CommunityData,
   PostApiV1CommunityErrors,
   PostApiV1CommunityJoinRequestByIdApproveData,
@@ -126,6 +138,9 @@ import type {
   PostApiV1PostData,
   PostApiV1PostErrors,
   PostApiV1PostResponses,
+  PutApiV1CommentVoteByCommentIdData,
+  PutApiV1CommentVoteByCommentIdErrors,
+  PutApiV1CommentVoteByCommentIdResponses,
   PutApiV1CommunityRuleByCommunityIdReorderData,
   PutApiV1CommunityRuleByCommunityIdReorderErrors,
   PutApiV1CommunityRuleByCommunityIdReorderResponses,
@@ -751,6 +766,93 @@ export const getApiV1Explore = <ThrowOnError extends boolean = false>(
   (options?.client ?? client).get<GetApiV1ExploreResponses, unknown, ThrowOnError>({
     url: "/api/v1/explore",
     ...options,
+  })
+
+/**
+ * Fetch a page of the comment tree for a post
+ */
+export const getApiV1CommentPostByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1CommentPostByPostIdData, ThrowOnError>,
+): RequestResult<
+  GetApiV1CommentPostByPostIdResponses,
+  GetApiV1CommentPostByPostIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1CommentPostByPostIdResponses,
+    GetApiV1CommentPostByPostIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/comment/post/{postId}", ...options })
+
+/**
+ * Create a comment on a post
+ */
+export const postApiV1Comment = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1CommentData, ThrowOnError>,
+): RequestResult<PostApiV1CommentResponses, PostApiV1CommentErrors, ThrowOnError> =>
+  (options?.client ?? client).post<PostApiV1CommentResponses, PostApiV1CommentErrors, ThrowOnError>(
+    {
+      url: "/api/v1/comment",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+    },
+  )
+
+/**
+ * Delete a comment (author only)
+ */
+export const deleteApiV1CommentById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1CommentByIdData, ThrowOnError>,
+): RequestResult<DeleteApiV1CommentByIdResponses, DeleteApiV1CommentByIdErrors, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteApiV1CommentByIdResponses,
+    DeleteApiV1CommentByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/comment/{id}", ...options })
+
+/**
+ * Edit a comment (author only)
+ */
+export const patchApiV1CommentById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1CommentByIdData, ThrowOnError>,
+): RequestResult<PatchApiV1CommentByIdResponses, PatchApiV1CommentByIdErrors, ThrowOnError> =>
+  (options.client ?? client).patch<
+    PatchApiV1CommentByIdResponses,
+    PatchApiV1CommentByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/comment/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Upvote, downvote, or clear a vote on a comment
+ */
+export const putApiV1CommentVoteByCommentId = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1CommentVoteByCommentIdData, ThrowOnError>,
+): RequestResult<
+  PutApiV1CommentVoteByCommentIdResponses,
+  PutApiV1CommentVoteByCommentIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1CommentVoteByCommentIdResponses,
+    PutApiV1CommentVoteByCommentIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/comment-vote/{commentId}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   })
 
 /**

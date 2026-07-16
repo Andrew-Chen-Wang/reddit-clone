@@ -1,6 +1,10 @@
 import { crudAccount } from "./account/crud"
 import { fetchAccount } from "./account/fetch"
 import { getCommunityAuthz } from "./authz/community/get"
+import { crudComment } from "./comment/crud"
+import { commentComparator, fetchComment } from "./comment/fetch"
+import { processComments } from "./comment/processComment"
+import { crudCommentVote } from "./commentVote/crud"
 import { crudCommunity } from "./community/crud"
 import { fetchCommunity } from "./community/fetch"
 import { crudCommunityJoinRequest } from "./communityJoinRequest/crud"
@@ -33,6 +37,11 @@ export {
   crudUserSettings,
   fetchUserSettings,
   getCommunityAuthz,
+  crudComment,
+  fetchComment,
+  commentComparator,
+  processComments,
+  crudCommentVote,
   crudCommunity,
   fetchCommunity,
   crudCommunityJoinRequest,
