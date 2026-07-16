@@ -23,11 +23,19 @@ import {
   getApiV1UserByUsernameByUsernameOverview,
   putApiV1PostVoteByPostId,
 } from "@lib/api-client/generated/sdk.gen"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type ReactElement, type ReactNode } from "react"
 import { toast } from "sonner"
 import { FeedViewMenu } from "./FeedViewMenu"
 import { OverviewFilterMenu, type OverviewFilter } from "./OverviewFilterMenu"
 import { useFeedView } from "./useFeedView"
+
+function wrapCommunityLink(link: ReactElement, name: string): ReactNode {
+  return <CommunityLinkHoverCard name={name}>{link}</CommunityLinkHoverCard>
+}
+
+function wrapAuthorLink(link: ReactElement, uname: string): ReactNode {
+  return <UserLinkHoverCard username={uname}>{link}</UserLinkHoverCard>
+}
 
 /**
  * An Overview item is a discriminated union: either one of the user's posts or
@@ -222,12 +230,8 @@ export function OverviewFeed({ username }: { username: string }) {
               href={permalinkForPost(item.post)}
               communityHref={item.post.community ? `/r/${item.post.community.name}` : undefined}
               authorHref={item.post.author ? `/user/${item.post.author.username}` : undefined}
-              wrapCommunityLink={(link, name) => (
-                <CommunityLinkHoverCard name={name}>{link}</CommunityLinkHoverCard>
-              )}
-              wrapAuthorLink={(link, uname) => (
-                <UserLinkHoverCard username={uname}>{link}</UserLinkHoverCard>
-              )}
+              wrapCommunityLink={wrapCommunityLink}
+              wrapAuthorLink={wrapAuthorLink}
               onUpvote={() => {
                 vote(item.post, 1)
               }}

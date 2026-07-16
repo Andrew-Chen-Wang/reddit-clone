@@ -20,7 +20,7 @@ export default function RulesPage() {
       </p>
       <ol className="flex flex-col gap-4">
         {RULES.map((rule, i) => (
-          <li key={i} className="flex gap-3">
+          <li key={rule} className="flex gap-3">
             <span className="font-semibold text-primary">{i + 1}.</span>
             <span className="text-muted-foreground">{rule}</span>
           </li>

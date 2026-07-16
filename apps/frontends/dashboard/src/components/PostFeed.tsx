@@ -40,8 +40,27 @@ import {
   postApiV1CommunityMemberByCommunityIdJoinMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import { ArrowUpDown, LayoutList, Rows3, Check } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type ReactElement, type ReactNode } from "react"
 import { toast } from "sonner"
+
+// Community icon keys arrive as raw storage keys; resolve them to public URLs
+// for display. Idempotent, so post media (already absolute) is untouched.
+function toDisplayPost(post: FeedPost): FeedPost {
+  return post.community
+    ? {
+        ...post,
+        community: { ...post.community, iconImageKey: mediaUrl(post.community.iconImageKey) },
+      }
+    : post
+}
+
+function wrapCommunityLink(link: ReactElement, name: string): ReactNode {
+  return <CommunityLinkHoverCard name={name}>{link}</CommunityLinkHoverCard>
+}
+
+function wrapAuthorLink(link: ReactElement, username: string): ReactNode {
+  return <UserLinkHoverCard username={username}>{link}</UserLinkHoverCard>
+}
 
 function FeedJoinButton({ communityId }: { communityId: string }) {
   const queryClient = useQueryClient()
@@ -316,16 +335,6 @@ export function PostFeed({
   const posts = feed.data?.pages.flatMap((p) => p.data) ?? []
   const activeSort = sorts.find((s) => s.value === sort) ?? sorts[0]
 
-  // Community icon keys arrive as raw storage keys; resolve them to public URLs
-  // for display. Idempotent, so post media (already absolute) is untouched.
-  const toDisplayPost = (post: FeedPost): FeedPost =>
-    post.community
-      ? {
-          ...post,
-          community: { ...post.community, iconImageKey: mediaUrl(post.community.iconImageKey) },
-        }
-      : post
-
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
@@ -447,12 +456,8 @@ export function PostFeed({
               communityHref={post.community ? `/r/${post.community.name}` : undefined}
               authorHref={post.author ? `/user/${post.author.username}` : undefined}
               showCommunity={showCommunity}
-              wrapCommunityLink={(link, name) => (
-                <CommunityLinkHoverCard name={name}>{link}</CommunityLinkHoverCard>
-              )}
-              wrapAuthorLink={(link, username) => (
-                <UserLinkHoverCard username={username}>{link}</UserLinkHoverCard>
-              )}
+              wrapCommunityLink={wrapCommunityLink}
+              wrapAuthorLink={wrapAuthorLink}
               onUpvote={() => {
                 vote(post, 1)
               }}

@@ -9,6 +9,12 @@ import { useEffect, useRef, useState } from "react"
 
 type SearchPage = { posts: PostRowPost[]; nextCursor: string | null }
 
+function permalinkFor(post: PostRowPost): string {
+  if (post.community) return `/r/${post.community.name}/comments/${post.id}`
+  if (post.author) return `/user/${post.author.username}`
+  return "/"
+}
+
 export type SearchPostListProps = {
   q: string
   type: "posts" | "media"
@@ -81,12 +87,6 @@ export function SearchPostList({
 
   function openLogin() {
     setLoginOpen(true)
-  }
-
-  function permalinkFor(post: PostRowPost): string {
-    if (post.community) return `/r/${post.community.name}/comments/${post.id}`
-    if (post.author) return `/user/${post.author.username}`
-    return "/"
   }
 
   return (

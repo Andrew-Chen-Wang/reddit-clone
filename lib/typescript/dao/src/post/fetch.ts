@@ -103,77 +103,89 @@ function withMediaGuard(query: PostQuery): PostQuery {
   )
 }
 
-export function fetchPost(db: Kysely<DB>) {
-  function applyViewerExclusions(query: PostQuery, viewerId: string): PostQuery {
-    return query
-      .where((eb) =>
-        eb.not(
-          eb.exists(
-            eb
-              .selectFrom("postHide")
-              .select("postHide.userId")
-              .whereRef("postHide.postId", "=", "post.id")
-              .where("postHide.userId", "=", viewerId),
-          ),
+function applyViewerExclusions(query: PostQuery, viewerId: string): PostQuery {
+  return query
+    .where((eb) =>
+      eb.not(
+        eb.exists(
+          eb
+            .selectFrom("postHide")
+            .select("postHide.userId")
+            .whereRef("postHide.postId", "=", "post.id")
+            .where("postHide.userId", "=", viewerId),
         ),
-      )
-      .where((eb) =>
-        eb.not(
-          eb.exists(
-            eb
-              .selectFrom("userMutedCommunity")
-              .select("userMutedCommunity.userId")
-              .whereRef("userMutedCommunity.communityId", "=", "post.communityId")
-              .where("userMutedCommunity.userId", "=", viewerId),
-          ),
+      ),
+    )
+    .where((eb) =>
+      eb.not(
+        eb.exists(
+          eb
+            .selectFrom("userMutedCommunity")
+            .select("userMutedCommunity.userId")
+            .whereRef("userMutedCommunity.communityId", "=", "post.communityId")
+            .where("userMutedCommunity.userId", "=", viewerId),
         ),
-      )
-      .where((eb) =>
-        eb.not(
-          eb.exists(
-            eb
-              .selectFrom("userBlock")
-              .select("userBlock.blockerUserId")
-              .where((inner) =>
-                inner.or([
-                  inner.and([
-                    inner("userBlock.blockerUserId", "=", viewerId),
-                    inner("userBlock.blockedUserId", "=", inner.ref("post.authorUserId")),
-                  ]),
-                  inner.and([
-                    inner("userBlock.blockerUserId", "=", inner.ref("post.authorUserId")),
-                    inner("userBlock.blockedUserId", "=", viewerId),
-                  ]),
+      ),
+    )
+    .where((eb) =>
+      eb.not(
+        eb.exists(
+          eb
+            .selectFrom("userBlock")
+            .select("userBlock.blockerUserId")
+            .where((inner) =>
+              inner.or([
+                inner.and([
+                  inner("userBlock.blockerUserId", "=", viewerId),
+                  inner("userBlock.blockedUserId", "=", inner.ref("post.authorUserId")),
                 ]),
-              ),
-          ),
+                inner.and([
+                  inner("userBlock.blockerUserId", "=", inner.ref("post.authorUserId")),
+                  inner("userBlock.blockedUserId", "=", viewerId),
+                ]),
+              ]),
+            ),
         ),
-      )
-  }
+      ),
+    )
+}
 
-  function applyNonRisingSort(
-    query: PostQuery,
-    sort: Exclude<PostSort, "rising">,
-    windowStart: Date | null,
-  ): PostQuery {
-    if (sort === "new") {
-      return query.orderBy("post.createdAt", "desc").orderBy("post.id", "desc")
-    }
-    if (sort === "top") {
-      return query
-        .$if(windowStart !== null, (qb) => qb.where("post.createdAt", ">=", windowStart!))
-        .orderBy("post.score", "desc")
-        .orderBy("post.id", "desc")
-    }
-    if (sort === "controversial") {
-      return query
-        .$if(windowStart !== null, (qb) => qb.where("post.createdAt", ">=", windowStart!))
-        .orderBy("post.controversialScore", "desc")
-        .orderBy("post.id", "desc")
-    }
-    return query.orderBy("post.hotScore", "desc").orderBy("post.id", "desc")
+function applyNonRisingSort(
+  query: PostQuery,
+  sort: Exclude<PostSort, "rising">,
+  windowStart: Date | null,
+): PostQuery {
+  if (sort === "new") {
+    return query.orderBy("post.createdAt", "desc").orderBy("post.id", "desc")
   }
+  if (sort === "top") {
+    return query
+      .$if(windowStart !== null, (qb) => qb.where("post.createdAt", ">=", windowStart!))
+      .orderBy("post.score", "desc")
+      .orderBy("post.id", "desc")
+  }
+  if (sort === "controversial") {
+    return query
+      .$if(windowStart !== null, (qb) => qb.where("post.createdAt", ">=", windowStart!))
+      .orderBy("post.controversialScore", "desc")
+      .orderBy("post.id", "desc")
+  }
+  return query.orderBy("post.hotScore", "desc").orderBy("post.id", "desc")
+}
 
+function hasPendingReport(
+  eb: ExpressionBuilder<DB, "post">,
+): ExpressionWrapper<DB, "post", SqlBool> {
+  return eb.exists(
+    eb
+      .selectFrom("postReport")
+      .select("postReport.id")
+      .whereRef("postReport.postId", "=", "post.id")
+      .where("postReport.status", "=", "pending"),
+  )
+}
+
+export function fetchPost(db: Kysely<DB>) {
   function communityFeed(opts: {
     communityId: string
     sort: PostSort
@@ -446,16 +458,6 @@ export function fetchPost(db: Kysely<DB>) {
     limit: number
   }): Promise<ModPostRow[]> {
     if (opts.communityIds.length === 0) return []
-    const hasPendingReport = (
-      eb: ExpressionBuilder<DB, "post">,
-    ): ExpressionWrapper<DB, "post", SqlBool> =>
-      eb.exists(
-        eb
-          .selectFrom("postReport")
-          .select("postReport.id")
-          .whereRef("postReport.postId", "=", "post.id")
-          .where("postReport.status", "=", "pending"),
-      )
     let query = db
       .selectFrom("post")
       .where("post.communityId", "in", opts.communityIds)

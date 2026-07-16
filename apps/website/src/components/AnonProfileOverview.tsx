@@ -12,6 +12,12 @@ export type AnonOverviewItem =
   | { kind: "post"; post: PostRowPost }
   | { kind: "comment"; comment: ProfileCommentCardComment }
 
+function permalinkFor(post: PostRowPost): string {
+  if (post.community) return `/r/${post.community.name}/comments/${post.id}`
+  if (post.author) return `/user/${post.author.username}`
+  return "/"
+}
+
 /**
  * Anonymous (SEO) profile Overview: the user's posts and comments intertwined
  * newest-first, server-rendered for crawlers. Voting opens a login prompt. The
@@ -23,12 +29,6 @@ export function AnonProfileOverview({ items }: { items: AnonOverviewItem[] }) {
 
   function openLogin() {
     setLoginOpen(true)
-  }
-
-  function permalinkFor(post: PostRowPost): string {
-    if (post.community) return `/r/${post.community.name}/comments/${post.id}`
-    if (post.author) return `/user/${post.author.username}`
-    return "/"
   }
 
   return (

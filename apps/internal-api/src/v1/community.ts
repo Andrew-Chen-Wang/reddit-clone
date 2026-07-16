@@ -26,6 +26,10 @@ import {
   communityUpdateSchemaRequest,
 } from "./community.serializer"
 
+function compileRegex(pattern: string): RegExp {
+  return new RegExp(pattern)
+}
+
 const app = new Hono()
   .get(
     "/name-available",
@@ -350,7 +354,7 @@ const app = new Hono()
 
       if (body.titleRegex) {
         try {
-          new RegExp(body.titleRegex)
+          compileRegex(body.titleRegex)
         } catch {
           return throwBadRequest(c, "Invalid title regex", ErrorCode.ValidationFailed, {
             target: "titleRegex",

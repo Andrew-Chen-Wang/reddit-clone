@@ -1,4 +1,4 @@
-import Markdoc from "@markdoc/markdoc"
+import { parse, transform, renderers } from "@markdoc/markdoc"
 
 function decodeBasicEntities(input: string): string {
   return input
@@ -12,9 +12,9 @@ function decodeBasicEntities(input: string): string {
 
 export function markdownToText(text: string | null | undefined, maxLen?: number): string {
   if (!text) return ""
-  const ast = Markdoc.parse(text)
-  const content = Markdoc.transform(ast)
-  const html = Markdoc.renderers.html(content)
+  const ast = parse(text)
+  const content = transform(ast)
+  const html = renderers.html(content)
   const plain = decodeBasicEntities(html.replace(/<[^>]+>/g, " "))
     .replace(/\s+/g, " ")
     .trim()

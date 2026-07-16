@@ -142,8 +142,11 @@ function ReportChips({ item }: { item: QueueItem }) {
           {item.reportCount} {item.reportCount === 1 ? "report" : "reports"}
         </Badge>
       ) : null}
-      {item.reasons.slice(0, 6).map((r, i) => (
-        <Badge key={i} variant="outline">
+      {item.reasons.slice(0, 6).map((r) => (
+        <Badge
+          key={`${r.communityRuleId ?? "none"}-${r.reasonText ?? "rule-violation"}`}
+          variant="outline"
+        >
           {r.reasonText ?? "Rule violation"}
         </Badge>
       ))}

@@ -124,8 +124,8 @@ function PostStatsPage() {
             <p className="mb-2 text-xs font-medium text-muted-foreground">Views, last 48 hours</p>
             <TooltipProvider>
               <div className="flex h-28 items-end gap-[2px]">
-                {bars.map((bar, i) => (
-                  <Tooltip key={i}>
+                {bars.map((bar) => (
+                  <Tooltip key={bar.label}>
                     <TooltipTrigger render={<div className="flex h-full flex-1 items-end" />}>
                       <div
                         className="w-full rounded-t-sm bg-primary/70 transition-colors hover:bg-primary"

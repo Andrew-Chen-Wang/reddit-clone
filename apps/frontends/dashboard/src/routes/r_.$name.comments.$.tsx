@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useEffect } from "react"
+import { useEffect, type ReactElement, type ReactNode } from "react"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
 import { LegalFooter } from "@ui/seo-shared/LegalFooter"
 import { PostDetailCard } from "@ui/seo-shared/post/PostDetailCard"
@@ -27,6 +27,14 @@ function asCommentSort(value: unknown): CommentSortValue | undefined {
   return typeof value === "string" && (COMMENT_SORTS as string[]).includes(value)
     ? (value as CommentSortValue)
     : undefined
+}
+
+function wrapCommunityLink(link: ReactElement, communityName: string): ReactNode {
+  return <CommunityLinkHoverCard name={communityName}>{link}</CommunityLinkHoverCard>
+}
+
+function wrapAuthorLink(link: ReactElement, username: string): ReactNode {
+  return <UserLinkHoverCard username={username}>{link}</UserLinkHoverCard>
 }
 
 type CommentSearch = { sort?: CommentSortValue; comment?: string }
@@ -143,12 +151,8 @@ function PostDetailPage() {
           onBack={() => {
             window.history.back()
           }}
-          wrapCommunityLink={(link, communityName) => (
-            <CommunityLinkHoverCard name={communityName}>{link}</CommunityLinkHoverCard>
-          )}
-          wrapAuthorLink={(link, username) => (
-            <UserLinkHoverCard username={username}>{link}</UserLinkHoverCard>
-          )}
+          wrapCommunityLink={wrapCommunityLink}
+          wrapAuthorLink={wrapAuthorLink}
           voteDisabled={post.isLocked}
           onUpvote={() => {
             vote(1)
