@@ -21,6 +21,7 @@ import {
   communityNameAvailableSchemaQuery,
   communityNameAvailableSchemaResponse,
   communityNameSchemaParam,
+  communitySettingsSchemaResponse,
   communityUpdateSchemaRequest,
 } from "./community.serializer"
 
@@ -178,6 +179,76 @@ const app = new Hono()
     },
   )
   .use(authMiddleware)
+  .get(
+    "/:id/settings",
+    describeRoute({
+      description: "Get all community settings for prefill (moderators with config permission)",
+      responses: {
+        200: {
+          description: "Community settings",
+          content: {
+            "application/json": {
+              schema: resolver(communitySettingsSchemaResponse),
+            },
+          },
+        },
+        403: {
+          description: "Not permitted",
+          content: {
+            "application/json": {
+              schema: resolver(ErrorSchemaResponse),
+            },
+          },
+        },
+        404: {
+          description: "Community not found",
+          content: {
+            "application/json": {
+              schema: resolver(ErrorSchemaResponse),
+            },
+          },
+        },
+      },
+    }),
+    validator("param", IdParamT),
+    async (c) => {
+      const user = c.var.user
+      const { id } = c.req.valid("param")
+
+      const moderate = await getCommunityAuthz(db).canModerate(id, user.id, "config")
+      if (!moderate.ok) return throwForbidden(c, "You cannot view these settings")
+
+      const community = await fetchCommunity(db).getOne(id, [
+        "id",
+        "name",
+        "displayName",
+        "description",
+        "defaultCommentSort",
+        "topicId",
+        "isNsfw",
+        "welcomeMessage",
+        "postGuidelines",
+        "allowedPostTypes",
+        "bodyPolicy",
+        "titleRegex",
+        "linkDomainWhitelist",
+        "linkDomainBlacklist",
+        "mediaInComments",
+        "requirePostFlair",
+        "holdForReview",
+        "spoilerEnabled",
+        "archiveOldPosts",
+        "appearInFeeds",
+        "appearInRecommendations",
+        "notifyActivity",
+        "notifyReports",
+        "notifyMilestones",
+      ])
+      if (!community) return throwNotFound(c, "Community not found")
+
+      return c.json(community)
+    },
+  )
   .post(
     "/",
     describeRoute({

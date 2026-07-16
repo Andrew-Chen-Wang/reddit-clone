@@ -67,6 +67,33 @@ export const communityUpdateSchemaRequest = Type.Object({
   notifyMilestones: Type.Optional(Type.Boolean()),
 })
 
+export const communitySettingsSchemaResponse = Type.Object({
+  id: UUID7String,
+  name: Type.String(),
+  displayName: Nullable(Type.String()),
+  description: Type.String(),
+  defaultCommentSort: Type.String(),
+  topicId: Nullable(UUID7String),
+  isNsfw: Type.Boolean(),
+  welcomeMessage: Nullable(Type.String()),
+  postGuidelines: Nullable(Type.String()),
+  allowedPostTypes: Type.String(),
+  bodyPolicy: Type.String(),
+  titleRegex: Nullable(Type.String()),
+  linkDomainWhitelist: Nullable(Type.Array(Type.String())),
+  linkDomainBlacklist: Nullable(Type.Array(Type.String())),
+  mediaInComments: Type.Boolean(),
+  requirePostFlair: Type.Boolean(),
+  holdForReview: Type.Boolean(),
+  spoilerEnabled: Type.Boolean(),
+  archiveOldPosts: Type.Boolean(),
+  appearInFeeds: Type.Boolean(),
+  appearInRecommendations: Type.Boolean(),
+  notifyActivity: Type.Boolean(),
+  notifyReports: Type.Boolean(),
+  notifyMilestones: Type.Boolean(),
+})
+
 export const communityNameSchemaParam = Type.Object({
   name: Type.String(),
 })
