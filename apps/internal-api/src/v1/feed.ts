@@ -1,6 +1,7 @@
 import { getCommunityAuthz } from "@lib/dao/authz/community/get"
 import { fetchCommunity } from "@lib/dao/community/fetch"
 import { fetchCommunityMember } from "@lib/dao/communityMember/fetch"
+import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
 import { fetchPost, type PostSort, type RawPostRow } from "@lib/dao/post/fetch"
 import { processPosts, type ProcessedPost } from "@lib/dao/post/processPost"
 import { fetchUser } from "@lib/dao/user/fetch"
@@ -209,6 +210,48 @@ const app = new Hono()
       let processed = await processPosts(db, results, user.id)
       if (homeSort === "best") processed = capConsecutive(processed, HOME_CONSECUTIVE_CAP)
 
+      return c.json({ data: processed, nextCursor })
+    },
+  )
+  .get(
+    "/mod",
+    authMiddleware,
+    describeRoute({
+      description: "Aggregate feed of posts across every community the viewer moderates",
+      responses: {
+        200: {
+          description: "Moderated communities feed",
+          content: { "application/json": { schema: resolver(feedSchemaResponse) } },
+        },
+      },
+    }),
+    validator("query", feedSchemaQuery),
+    async (c) => {
+      const user = c.var.user
+      const query = c.req.valid("query")
+      const sort = query.sort ?? "hot"
+      const cursor = query.cursor ?? null
+
+      const moderated = await fetchCommunityModerator(db).getManyForUser(user.id)
+      const communityIds = moderated.map((m) => m.id)
+      if (communityIds.length === 0) return c.json({ data: [], nextCursor: null })
+
+      const feedQuery = fetchPost(db).multiCommunityFeed({
+        communityIds,
+        sort,
+        windowStart: windowStartFor(query.t),
+        viewerId: user.id,
+      })
+
+      const { results, nextCursor } = await cursorOffsetPaginate({
+        query: feedQuery,
+        cursor,
+        ordering: "id",
+        positionColumn: "post.id",
+        pageSize: PAGE_SIZE,
+      })
+
+      const processed = await processPosts(db, results, user.id)
       return c.json({ data: processed, nextCursor })
     },
   )

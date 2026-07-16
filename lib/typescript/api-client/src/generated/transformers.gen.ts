@@ -11,6 +11,7 @@ import type {
   GetApiV1DraftResponse,
   GetApiV1FeedCommunityByNameResponse,
   GetApiV1FeedHomeResponse,
+  GetApiV1FeedModResponse,
   GetApiV1FeedPopularResponse,
   GetApiV1FeedProfileByUsernameResponse,
   GetApiV1HistoryRecentCommunitiesResponse,
@@ -262,6 +263,19 @@ export const getApiV1FeedPopularResponseTransformer = async (
 export const getApiV1FeedHomeResponseTransformer = async (
   data: any,
 ): Promise<GetApiV1FeedHomeResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1FeedModResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1FeedModResponse> => {
   data.data = data.data.map((item: any) => {
     item.createdAt = new Date(item.createdAt)
     if (item.editedAt) {

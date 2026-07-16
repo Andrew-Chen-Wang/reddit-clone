@@ -139,6 +139,8 @@ import type {
   GetApiV1FeedCommunityByNameResponses,
   GetApiV1FeedHomeData,
   GetApiV1FeedHomeResponses,
+  GetApiV1FeedModData,
+  GetApiV1FeedModResponses,
   GetApiV1FeedPopularData,
   GetApiV1FeedPopularResponses,
   GetApiV1FeedProfileByUsernameData,
@@ -1911,6 +1913,17 @@ export const getApiV1FeedHome = <ThrowOnError extends boolean = false>(
 ): RequestResult<GetApiV1FeedHomeResponses, unknown, ThrowOnError> =>
   (options?.client ?? client).get<GetApiV1FeedHomeResponses, unknown, ThrowOnError>({
     url: "/api/v1/feed/home",
+    ...options,
+  })
+
+/**
+ * Aggregate feed of posts across every community the viewer moderates
+ */
+export const getApiV1FeedMod = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1FeedModData, ThrowOnError>,
+): RequestResult<GetApiV1FeedModResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1FeedModResponses, unknown, ThrowOnError>({
+    url: "/api/v1/feed/mod",
     ...options,
   })
 
