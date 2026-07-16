@@ -1,0 +1,54 @@
+name: PR Media Check
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  check-media:
+    name: Require before/after media in description
+    runs-on: ubuntu-latest
+    # Maintainer and bots (e.g. dependabot) are exempt
+    if: >-
+      github.event.pull_request.user.login != 'Andrew-Chen-Wang' &&
+      !endsWith(github.event.pull_request.user.login, '[bot]')
+    steps:
+      - name: Check PR description for at least two media elements
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let body = context.payload.pull_request.body || '';
+
+            // Strip HTML comments so template placeholder text never counts
+            body = body.replace(/<!--[\s\S]*?-->/g, '');
+
+            // Each pattern's matches are removed from the body before the
+            // next pattern runs, so a markdown image wrapping an uploaded
+            // asset URL is only counted once.
+            const patterns = [
+              /!\[[^\]]*\]\([^)\s]+[^)]*\)/g, // markdown images: ![alt](url)
+              /<img\b[^>]*>/gi, // HTML <img> tags
+              /<video\b[\s\S]*?(?:<\/video>|\/>)/gi, // HTML <video> tags
+              /https:\/\/github\.com\/user-attachments\/assets\/[\w-]+/g, // GitHub-uploaded images/videos
+              /https:\/\/user-images\.githubusercontent\.com\/[^\s)<>]+/g, // legacy GitHub upload URLs
+            ];
+
+            let count = 0;
+            for (const re of patterns) {
+              const matches = body.match(re) || [];
+              count += matches.length;
+              body = body.replace(re, '');
+            }
+
+            core.info(`Found ${count} media element(s) in the PR description.`);
+
+            if (count < 2) {
+              core.setFailed(
+                `PR description contains ${count} media element(s), but at least 2 are required ` +
+                  '(before and after images/videos). Please add them to the "Before" and "After" ' +
+                  'sections of the PR template, then this check will re-run automatically.'
+              );
+            }
