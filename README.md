@@ -18,6 +18,14 @@ Problem 1: Unserious, emotional, or people who are unwilling to listen to other 
 
 Problem 2: Downvoting dismisses viewpoints. Solution: in my fork, I would ask my coding agent to replace the upvote with a "coin" as if one we're giving credit to another person. It could be for making a good comment, or giving credit if it changes your mind. I would replace downvoting with a list of "reasons" for a user to choose from including a comment being poorly written, unsubstantiated such as using poor sources, etc. In my case, Reddit's algorithm still works very well in this system because our upvote/downvote system simply reflects Reddit's original upvote/downvote intent and algorithms.
 
+## Reddit's Downside
+
+Because of how large Reddit's user base became, not only has voting become its more dominant form of "liking" and "disliking" based on emotion instead of Reddit's originally true intent, there is a more sinister thing about large communities in the first place: agreed upon rules and over stretching.
+
+We can skip agreed upon rules because that's been touched on already i.e. voting. But over stretching is different in that the algorithm and features of Reddit are desigend for a broad user base, but many communities may want different features, allow different users in, etc. Those features might include ID verification, elitist entry, multiple voting systems, or in particular a certain algorithm.
+
+Because of how generalized Reddit is, it can't support every community in its best effort. Maybe the best solution for Reddit as a unicorn company is to figure out how to allow communities to specialize in creation, but that makes other features of Reddit, in particular the personalization of the home page and recommendation system, more difficult. For example, changing the voting system (like adding multiple voting types) for one subreddit would make the recommendation system difficult to normalize/reconcile in addition to strange scaling requirements. Thus, the upper bound on Reddit's creativity was reached simply because of financial requirements (i.e. taking as much user attention) and competition to be the largest online discussion forum.
+
 # Deployment
 
 The assumption of this codebase is that you're somewhat technical and willing to use a coding agent. Though there's OpenTofu, I personally would deploy with Vercel, Supabase for a free Postgres instance, Neon Redis for our BullMQ worker, and AWS ECS instance for our BullMQ worker itself (BullMQ is an asynchronous background worker service, so it'll run tasks outside a request lifecycle). For search, though we use Elasticsearch during development, for your fork, unless you have a gaming server/spare computer with 8GB of RAM, you should replace the search service with Postgres FTS. If you do have a spare computer to host everything, I recommend deploying everything to there using Tailscale/Zrok in GitHub Actions.
