@@ -51,7 +51,9 @@ export async function up(db: Kysely<any>): Promise<void> {
   for (const t of PAIR_TABLES) {
     await db.schema
       .createTable(t.name)
-      .addColumn(t.left.col, "uuid", (col) => col.references(t.left.ref).onDelete("cascade").notNull())
+      .addColumn(t.left.col, "uuid", (col) =>
+        col.references(t.left.ref).onDelete("cascade").notNull(),
+      )
       .addColumn(t.right.col, "uuid", (col) =>
         col.references(t.right.ref).onDelete("cascade").notNull(),
       )
@@ -71,11 +73,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .on("user_follow")
     .column("followed_user_id")
     .execute()
-  await db.schema
-    .createIndex("post_follow_post_idx")
-    .on("post_follow")
-    .column("post_id")
-    .execute()
+  await db.schema.createIndex("post_follow_post_idx").on("post_follow").column("post_id").execute()
   await db.schema
     .createIndex("comment_follow_comment_idx")
     .on("comment_follow")
@@ -86,9 +84,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .createTable("post_draft")
     .addColumn("id", "uuid", (col) => col.primaryKey())
     .addColumn("user_id", "uuid", (col) => col.references("user.id").onDelete("cascade").notNull())
-    .addColumn("community_id", "uuid", (col) =>
-      col.references("community.id").onDelete("set null"),
-    )
+    .addColumn("community_id", "uuid", (col) => col.references("community.id").onDelete("set null"))
     .addColumn("is_profile", "boolean", (col) => col.notNull().defaultTo(sql`false`))
     .addColumn("type", "text", (col) => col.notNull().defaultTo(sql`'text'`))
     .addColumn("title", "text")
@@ -117,9 +113,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("author_user_id", "uuid", (col) =>
       col.references("user.id").onDelete("cascade").notNull(),
     )
-    .addColumn("community_id", "uuid", (col) =>
-      col.references("community.id").onDelete("cascade"),
-    )
+    .addColumn("community_id", "uuid", (col) => col.references("community.id").onDelete("cascade"))
     .addColumn("is_profile", "boolean", (col) => col.notNull().defaultTo(sql`false`))
     .addColumn("type", "text", (col) => col.notNull().defaultTo(sql`'text'`))
     .addColumn("title", "text", (col) => col.notNull())
