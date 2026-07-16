@@ -12,6 +12,11 @@ import type {
   DeleteApiV1FlairUserTemplatesByIdData,
   DeleteApiV1FlairUserTemplatesByIdErrors,
   DeleteApiV1FlairUserTemplatesByIdResponses,
+  DeleteApiV1HistoryRecentPostsData,
+  DeleteApiV1HistoryRecentPostsResponses,
+  DeleteApiV1PostByIdData,
+  DeleteApiV1PostByIdErrors,
+  DeleteApiV1PostByIdResponses,
   DeleteApiV1UserMeDeleteData,
   DeleteApiV1UserMeDeleteErrors,
   DeleteApiV1UserMeDeleteResponses,
@@ -34,10 +39,27 @@ import type {
   GetApiV1CommunityRuleByCommunityIdResponses,
   GetApiV1ExploreData,
   GetApiV1ExploreResponses,
+  GetApiV1FeedCommunityByNameData,
+  GetApiV1FeedCommunityByNameErrors,
+  GetApiV1FeedCommunityByNameResponses,
+  GetApiV1FeedHomeData,
+  GetApiV1FeedHomeResponses,
+  GetApiV1FeedPopularData,
+  GetApiV1FeedPopularResponses,
+  GetApiV1FeedProfileByUsernameData,
+  GetApiV1FeedProfileByUsernameErrors,
+  GetApiV1FeedProfileByUsernameResponses,
   GetApiV1FlairByCommunityIdPostTemplatesData,
   GetApiV1FlairByCommunityIdPostTemplatesResponses,
   GetApiV1FlairByCommunityIdUserTemplatesData,
   GetApiV1FlairByCommunityIdUserTemplatesResponses,
+  GetApiV1HistoryRecentCommunitiesData,
+  GetApiV1HistoryRecentCommunitiesResponses,
+  GetApiV1HistoryRecentPostsData,
+  GetApiV1HistoryRecentPostsResponses,
+  GetApiV1PostByIdData,
+  GetApiV1PostByIdErrors,
+  GetApiV1PostByIdResponses,
   GetApiV1TopicData,
   GetApiV1TopicResponses,
   GetApiV1UserByUsernameByUsernameData,
@@ -66,6 +88,9 @@ import type {
   PatchApiV1FlairUserTemplatesByIdData,
   PatchApiV1FlairUserTemplatesByIdErrors,
   PatchApiV1FlairUserTemplatesByIdResponses,
+  PatchApiV1PostByIdData,
+  PatchApiV1PostByIdErrors,
+  PatchApiV1PostByIdResponses,
   PatchApiV1UserMeData,
   PatchApiV1UserMeErrors,
   PatchApiV1UserMeResponses,
@@ -98,12 +123,18 @@ import type {
   PostApiV1FlairByCommunityIdUserTemplatesData,
   PostApiV1FlairByCommunityIdUserTemplatesErrors,
   PostApiV1FlairByCommunityIdUserTemplatesResponses,
+  PostApiV1PostData,
+  PostApiV1PostErrors,
+  PostApiV1PostResponses,
   PutApiV1CommunityRuleByCommunityIdReorderData,
   PutApiV1CommunityRuleByCommunityIdReorderErrors,
   PutApiV1CommunityRuleByCommunityIdReorderResponses,
   PutApiV1FlairByCommunityIdMyFlairData,
   PutApiV1FlairByCommunityIdMyFlairErrors,
   PutApiV1FlairByCommunityIdMyFlairResponses,
+  PutApiV1PostVoteByPostIdData,
+  PutApiV1PostVoteByPostIdErrors,
+  PutApiV1PostVoteByPostIdResponses,
 } from "./types.gen"
 
 export type Options<
@@ -721,3 +752,164 @@ export const getApiV1Explore = <ThrowOnError extends boolean = false>(
     url: "/api/v1/explore",
     ...options,
   })
+
+/**
+ * Delete a post (author only)
+ */
+export const deleteApiV1PostById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1PostByIdData, ThrowOnError>,
+): RequestResult<DeleteApiV1PostByIdResponses, DeleteApiV1PostByIdErrors, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteApiV1PostByIdResponses,
+    DeleteApiV1PostByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/post/{id}", ...options })
+
+/**
+ * Get a single post with viewer overlay
+ */
+export const getApiV1PostById = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1PostByIdData, ThrowOnError>,
+): RequestResult<GetApiV1PostByIdResponses, GetApiV1PostByIdErrors, ThrowOnError> =>
+  (options.client ?? client).get<GetApiV1PostByIdResponses, GetApiV1PostByIdErrors, ThrowOnError>({
+    url: "/api/v1/post/{id}",
+    ...options,
+  })
+
+/**
+ * Edit a post (author only)
+ */
+export const patchApiV1PostById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1PostByIdData, ThrowOnError>,
+): RequestResult<PatchApiV1PostByIdResponses, PatchApiV1PostByIdErrors, ThrowOnError> =>
+  (options.client ?? client).patch<
+    PatchApiV1PostByIdResponses,
+    PatchApiV1PostByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/post/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Create a text or link post
+ */
+export const postApiV1Post = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1PostData, ThrowOnError>,
+): RequestResult<PostApiV1PostResponses, PostApiV1PostErrors, ThrowOnError> =>
+  (options?.client ?? client).post<PostApiV1PostResponses, PostApiV1PostErrors, ThrowOnError>({
+    url: "/api/v1/post",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Upvote, downvote, or clear a vote on a post
+ */
+export const putApiV1PostVoteByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1PostVoteByPostIdData, ThrowOnError>,
+): RequestResult<PutApiV1PostVoteByPostIdResponses, PutApiV1PostVoteByPostIdErrors, ThrowOnError> =>
+  (options.client ?? client).put<
+    PutApiV1PostVoteByPostIdResponses,
+    PutApiV1PostVoteByPostIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/post-vote/{postId}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Feed of posts for a community
+ */
+export const getApiV1FeedCommunityByName = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1FeedCommunityByNameData, ThrowOnError>,
+): RequestResult<
+  GetApiV1FeedCommunityByNameResponses,
+  GetApiV1FeedCommunityByNameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1FeedCommunityByNameResponses,
+    GetApiV1FeedCommunityByNameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/feed/community/{name}", ...options })
+
+/**
+ * Popular feed across all public and restricted communities
+ */
+export const getApiV1FeedPopular = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1FeedPopularData, ThrowOnError>,
+): RequestResult<GetApiV1FeedPopularResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1FeedPopularResponses, unknown, ThrowOnError>({
+    url: "/api/v1/feed/popular",
+    ...options,
+  })
+
+/**
+ * Personalized home feed from joined communities
+ */
+export const getApiV1FeedHome = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1FeedHomeData, ThrowOnError>,
+): RequestResult<GetApiV1FeedHomeResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1FeedHomeResponses, unknown, ThrowOnError>({
+    url: "/api/v1/feed/home",
+    ...options,
+  })
+
+/**
+ * A user's profile posts
+ */
+export const getApiV1FeedProfileByUsername = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1FeedProfileByUsernameData, ThrowOnError>,
+): RequestResult<
+  GetApiV1FeedProfileByUsernameResponses,
+  GetApiV1FeedProfileByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1FeedProfileByUsernameResponses,
+    GetApiV1FeedProfileByUsernameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/feed/profile/{username}", ...options })
+
+/**
+ * Clear the current user's recently viewed posts
+ */
+export const deleteApiV1HistoryRecentPosts = <ThrowOnError extends boolean = false>(
+  options?: Options<DeleteApiV1HistoryRecentPostsData, ThrowOnError>,
+): RequestResult<DeleteApiV1HistoryRecentPostsResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).delete<DeleteApiV1HistoryRecentPostsResponses, unknown, ThrowOnError>(
+    { url: "/api/v1/history/recent-posts", ...options },
+  )
+
+/**
+ * Recently viewed posts for the current user
+ */
+export const getApiV1HistoryRecentPosts = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1HistoryRecentPostsData, ThrowOnError>,
+): RequestResult<GetApiV1HistoryRecentPostsResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1HistoryRecentPostsResponses, unknown, ThrowOnError>({
+    url: "/api/v1/history/recent-posts",
+    ...options,
+  })
+
+/**
+ * Recently visited communities for the current user
+ */
+export const getApiV1HistoryRecentCommunities = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1HistoryRecentCommunitiesData, ThrowOnError>,
+): RequestResult<GetApiV1HistoryRecentCommunitiesResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1HistoryRecentCommunitiesResponses, unknown, ThrowOnError>(
+    { url: "/api/v1/history/recent-communities", ...options },
+  )
