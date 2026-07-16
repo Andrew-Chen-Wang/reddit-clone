@@ -15,6 +15,8 @@ import {
 } from "@ui/base/ui/dropdown-menu"
 import { PostRow, type PostRowPost } from "@ui/seo-shared/post/PostRow"
 import { PostFeedSkeleton } from "@ui/seo-shared/post/PostRowSkeleton"
+import { PostActionsMenu } from "@frontends/dashboard/components/PostActionsMenu"
+import { PostShareMenu } from "@frontends/dashboard/components/PostShareMenu"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1FeedCommunityByName,
@@ -32,8 +34,15 @@ import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 
 export type FeedPost = PostRowPost & {
-  community: { name: string; displayName: string | null; iconImageKey: string | null } | null
+  isAuthor: boolean
+  community: {
+    id: string
+    name: string
+    displayName: string | null
+    iconImageKey: string | null
+  } | null
   author: { username: string; displayName: string | null } | null
+  flair: { id: string; text: string; bgColor: string | null; textColor: string | null } | null
 }
 export type FeedPage = { data: FeedPost[]; nextCursor: string | null }
 
@@ -125,6 +134,21 @@ function applyVoteToCache(
   }
 }
 
+/** Removes a post from every page of the cached feed (used for hide/delete). */
+function removePostFromCache(
+  data: InfiniteData<FeedPage> | undefined,
+  postId: string,
+): InfiniteData<FeedPage> | undefined {
+  if (!data) return data
+  return {
+    ...data,
+    pages: data.pages.map((page) => ({
+      ...page,
+      data: page.data.filter((p) => p.id !== postId),
+    })),
+  }
+}
+
 export type PostFeedProps = {
   source: FeedSource
   sorts: FeedSortDef[]
@@ -197,6 +221,12 @@ export function PostFeed({
     patchSettings.mutate({ body: { feedView: next } })
   }
 
+  function removeFromFeed(postId: string) {
+    queryClient.setQueryData<InfiniteData<FeedPage>>(queryKey, (old) =>
+      removePostFromCache(old, postId),
+    )
+  }
+
   // Infinite scroll sentinel.
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
@@ -223,7 +253,10 @@ export function PostFeed({
   // for display. Idempotent, so post media (already absolute) is untouched.
   const toDisplayPost = (post: FeedPost): FeedPost =>
     post.community
-      ? { ...post, community: { ...post.community, iconImageKey: mediaUrl(post.community.iconImageKey) } }
+      ? {
+          ...post,
+          community: { ...post.community, iconImageKey: mediaUrl(post.community.iconImageKey) },
+        }
       : post
 
   return (
@@ -343,11 +376,39 @@ export function PostFeed({
                 vote(post, -1)
               }}
               voteDisabled={post.isLocked}
-              onShare={() => {
-                const url = `${window.location.origin}${permalinkFor(post)}`
-                void navigator.clipboard.writeText(url)
-                toast.success("Link copied")
-              }}
+              shareSlot={
+                <PostShareMenu
+                  post={{
+                    id: post.id,
+                    title: post.title,
+                    community: post.community ? { name: post.community.name } : null,
+                  }}
+                  permalink={permalinkFor(post)}
+                />
+              }
+              menuSlot={
+                <PostActionsMenu
+                  post={{
+                    id: post.id,
+                    type: post.type,
+                    bodyMd: post.bodyMd,
+                    isNsfw: post.isNsfw,
+                    isSpoiler: post.isSpoiler,
+                    isOc: post.isOc,
+                    isAuthor: post.isAuthor,
+                    author: post.author ? { username: post.author.username } : null,
+                    community: post.community
+                      ? { id: post.community.id, name: post.community.name }
+                      : null,
+                    flair: post.flair ? { id: post.flair.id } : null,
+                  }}
+                  onHidden={removeFromFeed}
+                  onDeleted={removeFromFeed}
+                  onEdited={() => {
+                    void feed.refetch()
+                  }}
+                />
+              }
             />
           ))}
         </div>

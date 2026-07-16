@@ -40,9 +40,7 @@ export function fetchChatMessage(db: Kysely<DB>) {
       .selectFrom("chatMessage")
       .select(MESSAGE_FIELDS)
       .where("conversationId", "=", conversationId)
-    const filtered = beforeCreatedAt
-      ? base.where("createdAt", "<", beforeCreatedAt)
-      : base
+    const filtered = beforeCreatedAt ? base.where("createdAt", "<", beforeCreatedAt) : base
     return await filtered
       .orderBy("createdAt", "desc")
       .orderBy("id", "desc")

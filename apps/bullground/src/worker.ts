@@ -8,10 +8,18 @@ import {
 } from "@utils/queues"
 import { type Job, Worker } from "bullmq"
 import { processDraftExpiry } from "./jobs/draftExpiry"
+import { processEsBackfill } from "./jobs/esBackfill"
+import {
+  processEsSyncComment,
+  processEsSyncCommunity,
+  processEsSyncPost,
+  processEsSyncUser,
+} from "./jobs/esSync"
 import { processMediaCleanup } from "./jobs/mediaCleanup"
 import { processRecurringPostScheduler } from "./jobs/recurringPostScheduler"
 import { processRisingRecompute } from "./jobs/risingRecompute"
 import { processScheduledPostPublish } from "./jobs/scheduledPostPublish"
+import { ensureSearchIndexes } from "@template-nextjs/search"
 
 // This process runs the cloud workers (fast/medium/slow). Each worker dispatches on
 // job.name; new milestones add cases here and the matching payload type in @utils/queues.
@@ -19,9 +27,20 @@ import { processScheduledPostPublish } from "./jobs/scheduledPostPublish"
 function makeFastWorker() {
   return new Worker(
     "fast",
-    (job) => {
+    async (job) => {
       console.info(`[fast] starting ${job.name} (id=${job.id})`)
-      return Promise.resolve()
+      if (job.name === "es-sync-post") {
+        await processEsSyncPost(job.data as JobPayloadMap["es-sync-post"])
+      }
+      if (job.name === "es-sync-comment") {
+        await processEsSyncComment(job.data as JobPayloadMap["es-sync-comment"])
+      }
+      if (job.name === "es-sync-community") {
+        await processEsSyncCommunity(job.data as JobPayloadMap["es-sync-community"])
+      }
+      if (job.name === "es-sync-user") {
+        await processEsSyncUser(job.data as JobPayloadMap["es-sync-user"])
+      }
     },
     { connection, concurrency: 10, removeOnComplete: { age: 86400 } },
   )
@@ -57,6 +76,9 @@ function makeSlowWorker() {
       if (job.name === "draft-expiry") {
         await processDraftExpiry(job.data as JobPayloadMap["draft-expiry"])
       }
+      if (job.name === "es-backfill") {
+        await processEsBackfill(job.data as JobPayloadMap["es-backfill"])
+      }
     },
     { connection, concurrency: 5, removeOnComplete: { age: 86400 } },
   )
@@ -69,6 +91,9 @@ const workers: [string, Worker][] = [
 ]
 
 await registerRepeatables()
+await ensureSearchIndexes().catch((err: unknown) => {
+  console.error("[boot] ensureSearchIndexes failed:", err)
+})
 
 for (const [name, worker] of workers) {
   worker.on("failed", (job, err) => {

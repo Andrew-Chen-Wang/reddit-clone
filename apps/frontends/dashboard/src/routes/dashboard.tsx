@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { PostFeed, type FeedPost } from "@frontends/dashboard/components/PostFeed"
 import { RecentPostsRail } from "@frontends/dashboard/components/RecentPostsRail"
+import { SuggestedCommunitiesRail } from "@frontends/dashboard/components/SuggestedCommunitiesRail"
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardHome,
@@ -33,7 +34,8 @@ function DashboardHome() {
           emptyDescription="Join some communities to see posts here."
         />
       </div>
-      <aside className="w-full shrink-0 lg:w-80">
+      <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-80">
+        <SuggestedCommunitiesRail />
         <RecentPostsRail />
       </aside>
     </div>

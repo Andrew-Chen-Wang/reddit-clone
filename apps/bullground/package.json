@@ -15,6 +15,7 @@
   "dependencies": {
     "@lib/dao": "workspace:*",
     "@template-nextjs/db": "workspace:*",
+    "@template-nextjs/search": "workspace:*",
     "@utils/aws": "workspace:*",
     "@utils/queues": "workspace:*",
     "bullmq": "catalog:",

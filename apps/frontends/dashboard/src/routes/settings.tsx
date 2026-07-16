@@ -40,6 +40,7 @@ import {
   postApiV1MediaBannerUpload,
 } from "@lib/api-client/generated/sdk.gen"
 import type { PatchApiV1UserMeSettingsData } from "@lib/api-client/generated/types.gen"
+import { AccountEngagementCards } from "@frontends/dashboard/components/AccountEngagementCards"
 import { ImageCropDialog } from "@frontends/dashboard/components/ImageCropDialog"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import { uploadToPresigned } from "@frontends/dashboard/lib/mediaUpload"
@@ -163,6 +164,8 @@ function AccountTab() {
         </CardContent>
       </Card>
 
+      <AccountEngagementCards />
+
       <Card className="border-destructive/40">
         <CardHeader>
           <CardTitle>Delete account</CardTitle>
@@ -274,146 +277,146 @@ function ProfileTab() {
 
   return (
     <>
-    <Card>
-      <CardHeader>
-        <CardTitle>Profile</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <Label>Banner</Label>
-          <div className="relative h-28 w-full overflow-hidden rounded-md border bg-gradient-to-r from-primary/30 to-primary/10">
-            {user?.bannerImageKey ? (
-              // oxlint-disable-next-line no-img-element
-              <img
-                src={mediaUrl(user.bannerImageKey) ?? undefined}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            ) : null}
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              className="absolute bottom-2 right-2"
-              disabled={uploading}
-              onClick={() => bannerInputRef.current?.click()}
-            >
-              <ImagePlus className="size-4" />
-              Change
-            </Button>
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <Label>Banner</Label>
+            <div className="relative h-28 w-full overflow-hidden rounded-md border bg-gradient-to-r from-primary/30 to-primary/10">
+              {user?.bannerImageKey ? (
+                // oxlint-disable-next-line no-img-element
+                <img
+                  src={mediaUrl(user.bannerImageKey) ?? undefined}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              ) : null}
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                className="absolute bottom-2 right-2"
+                disabled={uploading}
+                onClick={() => bannerInputRef.current?.click()}
+              >
+                <ImagePlus className="size-4" />
+                Change
+              </Button>
+            </div>
+            <input
+              ref={bannerInputRef}
+              type="file"
+              aria-label="Upload banner image"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              className="hidden"
+              onChange={(e) => {
+                pickFile("banner", e.target.files)
+                e.target.value = ""
+              }}
+            />
           </div>
-          <input
-            ref={bannerInputRef}
-            type="file"
-            aria-label="Upload banner image"
-            accept="image/jpeg,image/png,image/gif,image/webp"
-            className="hidden"
-            onChange={(e) => {
-              pickFile("banner", e.target.files)
-              e.target.value = ""
-            }}
-          />
-        </div>
 
-        <div className="flex items-center gap-4">
-          <Avatar className="size-16">
-            {user?.avatarImageKey ? (
-              <AvatarImage src={mediaUrl(user.avatarImageKey) ?? undefined} alt="" />
-            ) : null}
-            <AvatarFallback className="text-xl">
-              {(user?.displayName ?? user?.username ?? "?").charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col gap-1">
-            <Label>Avatar</Label>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              className="w-fit"
-              disabled={uploading}
-              onClick={() => avatarInputRef.current?.click()}
-            >
-              <ImagePlus className="size-4" />
-              Change avatar
-            </Button>
+          <div className="flex items-center gap-4">
+            <Avatar className="size-16">
+              {user?.avatarImageKey ? (
+                <AvatarImage src={mediaUrl(user.avatarImageKey) ?? undefined} alt="" />
+              ) : null}
+              <AvatarFallback className="text-xl">
+                {(user?.displayName ?? user?.username ?? "?").charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col gap-1">
+              <Label>Avatar</Label>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="w-fit"
+                disabled={uploading}
+                onClick={() => avatarInputRef.current?.click()}
+              >
+                <ImagePlus className="size-4" />
+                Change avatar
+              </Button>
+            </div>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              aria-label="Upload avatar image"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              className="hidden"
+              onChange={(e) => {
+                pickFile("avatar", e.target.files)
+                e.target.value = ""
+              }}
+            />
           </div>
-          <input
-            ref={avatarInputRef}
-            type="file"
-            aria-label="Upload avatar image"
-            accept="image/jpeg,image/png,image/gif,image/webp"
-            className="hidden"
-            onChange={(e) => {
-              pickFile("avatar", e.target.files)
-              e.target.value = ""
-            }}
-          />
-        </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="display-name">Display name</Label>
-          <Input
-            id="display-name"
-            value={displayName}
-            maxLength={30}
-            placeholder={user?.username ?? ""}
-            onChange={(event) => {
-              setDisplayName(event.target.value)
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="display-name">Display name</Label>
+            <Input
+              id="display-name"
+              value={displayName}
+              maxLength={30}
+              placeholder={user?.username ?? ""}
+              onChange={(event) => {
+                setDisplayName(event.target.value)
+              }}
+            />
+            <p className="text-xs text-muted-foreground">{displayName.length}/30</p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="about">About</Label>
+            <Textarea
+              id="about"
+              value={about}
+              maxLength={200}
+              rows={4}
+              onChange={(event) => {
+                setAbout(event.target.value)
+              }}
+            />
+            <p className="text-xs text-muted-foreground">{about.length}/200</p>
+          </div>
+          <LoadingButton
+            type="button"
+            className="w-fit"
+            loading={mutation.isPending}
+            onClick={() => {
+              mutation.mutate({
+                body: { displayName: displayName || null, about: about || null },
+              })
             }}
-          />
-          <p className="text-xs text-muted-foreground">{displayName.length}/30</p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="about">About</Label>
-          <Textarea
-            id="about"
-            value={about}
-            maxLength={200}
-            rows={4}
-            onChange={(event) => {
-              setAbout(event.target.value)
-            }}
-          />
-          <p className="text-xs text-muted-foreground">{about.length}/200</p>
-        </div>
-        <LoadingButton
-          type="button"
-          className="w-fit"
-          loading={mutation.isPending}
-          onClick={() => {
-            mutation.mutate({
-              body: { displayName: displayName || null, about: about || null },
-            })
-          }}
-        >
-          Save
-        </LoadingButton>
-      </CardContent>
-    </Card>
+          >
+            Save
+          </LoadingButton>
+        </CardContent>
+      </Card>
 
-    <ImageCropDialog
-      open={cropTarget !== null}
-      onOpenChange={(open) => {
-        if (!open && !uploading) {
-          setCropTarget(null)
-          setPendingFile(null)
+      <ImageCropDialog
+        open={cropTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !uploading) {
+            setCropTarget(null)
+            setPendingFile(null)
+          }
+        }}
+        file={pendingFile}
+        aspect={cropTarget === "banner" ? 4 : 1}
+        circular={cropTarget === "avatar"}
+        title={cropTarget === "banner" ? "Crop banner" : "Crop avatar"}
+        description={
+          cropTarget === "banner"
+            ? "Drag to frame your banner (4:1)."
+            : "Drag to frame your avatar."
         }
-      }}
-      file={pendingFile}
-      aspect={cropTarget === "banner" ? 4 : 1}
-      circular={cropTarget === "avatar"}
-      title={cropTarget === "banner" ? "Crop banner" : "Crop avatar"}
-      description={
-        cropTarget === "banner"
-          ? "Drag to frame your banner (4:1)."
-          : "Drag to frame your avatar."
-      }
-      busy={uploading}
-      onComplete={(blob) => {
-        void uploadCropped(blob)
-      }}
-    />
+        busy={uploading}
+        onComplete={(blob) => {
+          void uploadCropped(blob)
+        }}
+      />
     </>
   )
 }

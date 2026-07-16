@@ -21,6 +21,8 @@ export type PostDetailCardProps = {
   onDownvote: () => void
   voteDisabled?: boolean
   onShare?: () => void
+  /** Replaces the default share button (e.g. a share dropdown). Takes precedence over onShare. */
+  shareSlot?: ReactNode
   /** Extra action slot (e.g. author/mod overflow menu). */
   menuSlot?: ReactNode
 }
@@ -42,6 +44,7 @@ export function PostDetailCard({
   onDownvote,
   voteDisabled,
   onShare,
+  shareSlot,
   menuSlot,
 }: PostDetailCardProps) {
   return (
@@ -151,18 +154,19 @@ export function PostDetailCard({
           <MessageSquare className="size-4" />
           {formatCompactNumber(post.commentCount)}
         </span>
-        {onShare ? (
-          <button
-            type="button"
-            onClick={onShare}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/70",
-            )}
-          >
-            <Share2 className="size-4" />
-            Share
-          </button>
-        ) : null}
+        {shareSlot ??
+          (onShare ? (
+            <button
+              type="button"
+              onClick={onShare}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/70",
+              )}
+            >
+              <Share2 className="size-4" />
+              Share
+            </button>
+          ) : null)}
       </div>
     </article>
   )

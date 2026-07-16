@@ -128,6 +128,26 @@ function ExploreSection({ section }: { section: ExploreSectionData }) {
   )
 }
 
+function CommunityGrid({ communities }: { communities: ExploreCommunity[] }) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {communities.map((community) => (
+        <CommunityCard
+          key={community.id}
+          community={{
+            name: community.name,
+            displayName: community.displayName,
+            description: community.description,
+            iconUrl: mediaUrl(community.iconImageKey),
+            memberCount: community.memberCount,
+          }}
+          joinSlot={<JoinButton communityId={community.id} />}
+        />
+      ))}
+    </div>
+  )
+}
+
 function ExplorePage() {
   const { data, isLoading } = useQuery(getApiV1ExploreOptions())
   const [activeTopic, setActiveTopic] = useState<string | null>(null)
@@ -143,6 +163,9 @@ function ExplorePage() {
   const topics = data?.topics ?? []
   const sections = (data?.sections ?? []) as ExploreSectionData[]
   const shown = activeTopic ? sections.filter((s) => s.topicSlug === activeTopic) : sections
+  const recommended = (data?.recommended ?? []) as ExploreCommunity[]
+  const moreLike = (data?.moreLike ?? []) as { basedOn: string; communities: ExploreCommunity[] }[]
+  const showRecommendations = !activeTopic && (recommended.length > 0 || moreLike.length > 0)
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6">
@@ -179,6 +202,23 @@ function ExplorePage() {
           </button>
         ))}
       </div>
+
+      {showRecommendations ? (
+        <div className="mt-6 flex flex-col gap-8">
+          {recommended.length > 0 ? (
+            <section>
+              <h2 className="mb-3 text-lg font-semibold">Recommended for you</h2>
+              <CommunityGrid communities={recommended} />
+            </section>
+          ) : null}
+          {moreLike.map((group) => (
+            <section key={group.basedOn}>
+              <h2 className="mb-3 text-lg font-semibold">More like r/{group.basedOn}</h2>
+              <CommunityGrid communities={group.communities} />
+            </section>
+          ))}
+        </div>
+      ) : null}
 
       <div className="mt-6 flex flex-col gap-8">
         {shown.map((section) => (

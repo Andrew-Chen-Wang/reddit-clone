@@ -24,11 +24,7 @@ export function crudChatParticipant(db: Kysely<DB>) {
       .execute()
   }
 
-  async function setStatus(
-    conversationId: string,
-    userId: string,
-    status: string,
-  ): Promise<void> {
+  async function setStatus(conversationId: string, userId: string, status: string): Promise<void> {
     await db
       .updateTable("chatParticipant")
       .set({ status })

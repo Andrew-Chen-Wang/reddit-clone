@@ -7,7 +7,9 @@
     "strict": true,
     "noImplicitReturns": true,
     "target": "ESNext",
-    "noEmit": true,
+    "noEmit": false,
+    "composite": true,
+    "declaration": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -23,5 +25,5 @@
     "outDir": "./build"
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "build"]
+  "exclude": ["node_modules", "build", "**/*.test.ts"]
 }

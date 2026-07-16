@@ -7,10 +7,7 @@
  * absolute (http/https) are returned unchanged. Framework-agnostic — the caller
  * supplies `base` (Vite reads `import.meta.env`, Next.js reads `process.env`).
  */
-export function buildMediaUrl(
-  key: string | null | undefined,
-  base: string,
-): string | null {
+export function buildMediaUrl(key: string | null | undefined, base: string): string | null {
   if (!key) return null
   if (/^https?:\/\//i.test(key)) return key
   const trimmedBase = base.replace(/\/+$/, "")

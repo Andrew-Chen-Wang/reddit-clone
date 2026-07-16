@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import ReactCrop, {
-  centerCrop,
-  makeAspectCrop,
-  type Crop,
-  type PixelCrop,
-} from "react-image-crop"
+import ReactCrop, { centerCrop, makeAspectCrop, type Crop, type PixelCrop } from "react-image-crop"
 import "react-image-crop/dist/ReactCrop.css"
 import {
   Dialog,
@@ -35,11 +30,7 @@ export type ImageCropDialogProps = {
 }
 
 function centeredAspectCrop(width: number, height: number, aspect: number): Crop {
-  return centerCrop(
-    makeAspectCrop({ unit: "%", width: 90 }, aspect, width, height),
-    width,
-    height,
-  )
+  return centerCrop(makeAspectCrop({ unit: "%", width: 90 }, aspect, width, height), width, height)
 }
 
 async function toCroppedBlob(image: HTMLImageElement, crop: PixelCrop): Promise<Blob> {
@@ -62,13 +53,10 @@ async function toCroppedBlob(image: HTMLImageElement, crop: PixelCrop): Promise<
     canvas.height,
   )
   return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (blob) resolve(blob)
-        else reject(new Error("Could not render crop"))
-      },
-      "image/png",
-    )
+    canvas.toBlob((blob) => {
+      if (blob) resolve(blob)
+      else reject(new Error("Could not render crop"))
+    }, "image/png")
   })
 }
 
