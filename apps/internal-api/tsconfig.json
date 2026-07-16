@@ -26,7 +26,7 @@
     "declaration": true
   },
   "include": ["**/*.ts", "**/*.json"],
-  "exclude": ["node_modules", "build"],
+  "exclude": ["node_modules", "build", "**/*.test.ts"],
   "references": [
     { "path": "../../packages/db" },
     { "path": "../../lib/typescript/dao" },
