@@ -13,13 +13,22 @@ import {
   SidebarMenuItem,
 } from "@ui/base/ui/sidebar"
 import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@ui/base/ui/dialog"
+import { Input } from "@ui/base/ui/input"
+import { Label } from "@ui/base/ui/label"
+import { LoadingButton } from "@ui/base/ui/loading-button"
+import { Textarea } from "@ui/base/ui/textarea"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1CommunityMemberMineOptions,
   getApiV1CommunityMemberModeratedOptions,
+  getApiV1CustomFeedMineOptions,
   getApiV1HistoryRecentCommunitiesOptions,
   getApiV1ModTeamMyInvitesOptions,
+  getApiV1UserMeOptions,
   patchApiV1CommunityMemberByCommunityIdMembershipMutation,
+  patchApiV1CustomFeedByIdMutation,
+  postApiV1CustomFeedMutation,
   postApiV1ModTeamInviteByIdAcceptMutation,
   postApiV1ModTeamInviteByIdDeclineMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
@@ -28,6 +37,7 @@ import {
   ChevronRight,
   Compass,
   Home,
+  Layers,
   Plus,
   ShieldCheck,
   Star,
@@ -191,6 +201,179 @@ function ModInvitesBanner() {
   )
 }
 
+type CustomFeed = {
+  id: string
+  name: string
+  slug: string
+  isFavorite: boolean
+}
+
+function CreateCustomFeedDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean
+  onOpenChange: (o: boolean) => void
+}) {
+  const queryClient = useQueryClient()
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
+
+  const create = useMutation({
+    ...postApiV1CustomFeedMutation(),
+    onSuccess: () => {
+      toast.success("Custom feed created")
+      setName("")
+      setDescription("")
+      onOpenChange(false)
+      void queryClient.invalidateQueries({ queryKey: getApiV1CustomFeedMineOptions().queryKey })
+    },
+    onError: () => {
+      toast.error("Could not create custom feed")
+    },
+  })
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (o) {
+          setName("")
+          setDescription("")
+        }
+        onOpenChange(o)
+      }}
+    >
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Create custom feed</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="feed-name">Name</Label>
+            <Input
+              id="feed-name"
+              value={name}
+              maxLength={50}
+              onChange={(e) => {
+                setName(e.target.value)
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="feed-description">Description</Label>
+            <Textarea
+              id="feed-description"
+              rows={3}
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value)
+              }}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <LoadingButton
+            loading={create.isPending}
+            disabled={name.trim() === ""}
+            onClick={() => {
+              create.mutate({
+                body: {
+                  name: name.trim(),
+                  description: description.trim() === "" ? null : description.trim(),
+                },
+              })
+            }}
+          >
+            Create
+          </LoadingButton>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function CustomFeedStar({ feedId, isFavorite }: { feedId: string; isFavorite: boolean }) {
+  const queryClient = useQueryClient()
+  const toggle = useMutation({
+    ...patchApiV1CustomFeedByIdMutation(),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: getApiV1CustomFeedMineOptions().queryKey })
+    },
+    onError: () => {
+      toast.error("Could not update favorite")
+    },
+  })
+  return (
+    <SidebarMenuAction
+      aria-label={isFavorite ? "Unfavorite" : "Favorite"}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        toggle.mutate({ path: { id: feedId }, body: { isFavorite: !isFavorite } })
+      }}
+    >
+      <Star className={isFavorite ? "fill-yellow-400 text-yellow-400" : ""} />
+    </SidebarMenuAction>
+  )
+}
+
+function CustomFeedsSection() {
+  const [createOpen, setCreateOpen] = useState(false)
+  const { data: me } = useQuery(getApiV1UserMeOptions())
+  const { data: feedsData } = useQuery(getApiV1CustomFeedMineOptions())
+  const feeds = (feedsData?.data ?? []) as CustomFeed[]
+  const username = me?.username
+
+  return (
+    <Collapsible defaultOpen className="group/feeds">
+      <SidebarGroup>
+        <SidebarGroupLabel render={<CollapsibleTrigger />} className="group/label cursor-pointer">
+          Custom Feeds
+          <ChevronRight className="ml-auto transition-transform group-data-[panel-open]/label:rotate-90" />
+        </SidebarGroupLabel>
+        <CollapsibleContent>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => {
+                    setCreateOpen(true)
+                  }}
+                  tooltip="Create Custom Feed"
+                >
+                  <Plus />
+                  <span>Create Custom Feed</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              {username
+                ? feeds.map((feed) => (
+                    <SidebarMenuItem key={feed.id}>
+                      <SidebarMenuButton
+                        render={
+                          <Link
+                            to="/feed/$username/$slug"
+                            params={{ username, slug: feed.slug }}
+                          />
+                        }
+                        tooltip={feed.name}
+                      >
+                        <Layers />
+                        <span>{feed.name}</span>
+                      </SidebarMenuButton>
+                      <CustomFeedStar feedId={feed.id} isFavorite={feed.isFavorite} />
+                    </SidebarMenuItem>
+                  ))
+                : null}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </CollapsibleContent>
+      </SidebarGroup>
+      <CreateCustomFeedDialog open={createOpen} onOpenChange={setCreateOpen} />
+    </Collapsible>
+  )
+}
+
 const MAIN_NAV = [
   { to: "/" as const, label: "Home", icon: Home },
   { to: "/popular" as const, label: "Popular", icon: TrendingUp },
@@ -336,6 +519,9 @@ export function AppSidebar() {
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
+
+        {/* Custom Feeds */}
+        <CustomFeedsSection />
 
         {/* Resources */}
         <SidebarGroup>

@@ -10,12 +10,15 @@ import {
 } from "@ui/base/ui/dropdown-menu"
 import { CommunityHeader } from "@ui/seo-shared/community/CommunityHeader"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/base/ui/dialog"
+import { Markdown } from "@ui/seo-shared/Markdown"
 import { PostFeed, type FeedPost } from "@frontends/dashboard/components/PostFeed"
 import { CommunityAppearanceDialog } from "@frontends/dashboard/components/CommunityAppearanceDialog"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1CommunityByNameOptions,
   getApiV1CommunityMemberMineOptions,
+  getApiV1CommunityWidgetByCommunityNameOptions,
   patchApiV1CommunityMemberByCommunityIdMembershipMutation,
   postApiV1CommunityMemberByCommunityIdJoinMutation,
   postApiV1CommunityMemberByCommunityIdLeaveMutation,
@@ -48,7 +51,11 @@ function CommunityPage() {
   const { name } = Route.useParams()
   const queryClient = useQueryClient()
   const [appearanceOpen, setAppearanceOpen] = useState(false)
+  const [welcomeOpen, setWelcomeOpen] = useState(false)
   const communityQuery = useQuery(getApiV1CommunityByNameOptions({ path: { name } }))
+  const widgetsQuery = useQuery(
+    getApiV1CommunityWidgetByCommunityNameOptions({ path: { communityName: name } }),
+  )
 
   const invalidate = () => {
     void queryClient.invalidateQueries({
@@ -65,6 +72,7 @@ function CommunityPage() {
       invalidate()
       if (result.requested)
         toast.success("Request sent", { description: "A moderator will review it." })
+      if (result.joined && communityQuery.data?.welcomeMessage) setWelcomeOpen(true)
     },
     onError: () => toast.error("Could not join community"),
   })
@@ -276,9 +284,27 @@ function CommunityPage() {
               username: m.username,
               avatarImageKey: m.avatarImageKey,
             }))}
+            bookmarks={widgetsQuery.data?.bookmarks}
+            widgets={widgetsQuery.data?.widgets}
+            related={widgetsQuery.data?.related.map((r) => ({
+              id: r.id,
+              name: r.name,
+              displayName: r.displayName,
+              iconUrl: mediaUrl(r.iconImageKey),
+              memberCount: r.memberCount,
+            }))}
           />
         </aside>
       </div>
+
+      <Dialog open={welcomeOpen} onOpenChange={setWelcomeOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Welcome to r/{community.name}</DialogTitle>
+          </DialogHeader>
+          <Markdown content={community.welcomeMessage} />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
