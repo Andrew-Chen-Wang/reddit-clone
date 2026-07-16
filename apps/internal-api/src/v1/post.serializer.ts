@@ -22,6 +22,7 @@ export const postCreateSchemaRequest = Type.Object({
   isSpoiler: Type.Optional(Type.Boolean()),
   isOc: Type.Optional(Type.Boolean()),
   flairTemplateId: Type.Optional(Nullable(UUID7String)),
+  crosspostOfPostId: Type.Optional(Nullable(UUID7String)),
 })
 
 export const postUpdateSchemaRequest = Type.Object({
