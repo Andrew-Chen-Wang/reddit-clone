@@ -202,6 +202,38 @@ export function fetchPost(db: Kysely<DB>) {
     return exclude(applyNonRisingSort(base, opts.sort, opts.windowStart))
   }
 
+  function multiCommunityFeed(opts: {
+    communityIds: string[]
+    sort: PostSort
+    windowStart: Date | null
+    viewerId?: string | null
+  }): PostQuery {
+    const exclude = (q: PostQuery): PostQuery =>
+      opts.viewerId ? applyViewerExclusions(q, opts.viewerId) : q
+    if (opts.sort === "rising") {
+      return exclude(
+        withMediaGuard(
+          db
+            .selectFrom("post")
+            .innerJoin("postRising", "postRising.postId", "post.id")
+            .where("post.communityId", "in", opts.communityIds)
+            .where("post.removedAt", "is", null)
+            .select(POST_COLUMNS)
+            .orderBy("postRising.score", "desc")
+            .orderBy("post.id", "desc"),
+        ),
+      )
+    }
+    const base = withMediaGuard(
+      db
+        .selectFrom("post")
+        .where("post.communityId", "in", opts.communityIds)
+        .where("post.removedAt", "is", null)
+        .select(POST_COLUMNS),
+    )
+    return exclude(applyNonRisingSort(base, opts.sort, opts.windowStart))
+  }
+
   function globalFeed(opts: {
     sort: PostSort
     windowStart: Date | null
@@ -430,6 +462,7 @@ export function fetchPost(db: Kysely<DB>) {
 
   return {
     communityFeed,
+    multiCommunityFeed,
     globalFeed,
     homeFeed,
     savedPostsFeed,

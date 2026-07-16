@@ -1,5 +1,6 @@
 import type { DB } from "@template-nextjs/db"
 import { type Kysely, sql } from "kysely"
+import { crudPostViewHourly } from "../postViewHourly/crud"
 
 export function crudPostView(db: Kysely<DB>) {
   async function recordView(postId: string, userId: string): Promise<void> {
@@ -15,6 +16,8 @@ export function crudPostView(db: Kysely<DB>) {
         .set({ viewCount: sql`${sql.ref("viewCount")} + 1` })
         .where("id", "=", postId)
         .execute()
+
+      await crudPostViewHourly(trx).upsertBucket(postId)
     })
   }
 

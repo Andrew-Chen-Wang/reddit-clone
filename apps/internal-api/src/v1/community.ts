@@ -98,6 +98,7 @@ const app = new Hono()
         "bannerImageKey",
         "memberCount",
         "defaultCommentSort",
+        "welcomeMessage",
         "createdAt",
       ])
 
@@ -155,6 +156,7 @@ const app = new Hono()
         bannerImageKey: community.bannerImageKey,
         memberCount: community.memberCount,
         defaultCommentSort: community.defaultCommentSort,
+        welcomeMessage: community.welcomeMessage,
         createdAt: community.createdAt.toISOString(),
         rules: rules.map((r) => ({
           id: r.id,
