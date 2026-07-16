@@ -538,8 +538,8 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   render={
-                    // oxlint-disable-next-line no-html-link-for-pages -- /legal is a Next.js page outside the SPA router
-                    <a href="/legal">
+                    // oxlint-disable-next-line no-html-link-for-pages -- /rules is a Next.js page outside the SPA router
+                    <a href="/rules">
                       <span>ReadIt Rules</span>
                     </a>
                   }

@@ -85,7 +85,7 @@ export function SearchPostList({
 
   function permalinkFor(post: PostRowPost): string {
     if (post.community) return `/r/${post.community.name}/comments/${post.id}`
-    if (post.author) return `/u/${post.author.username}`
+    if (post.author) return `/user/${post.author.username}`
     return "/"
   }
 
@@ -98,7 +98,7 @@ export function SearchPostList({
           variant="card"
           href={permalinkFor(post)}
           communityHref={post.community ? `/r/${post.community.name}` : undefined}
-          authorHref={post.author ? `/u/${post.author.username}` : undefined}
+          authorHref={post.author ? `/user/${post.author.username}` : undefined}
           onUpvote={openLogin}
           onDownvote={openLogin}
         />

@@ -161,7 +161,7 @@ export function SearchSuggest() {
                   }}
                   onClick={() => {
                     setOpen(false)
-                    void navigate({ to: "/u/$username", params: { username: profile.username } })
+                    void navigate({ to: "/user/$username", params: { username: profile.username } })
                   }}
                 >
                   <span className="min-w-0 flex-1 truncate text-sm">u/{profile.username}</span>

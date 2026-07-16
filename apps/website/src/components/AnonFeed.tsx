@@ -90,7 +90,7 @@ export function AnonFeed({
 
   function permalinkFor(post: PostRowPost): string {
     if (post.community) return `/r/${post.community.name}/comments/${post.id}`
-    if (post.author) return `/u/${post.author.username}`
+    if (post.author) return `/user/${post.author.username}`
     return "/"
   }
 
@@ -103,7 +103,7 @@ export function AnonFeed({
           variant="card"
           href={permalinkFor(post)}
           communityHref={post.community ? `/r/${post.community.name}` : undefined}
-          authorHref={post.author ? `/u/${post.author.username}` : undefined}
+          authorHref={post.author ? `/user/${post.author.username}` : undefined}
           showCommunity={showCommunity}
           onUpvote={openLogin}
           onDownvote={openLogin}

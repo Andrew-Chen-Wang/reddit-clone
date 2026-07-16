@@ -9,7 +9,7 @@ const MAIN_LINKS = [
 
 const RESOURCE_LINKS = [
   { href: "/about", label: "About ReadIt" },
-  { href: "/legal", label: "ReadIt Rules" },
+  { href: "/rules", label: "ReadIt Rules" },
   { href: "/legal", label: "Privacy Policy" },
 ]
 

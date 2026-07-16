@@ -205,7 +205,7 @@ export default async function SearchPage({
                 ? result.profiles.map((profile) => (
                     <Link
                       key={profile.id}
-                      href={`/u/${profile.username}`}
+                      href={`/user/${profile.username}`}
                       className="flex items-center gap-3 rounded-lg border bg-card p-3 hover:border-muted-foreground/30"
                     >
                       <div className="flex size-10 items-center justify-center rounded-full bg-muted text-sm font-semibold">

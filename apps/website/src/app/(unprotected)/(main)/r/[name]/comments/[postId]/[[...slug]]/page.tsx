@@ -95,7 +95,7 @@ export default async function PostDetailPage({
         <AnonPostDetail
           post={post}
           communityHref={`/r/${community.name}`}
-          authorHref={post.author ? `/u/${post.author.username}` : undefined}
+          authorHref={post.author ? `/user/${post.author.username}` : undefined}
         />
         <AnonCommentSection
           postId={postId}

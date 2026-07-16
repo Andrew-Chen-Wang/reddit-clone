@@ -168,7 +168,7 @@ export function EngagementPostList({
           post={toDisplayPost(post)}
           href={permalinkFor(post)}
           communityHref={post.community ? `/r/${post.community.name}` : undefined}
-          authorHref={post.author ? `/u/${post.author.username}` : undefined}
+          authorHref={post.author ? `/user/${post.author.username}` : undefined}
           onUpvote={() => {
             vote(post, 1)
           }}
