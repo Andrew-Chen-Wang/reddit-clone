@@ -4,10 +4,17 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 import { PostRow, type PostRowPost } from "@ui/seo-shared/post/PostRow"
 import { PostFeedSkeleton } from "@ui/seo-shared/post/PostRowSkeleton"
 import { LoginPromptDialog } from "@ui/seo-shared/LoginPromptDialog"
-import { getApiV1FeedCommunityByName, getApiV1FeedPopular } from "@lib/api-client/generated/sdk.gen"
+import {
+  getApiV1FeedCommunityByName,
+  getApiV1FeedPopular,
+  getApiV1FeedProfileByUsername,
+} from "@lib/api-client/generated/sdk.gen"
 import { useEffect, useRef, useState } from "react"
 
-export type AnonFeedSource = { kind: "community"; name: string } | { kind: "popular" }
+export type AnonFeedSource =
+  | { kind: "community"; name: string }
+  | { kind: "popular" }
+  | { kind: "profile"; username: string }
 
 type FeedPage = { data: PostRowPost[]; nextCursor: string | null }
 
@@ -21,6 +28,14 @@ async function fetchPage(
   if (source.kind === "community") {
     const { data } = await getApiV1FeedCommunityByName({
       path: { name: source.name },
+      query: query as never,
+      throwOnError: true,
+    })
+    return data
+  }
+  if (source.kind === "profile") {
+    const { data } = await getApiV1FeedProfileByUsername({
+      path: { username: source.username },
       query: query as never,
       throwOnError: true,
     })

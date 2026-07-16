@@ -71,3 +71,14 @@ export async function loadPopularFeed(
   const posts = await processPosts(db, rows.slice(0, FEED_PAGE_SIZE), viewerId)
   return { posts, initialCursor: firstNextCursor(hasMore) }
 }
+
+export async function loadProfileFeed(
+  profileUserId: string,
+  viewerId: string | null,
+): Promise<SsrFeedResult> {
+  const feedQuery = fetchPost(db).profileFeed(profileUserId)
+  const rows = (await feedQuery.limit(FEED_PAGE_SIZE + 1).execute()) as RawPostRow[]
+  const hasMore = rows.length > FEED_PAGE_SIZE
+  const posts = await processPosts(db, rows.slice(0, FEED_PAGE_SIZE), viewerId)
+  return { posts, initialCursor: firstNextCursor(hasMore) }
+}
