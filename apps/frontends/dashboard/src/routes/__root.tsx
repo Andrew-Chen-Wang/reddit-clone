@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { Outlet, createRootRoute } from "@tanstack/react-router"
+import { SidebarInset, SidebarProvider } from "@ui/base/ui/sidebar"
+import { AppSidebar } from "@frontends/dashboard/components/AppSidebar"
 import { TopNav } from "@frontends/dashboard/components/TopNav"
 import { getApiV1AuthMeOptions } from "@lib/api-client/generated/@tanstack/react-query.gen"
 
@@ -26,9 +28,12 @@ function RootLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <TopNav />
-      <main className="flex-1">
-        <Outlet />
-      </main>
+      <SidebarProvider className="min-h-0 flex-1">
+        <AppSidebar />
+        <SidebarInset className="min-w-0">
+          <Outlet />
+        </SidebarInset>
+      </SidebarProvider>
     </div>
   )
 }

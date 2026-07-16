@@ -1,0 +1,155 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@ui/base/ui/accordion"
+import { Avatar, AvatarFallback, AvatarImage } from "@ui/base/ui/avatar"
+import { Card, CardContent } from "@ui/base/ui/card"
+import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
+import { formatCompactNumber } from "@ui/seo-shared/format-number"
+import { visibilityMeta } from "@ui/seo-shared/community/visibility"
+
+export type CommunityRightRailRule = {
+  id: string
+  name: string
+  description: string | null
+  position: number
+}
+
+export type CommunityRightRailModerator = {
+  userId: string
+  username: string
+  avatarImageKey: string | null
+}
+
+export type CommunityRightRailProps = {
+  displayName: string | null
+  name: string
+  description: string
+  visibility: string
+  memberCount: number
+  createdAt: string | Date
+  rules: CommunityRightRailRule[]
+  moderators: CommunityRightRailModerator[]
+}
+
+function formatCreated(value: string | Date): string {
+  return new Date(value).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
+/** Presentational community "about" sidebar rail. Props-only. */
+export function CommunityRightRail({
+  displayName,
+  name,
+  description,
+  visibility,
+  memberCount,
+  createdAt,
+  rules,
+  moderators,
+}: CommunityRightRailProps) {
+  const meta = visibilityMeta(visibility)
+  const VisibilityIcon = meta.icon
+  const shownMods = moderators.slice(0, 5)
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Card>
+        <CardContent className="flex flex-col gap-4 pt-6">
+          <div>
+            <h2 className="text-base font-semibold">{displayName ?? `r/${name}`}</h2>
+            {description ? (
+              <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+            ) : null}
+          </div>
+
+          <dl className="flex flex-col gap-2 text-sm">
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-muted-foreground">Members</dt>
+              <dd className="font-medium">{formatCompactNumber(memberCount)}</dd>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-muted-foreground">Created</dt>
+              <dd className="font-medium">{formatCreated(createdAt)}</dd>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-muted-foreground">Visibility</dt>
+              <dd className="flex items-center gap-1.5 font-medium">
+                <VisibilityIcon className="size-4" />
+                {meta.label}
+              </dd>
+            </div>
+          </dl>
+        </CardContent>
+      </Card>
+
+      {rules.length > 0 ? (
+        <Card>
+          <CardContent className="pt-6">
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Rules
+            </h2>
+            <Accordion>
+              {rules.map((rule, index) => (
+                <AccordionItem key={rule.id} value={rule.id}>
+                  <AccordionTrigger className="text-left text-sm">
+                    <span className="flex gap-2">
+                      <span className="text-muted-foreground">{index + 1}.</span>
+                      <span>{rule.name}</span>
+                    </span>
+                  </AccordionTrigger>
+                  {rule.description ? (
+                    <AccordionContent className="text-sm text-muted-foreground">
+                      {rule.description}
+                    </AccordionContent>
+                  ) : null}
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {moderators.length > 0 ? (
+        <Card>
+          <CardContent className="flex flex-col gap-3 pt-6">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Moderators
+            </h2>
+            <ul className="flex flex-col gap-2">
+              {shownMods.map((mod) => {
+                const initial = mod.username.charAt(0).toUpperCase()
+                return (
+                  <li key={mod.userId}>
+                    <SeoLink
+                      href={`/u/${mod.username}`}
+                      className="flex items-center gap-2 text-sm hover:underline"
+                    >
+                      <Avatar className="size-6">
+                        {mod.avatarImageKey ? (
+                          <AvatarImage src={mod.avatarImageKey} alt="" />
+                        ) : null}
+                        <AvatarFallback className="text-xs">{initial}</AvatarFallback>
+                      </Avatar>
+                      <span className="truncate">u/{mod.username}</span>
+                    </SeoLink>
+                  </li>
+                )
+              })}
+            </ul>
+            {moderators.length > shownMods.length ? (
+              <SeoLink href={`/r/${name}/moderators`} className="text-sm text-primary hover:underline">
+                View all moderators
+              </SeoLink>
+            ) : null}
+          </CardContent>
+        </Card>
+      ) : null}
+    </div>
+  )
+}
