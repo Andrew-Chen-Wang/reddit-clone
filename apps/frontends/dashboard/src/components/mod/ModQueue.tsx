@@ -145,6 +145,10 @@ function RemovePopover({
             <div className="flex flex-col gap-1.5">
               <Label>Removal reason</Label>
               <Select
+                items={{
+                  none: "No reason",
+                  ...Object.fromEntries(reasons.map((r) => [r.id, r.title])),
+                }}
                 value={reasonId}
                 onValueChange={(v) => {
                   setReasonId(v ?? "none")
