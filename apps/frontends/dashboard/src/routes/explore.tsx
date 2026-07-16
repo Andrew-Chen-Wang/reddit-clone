@@ -60,7 +60,9 @@ function JoinButton({ communityId }: { communityId: string }) {
     <Button
       size="sm"
       disabled={join.isPending}
-      onClick={() =>{  join.mutate({ path: { communityId } }); }}
+      onClick={() => {
+        join.mutate({ path: { communityId } })
+      }}
     >
       Join
     </Button>
@@ -148,7 +150,9 @@ function ExplorePage() {
       <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
         <button
           type="button"
-          onClick={() =>{  setActiveTopic(null); }}
+          onClick={() => {
+            setActiveTopic(null)
+          }}
           className={cn(
             "shrink-0 rounded-full border px-3 py-1.5 text-sm transition-colors",
             !activeTopic ? "border-primary bg-primary text-primary-foreground" : "hover:bg-accent",
@@ -160,7 +164,9 @@ function ExplorePage() {
           <button
             key={topic.id}
             type="button"
-            onClick={() =>{  setActiveTopic(topic.slug); }}
+            onClick={() => {
+              setActiveTopic(topic.slug)
+            }}
             className={cn(
               "shrink-0 rounded-full border px-3 py-1.5 text-sm transition-colors",
               activeTopic === topic.slug

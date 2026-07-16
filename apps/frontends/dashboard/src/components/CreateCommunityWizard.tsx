@@ -185,9 +185,7 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
                   placeholder="community_name"
                   autoComplete="off"
                 />
-                <span className="pr-3 text-xs text-muted-foreground">
-                  {NAME_MAX - name.length}
-                </span>
+                <span className="pr-3 text-xs text-muted-foreground">{NAME_MAX - name.length}</span>
               </div>
               <NameAvailability name={name} formatValid={formatValid} />
             </div>
@@ -329,9 +327,7 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
             </Button>
           ) : (
             <Button onClick={handleCreate} disabled={createMutation.isPending || !nameReady}>
-              {createMutation.isPending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : null}
+              {createMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
               Create Community
             </Button>
           )}
