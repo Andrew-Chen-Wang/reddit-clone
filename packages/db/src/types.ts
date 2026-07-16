@@ -28,6 +28,79 @@ export interface Account {
   userId: string;
 }
 
+export interface ChatConversation {
+  createdAt: Generated<Timestamp>;
+  createdByUserId: string | null;
+  id: string;
+  isGroup: Generated<boolean>;
+  lastMessageAt: Generated<Timestamp>;
+  name: string | null;
+}
+
+export interface ChatMessage {
+  body: string;
+  conversationId: string;
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  id: string;
+  senderUserId: string | null;
+}
+
+export interface ChatParticipant {
+  conversationId: string;
+  createdAt: Generated<Timestamp>;
+  hiddenAt: Timestamp | null;
+  id: string;
+  lastReadAt: Timestamp | null;
+  role: Generated<string>;
+  status: Generated<string>;
+  userId: string;
+}
+
+export interface Comment {
+  approvedAt: Timestamp | null;
+  approvedByUserId: string | null;
+  authorUserId: string | null;
+  bodyMd: string | null;
+  childCount: Generated<number>;
+  controversialScore: Generated<number>;
+  createdAt: Generated<Timestamp>;
+  depth: Generated<number>;
+  downs: Generated<number>;
+  editedAt: Timestamp | null;
+  id: string;
+  isDeleted: Generated<boolean>;
+  isSticky: Generated<boolean>;
+  parentCommentId: string | null;
+  path: string[];
+  postId: string;
+  removedAt: Timestamp | null;
+  removedByUserId: string | null;
+  score: Generated<number>;
+  ups: Generated<number>;
+  wilsonScore: Generated<Int8>;
+}
+
+export interface CommentFollow {
+  commentId: string;
+  createdAt: Generated<Timestamp>;
+  userId: string;
+}
+
+export interface CommentSave {
+  commentId: string;
+  createdAt: Generated<Timestamp>;
+  userId: string;
+}
+
+export interface CommentVote {
+  commentId: string;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
+  userId: string;
+  value: number;
+}
+
 export interface Community {
   bannerImageKey: string | null;
   createdAt: Generated<Timestamp>;
@@ -102,6 +175,26 @@ export interface CommunityVisit {
   userId: string;
 }
 
+export interface ModmailConversation {
+  communityId: string;
+  createdAt: Generated<Timestamp>;
+  folder: Generated<string>;
+  id: string;
+  isHighlighted: Generated<boolean>;
+  lastMessageAt: Generated<Timestamp>;
+  participantUserId: string;
+  subject: string;
+}
+
+export interface ModmailMessage {
+  authorUserId: string | null;
+  bodyMd: string;
+  conversationId: string;
+  createdAt: Generated<Timestamp>;
+  id: string;
+  isInternalNote: Generated<boolean>;
+}
+
 export interface Post {
   approvedAt: Timestamp | null;
   approvedByUserId: string | null;
@@ -134,6 +227,23 @@ export interface Post {
   viewCount: Generated<Int8>;
 }
 
+export interface PostDraft {
+  bodyMd: string | null;
+  communityId: string | null;
+  createdAt: Generated<Timestamp>;
+  flairTemplateId: string | null;
+  id: string;
+  isNsfw: Generated<boolean>;
+  isOc: Generated<boolean>;
+  isProfile: Generated<boolean>;
+  isSpoiler: Generated<boolean>;
+  linkUrl: string | null;
+  title: string | null;
+  type: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+  userId: string;
+}
+
 export interface PostFlairTemplate {
   bgColor: string | null;
   communityId: string;
@@ -145,11 +255,43 @@ export interface PostFlairTemplate {
   textColor: string | null;
 }
 
+export interface PostFollow {
+  createdAt: Generated<Timestamp>;
+  postId: string;
+  userId: string;
+}
+
+export interface PostHide {
+  createdAt: Generated<Timestamp>;
+  postId: string;
+  userId: string;
+}
+
+export interface PostMedia {
+  byteSize: Int8 | null;
+  createdAt: Generated<Timestamp>;
+  height: number | null;
+  id: string;
+  mediaType: string;
+  mimeType: string | null;
+  position: Generated<number>;
+  postId: string;
+  s3Key: string;
+  uploadStatus: Generated<string>;
+  width: number | null;
+}
+
 export interface PostRising {
   communityId: string;
   computedAt: Generated<Timestamp>;
   postId: string;
   score: number;
+}
+
+export interface PostSave {
+  createdAt: Generated<Timestamp>;
+  postId: string;
+  userId: string;
 }
 
 export interface PostView {
@@ -158,12 +300,39 @@ export interface PostView {
   viewedAt: Generated<Timestamp>;
 }
 
+export interface PostViewHourly {
+  bucket: Timestamp;
+  postId: string;
+  viewCount: Generated<number>;
+}
+
 export interface PostVote {
   createdAt: Generated<Timestamp>;
   postId: string;
   updatedAt: Generated<Timestamp>;
   userId: string;
   value: number;
+}
+
+export interface ScheduledPost {
+  authorUserId: string;
+  bodyMd: string | null;
+  communityId: string | null;
+  createdAt: Generated<Timestamp>;
+  flairTemplateId: string | null;
+  id: string;
+  isNsfw: Generated<boolean>;
+  isOc: Generated<boolean>;
+  isProfile: Generated<boolean>;
+  isSpoiler: Generated<boolean>;
+  jobId: string | null;
+  linkUrl: string | null;
+  publishedPostId: string | null;
+  recurrence: string | null;
+  scheduledAt: Timestamp;
+  status: Generated<string>;
+  title: string;
+  type: Generated<string>;
 }
 
 export interface Session {
@@ -197,6 +366,12 @@ export interface User {
   username: string;
 }
 
+export interface UserBlock {
+  blockedUserId: string;
+  blockerUserId: string;
+  createdAt: Generated<Timestamp>;
+}
+
 export interface UserFlairTemplate {
   bgColor: string | null;
   communityId: string;
@@ -207,6 +382,18 @@ export interface UserFlairTemplate {
   selfAssignable: Generated<boolean>;
   text: string;
   textColor: string | null;
+}
+
+export interface UserFollow {
+  createdAt: Generated<Timestamp>;
+  followedUserId: string;
+  followerUserId: string;
+}
+
+export interface UserMutedCommunity {
+  communityId: string;
+  createdAt: Generated<Timestamp>;
+  userId: string;
 }
 
 export interface UserSettings {
@@ -230,6 +417,13 @@ export interface UserSettings {
 
 export interface DB {
   account: Account;
+  chatConversation: ChatConversation;
+  chatMessage: ChatMessage;
+  chatParticipant: ChatParticipant;
+  comment: Comment;
+  commentFollow: CommentFollow;
+  commentSave: CommentSave;
+  commentVote: CommentVote;
   community: Community;
   communityJoinRequest: CommunityJoinRequest;
   communityMember: CommunityMember;
@@ -237,14 +431,26 @@ export interface DB {
   communityRule: CommunityRule;
   communityUserFlair: CommunityUserFlair;
   communityVisit: CommunityVisit;
+  modmailConversation: ModmailConversation;
+  modmailMessage: ModmailMessage;
   post: Post;
+  postDraft: PostDraft;
   postFlairTemplate: PostFlairTemplate;
+  postFollow: PostFollow;
+  postHide: PostHide;
+  postMedia: PostMedia;
   postRising: PostRising;
+  postSave: PostSave;
   postView: PostView;
+  postViewHourly: PostViewHourly;
   postVote: PostVote;
+  scheduledPost: ScheduledPost;
   session: Session;
   topic: Topic;
   user: User;
+  userBlock: UserBlock;
   userFlairTemplate: UserFlairTemplate;
+  userFollow: UserFollow;
+  userMutedCommunity: UserMutedCommunity;
   userSettings: UserSettings;
 }

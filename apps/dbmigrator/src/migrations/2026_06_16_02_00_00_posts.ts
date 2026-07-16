@@ -80,20 +80,31 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("downs", "integer", (col) => col.notNull().defaultTo(sql`0`))
     .addColumn("created_at", "timestamptz", (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn("score", "integer", (col) =>
-      col.notNull().generatedAlwaysAs(sql`ups - downs`).stored(),
+      col
+        .notNull()
+        .generatedAlwaysAs(sql`ups - downs`)
+        .stored(),
     )
     .addColumn("hot_score", "double precision", (col) =>
-      col.notNull().generatedAlwaysAs(sql`readit_hot(ups, downs, created_at)`).stored(),
+      col
+        .notNull()
+        .generatedAlwaysAs(sql`readit_hot(ups, downs, created_at)`)
+        .stored(),
     )
     .addColumn("controversial_score", "double precision", (col) =>
-      col.notNull().generatedAlwaysAs(sql`readit_controversial(ups, downs)`).stored(),
+      col
+        .notNull()
+        .generatedAlwaysAs(sql`readit_controversial(ups, downs)`)
+        .stored(),
     )
     .addColumn("comment_count", "integer", (col) => col.notNull().defaultTo(sql`0`))
     .addColumn("view_count", "bigint", (col) => col.notNull().defaultTo(sql`0`))
     .addColumn("share_count", "integer", (col) => col.notNull().defaultTo(sql`0`))
     .addColumn("edited_at", "timestamptz")
     .addColumn("removed_at", "timestamptz")
-    .addColumn("removed_by_user_id", "uuid", (col) => col.references("user.id").onDelete("set null"))
+    .addColumn("removed_by_user_id", "uuid", (col) =>
+      col.references("user.id").onDelete("set null"),
+    )
     .addColumn("approved_at", "timestamptz")
     .addColumn("approved_by_user_id", "uuid", (col) =>
       col.references("user.id").onDelete("set null"),
@@ -145,7 +156,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     `.execute(db)
   }
 
-  await db.schema.createIndex("post_author_idx").on("post").columns(["author_user_id", "created_at desc"]).execute()
+  await db.schema
+    .createIndex("post_author_idx")
+    .on("post")
+    .columns(["author_user_id", "created_at desc"])
+    .execute()
 
   await db.schema
     .createTable("post_vote")
