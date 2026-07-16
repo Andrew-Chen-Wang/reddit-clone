@@ -14,7 +14,7 @@ export type JsonValue =
 /**
  * Replacer that converts non-JSON values (bigint, Date, etc.) to safe substitutes.
  */
-export const queryKeyJsonReplacer = (_key: string, value: unknown) => {
+export const queryKeyJsonReplacer = (_key: string, value: unknown): unknown | undefined => {
   if (value === undefined || typeof value === "function" || typeof value === "symbol") {
     return undefined
   }
@@ -49,7 +49,7 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> => {
   if (value === null || typeof value !== "object") {
     return false
   }
-  const prototype = Object.getPrototypeOf(value)
+  const prototype = Object.getPrototypeOf(value as object)
   return prototype === Object.prototype || prototype === null
 }
 
@@ -57,7 +57,7 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> => {
  * Turns URLSearchParams into a sorted JSON object for deterministic keys.
  */
 const serializeSearchParams = (params: URLSearchParams): JsonValue => {
-  const entries = Array.from(params.entries()).toSorted(([a], [b]) => a.localeCompare(b))
+  const entries = Array.from(params.entries()).sort(([a], [b]) => a.localeCompare(b))
   const result: Record<string, JsonValue> = {}
 
   for (const [key, value] of entries) {

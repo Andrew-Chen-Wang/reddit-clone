@@ -19,7 +19,7 @@ interface HourBar {
   count: number
 }
 
-function buildHourBars(buckets: { bucket: string; count: number }[]): HourBar[] {
+function buildHourBars(buckets: { bucket: Date; count: number }[]): HourBar[] {
   const counts = new Map<number, number>()
   for (const b of buckets) {
     counts.set(new Date(b.bucket).getTime(), b.count)
@@ -126,15 +126,13 @@ function PostStatsPage() {
               <div className="flex h-28 items-end gap-[2px]">
                 {bars.map((bar, i) => (
                   <Tooltip key={i}>
-                    <TooltipTrigger asChild>
-                      <div className="flex h-full flex-1 items-end">
-                        <div
-                          className="w-full rounded-t-sm bg-primary/70 transition-colors hover:bg-primary"
-                          style={{
-                            height: `${Math.max(bar.count === 0 ? 2 : 6, (bar.count / maxCount) * 100)}%`,
-                          }}
-                        />
-                      </div>
+                    <TooltipTrigger render={<div className="flex h-full flex-1 items-end" />}>
+                      <div
+                        className="w-full rounded-t-sm bg-primary/70 transition-colors hover:bg-primary"
+                        style={{
+                          height: `${Math.max(bar.count === 0 ? 2 : 6, (bar.count / maxCount) * 100)}%`,
+                        }}
+                      />
                     </TooltipTrigger>
                     <TooltipContent>
                       {bar.label}: {bar.count} {bar.count === 1 ? "view" : "views"}

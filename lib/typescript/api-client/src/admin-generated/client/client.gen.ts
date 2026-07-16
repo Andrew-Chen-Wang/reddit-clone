@@ -96,7 +96,7 @@ export const createClient = (config: Config = {}): Client => {
 
       // fetch must be assigned here, otherwise it would throw the error:
       // TypeError: Failed to execute 'fetch' on 'Window': Illegal invocation
-      const _fetch = opts.fetch
+      const _fetch = opts.fetch!
 
       response = await _fetch(request)
 
