@@ -30,6 +30,7 @@ export const feedSchemaQuery = Type.Object({
   sort: Type.Optional(feedSort),
   t: Type.Optional(topWindow),
   cursor: Type.Optional(Type.String()),
+  flairTemplateId: Type.Optional(Type.String()),
 })
 
 export const homeFeedSchemaQuery = Type.Object({

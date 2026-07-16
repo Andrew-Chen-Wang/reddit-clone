@@ -26,10 +26,15 @@ export type CommentNodeViewProps = {
   collapsed: boolean
   onToggleCollapse: () => void
   /**
-   * True when this comment has a loaded, expanded subtree — controls the vertical
-   * thread line drawn under the avatar (the line the collapse toggle sits on).
+   * True when this comment has a loaded, expanded subtree. Only then is the
+   * collapse toggle + vertical thread line drawn under the avatar — childless
+   * comments show neither (matching Reddit).
    */
   hasThread?: boolean
+  /** Highlights this comment's collapse stub when its connector line is hovered. */
+  connectorHovered?: boolean
+  /** Notifies the tree when the collapse stub is hovered (drives whole-line highlight). */
+  onConnectorHoverChange?: (hovering: boolean) => void
   /** Author id of the post this comment belongs to, for the "OP" badge. */
   postAuthorId?: string
   /** Number of descendants hidden while collapsed (shown in the meta line). */
@@ -67,6 +72,8 @@ export function CommentNodeView({
   collapsed,
   onToggleCollapse,
   hasThread = false,
+  connectorHovered = false,
+  onConnectorHoverChange,
   postAuthorId,
   collapsedCount,
   onUpvote,
@@ -112,7 +119,9 @@ export function CommentNodeView({
     <div className="flex gap-2">
       {/* Avatar rail: avatar on top, then the collapse thread-line + toggle. */}
       <div className="flex w-8 shrink-0 flex-col items-center">
-        <Avatar size="sm" className="size-8">
+        {/* 32px avatar filling the 32px rail so the child elbows land flush against
+            it — matching Reddit and leaving no gap between line and avatar. */}
+        <Avatar className="size-8">
           {node.author?.avatarImageKey ? (
             <AvatarImage src={node.author.avatarImageKey} alt="" />
           ) : null}
@@ -120,21 +129,37 @@ export function CommentNodeView({
             {node.author ? initials(node.author.username) : "?"}
           </AvatarFallback>
         </Avatar>
-        {editor ? null : (
+        {hasThread && !editor ? (
           <button
             type="button"
             aria-label="Collapse comment thread"
             onClick={onToggleCollapse}
-            className="group/thread relative flex w-full flex-1 cursor-pointer flex-col items-center justify-end pt-1"
+            onMouseEnter={() => {
+              onConnectorHoverChange?.(true)
+            }}
+            onMouseLeave={() => {
+              onConnectorHoverChange?.(false)
+            }}
+            className="relative flex w-full flex-1 cursor-pointer flex-col items-center justify-end pt-1"
           >
-            {hasThread ? (
-              <span className="absolute top-1 bottom-3 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover/thread:bg-foreground/40" />
-            ) : null}
-            <span className="relative z-[1] flex size-[18px] items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-colors group-hover/thread:border-foreground/50 group-hover/thread:text-foreground">
+            <span
+              className={cn(
+                "absolute top-1 bottom-3 left-1/2 w-px -translate-x-1/2 transition-colors",
+                connectorHovered ? "bg-foreground/50" : "bg-border",
+              )}
+            />
+            <span
+              className={cn(
+                "relative z-[1] flex size-[18px] items-center justify-center rounded-full border bg-background transition-colors",
+                connectorHovered
+                  ? "border-foreground/50 text-foreground"
+                  : "border-border text-muted-foreground",
+              )}
+            >
               <Minus className="size-3" />
             </span>
           </button>
-        )}
+        ) : null}
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">

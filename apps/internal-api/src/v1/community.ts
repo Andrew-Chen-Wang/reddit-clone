@@ -6,6 +6,7 @@ import { fetchCommunityJoinRequest } from "@lib/dao/communityJoinRequest/fetch"
 import { fetchCommunityMember } from "@lib/dao/communityMember/fetch"
 import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
 import { fetchCommunityRule } from "@lib/dao/communityRule/fetch"
+import { fetchCommunityUserFlair } from "@lib/dao/communityUserFlair/fetch"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
@@ -124,6 +125,9 @@ const app = new Hono()
       let isModerator = false
       let notificationLevel: string | null = null
       let pendingJoinRequest = false
+      let userFlair: Awaited<
+        ReturnType<ReturnType<typeof fetchCommunityUserFlair>["getResolvedForUser"]>
+      > = null
 
       if (user) {
         const membership = await fetchCommunityMember(db).getOne(community.id, user.id, [
@@ -142,6 +146,7 @@ const app = new Hono()
           ])
           pendingJoinRequest = request !== undefined
         }
+        userFlair = await fetchCommunityUserFlair(db).getResolvedForUser(community.id, user.id)
       }
 
       return c.json({
@@ -176,6 +181,7 @@ const app = new Hono()
           isModerator,
           notificationLevel,
           pendingJoinRequest,
+          userFlair,
         },
       })
     },

@@ -5,12 +5,14 @@ import { getCurrentSession } from "@website/lib/auth"
 import { buttonVariants } from "@ui/base/ui/button"
 import { CommunityHeader } from "@ui/seo-shared/community/CommunityHeader"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
+import { CommunityPostTypesCard } from "@ui/seo-shared/community/CommunityPostTypesCard"
 import { fetchCommunity } from "@lib/dao/community/fetch"
 import { fetchCommunityBookmark } from "@lib/dao/communityBookmark/fetch"
 import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
 import { fetchCommunityRelated } from "@lib/dao/communityRelated/fetch"
 import { fetchCommunityRule } from "@lib/dao/communityRule/fetch"
 import { fetchCommunityWidget } from "@lib/dao/communityWidget/fetch"
+import { fetchPostFlairTemplate } from "@lib/dao/postFlairTemplate/fetch"
 import { db } from "@template-nextjs/db"
 import { mediaUrl } from "@website/lib/mediaUrl"
 import Link from "next/link"
@@ -30,10 +32,10 @@ export default async function CommunityPage({
   searchParams,
 }: {
   params: Promise<{ name: string }>
-  searchParams: Promise<{ sort?: string; t?: string }>
+  searchParams: Promise<{ sort?: string; t?: string; flair?: string }>
 }) {
   const { name } = await params
-  const { sort: sortParam, t } = await searchParams
+  const { sort: sortParam, t, flair: activeFlairId } = await searchParams
   const community = await fetchCommunity(db).getOneByName(name, [
     "id",
     "name",
@@ -55,7 +57,7 @@ export default async function CommunityPage({
   const sort = normalizeSort(sortParam, ALLOWED)
   const session = await getCurrentSession()
 
-  const [rules, moderators, feed, bookmarks, widgets, related] = await Promise.all([
+  const [rules, moderators, feed, bookmarks, widgets, related, postFlair] = await Promise.all([
     fetchCommunityRule(db).getManyForCommunity(community.id, [
       "id",
       "name",
@@ -67,6 +69,13 @@ export default async function CommunityPage({
     fetchCommunityBookmark(db).listForCommunity(community.id, ["id", "label", "url", "position"]),
     fetchCommunityWidget(db).listForCommunity(community.id, ["id", "title", "bodyMd", "position"]),
     fetchCommunityRelated(db).listForCommunity(community.id),
+    fetchPostFlairTemplate(db).getManyForCommunity(community.id, [
+      "id",
+      "text",
+      "bgColor",
+      "textColor",
+      "position",
+    ]),
   ])
 
   return (
@@ -145,6 +154,29 @@ export default async function CommunityPage({
               iconUrl: mediaUrl(r.iconImageKey),
               memberCount: r.memberCount,
             }))}
+            postTypesSlot={
+              <CommunityPostTypesCard
+                templates={postFlair.map((f) => ({
+                  id: f.id,
+                  text: f.text,
+                  bgColor: f.bgColor,
+                  textColor: f.textColor,
+                }))}
+                activeFlairId={activeFlairId ?? null}
+                renderPill={({ template, active, className, style, children }) => (
+                  <Link
+                    key={template.id}
+                    href={
+                      active ? `/r/${community.name}` : `/r/${community.name}?flair=${template.id}`
+                    }
+                    className={className}
+                    style={style}
+                  >
+                    {children}
+                  </Link>
+                )}
+              />
+            }
           />
         </aside>
       </div>

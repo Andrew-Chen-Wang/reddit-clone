@@ -15,5 +15,43 @@ export function fetchCommunityUserFlair(db: Kysely<DB>) {
       .executeTakeFirst()
   }
 
-  return { getOne }
+  async function getResolvedForUser(
+    communityId: string,
+    userId: string,
+  ): Promise<{
+    templateId: string | null
+    text: string
+    bgColor: string | null
+    textColor: string | null
+  } | null> {
+    const row = await db
+      .selectFrom("communityUserFlair")
+      .leftJoin(
+        "userFlairTemplate",
+        "userFlairTemplate.id",
+        "communityUserFlair.userFlairTemplateId",
+      )
+      .select([
+        "communityUserFlair.userFlairTemplateId as templateId",
+        "communityUserFlair.customText as customText",
+        "userFlairTemplate.text as templateText",
+        "userFlairTemplate.bgColor as bgColor",
+        "userFlairTemplate.textColor as textColor",
+      ])
+      .where("communityUserFlair.communityId", "=", communityId)
+      .where("communityUserFlair.userId", "=", userId)
+      .executeTakeFirst()
+
+    if (!row) return null
+    const text = row.customText ?? row.templateText ?? ""
+    if (text === "") return null
+    return {
+      templateId: row.templateId,
+      text,
+      bgColor: row.bgColor,
+      textColor: row.textColor,
+    }
+  }
+
+  return { getOne, getResolvedForUser }
 }

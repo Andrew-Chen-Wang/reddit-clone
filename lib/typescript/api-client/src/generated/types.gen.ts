@@ -847,6 +847,12 @@ export type GetApiV1CommunityByNameResponses = {
       isModerator: boolean
       notificationLevel: "off" | "low" | "frequent" | null
       pendingJoinRequest: boolean
+      userFlair: {
+        templateId: string | null
+        text: string
+        bgColor: string | null
+        textColor: string | null
+      } | null
     }
   }
 }
@@ -3321,6 +3327,7 @@ export type GetApiV1FeedCommunityByNameData = {
     sort?: "hot" | "new" | "top" | "controversial" | "rising"
     t?: "hour" | "day" | "week" | "month" | "year" | "all"
     cursor?: string
+    flairTemplateId?: string
   }
   url: "/api/v1/feed/community/{name}"
 }
@@ -3405,6 +3412,7 @@ export type GetApiV1FeedPopularData = {
     sort?: "hot" | "new" | "top" | "controversial" | "rising"
     t?: "hour" | "day" | "week" | "month" | "year" | "all"
     cursor?: string
+    flairTemplateId?: string
   }
   url: "/api/v1/feed/popular"
 }
@@ -3552,6 +3560,7 @@ export type GetApiV1FeedModData = {
     sort?: "hot" | "new" | "top" | "controversial" | "rising"
     t?: "hour" | "day" | "week" | "month" | "year" | "all"
     cursor?: string
+    flairTemplateId?: string
   }
   url: "/api/v1/feed/mod"
 }
@@ -3627,6 +3636,7 @@ export type GetApiV1FeedProfileByUsernameData = {
     sort?: "hot" | "new" | "top" | "controversial" | "rising"
     t?: "hour" | "day" | "week" | "month" | "year" | "all"
     cursor?: string
+    flairTemplateId?: string
   }
   url: "/api/v1/feed/profile/{username}"
 }
