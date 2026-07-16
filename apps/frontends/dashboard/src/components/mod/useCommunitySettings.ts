@@ -1,39 +1,47 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
+  getApiV1CommunityByIdSettingsOptions,
   getApiV1CommunityByNameOptions,
   patchApiV1CommunityByIdMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import type {
-  GetApiV1CommunityByNameResponses,
+  GetApiV1CommunityByIdSettingsResponses,
   PatchApiV1CommunityByIdData,
 } from "@lib/api-client/generated/types.gen"
 import { toast } from "sonner"
 
 export type CommunitySettingsBody = NonNullable<PatchApiV1CommunityByIdData["body"]>
 
-/**
- * The community detail response currently only surfaces a subset of settings
- * columns. Until the serializer exposes the rest, treat the extra columns the
- * PATCH accepts as optionally present, so forms prefill correctly the moment the
- * backend adds them. See the note sent to m8-backend.
- */
-export type CommunityWithSettings = GetApiV1CommunityByNameResponses[200] &
-  Partial<CommunitySettingsBody>
+/** Full community settings (every column the PATCH accepts, one-to-one). */
+export type CommunityWithSettings = GetApiV1CommunityByIdSettingsResponses[200]
 
 /**
- * Loads a community for the mod settings pages and returns an immediate-save
- * PATCH helper that revalidates the detail query and toasts on completion.
+ * Loads a community's full settings for the mod settings pages and returns an
+ * immediate-save PATCH helper. The name is resolved to an id via the community
+ * detail query (also used for the guard/aggregate), then settings are fetched
+ * from the dedicated mod-only endpoint. The aggregate "mod" view has no single
+ * community, so nothing is loaded there.
  */
 export function useCommunitySettings(name: string) {
   const queryClient = useQueryClient()
-  const options = getApiV1CommunityByNameOptions({ path: { name } })
-  const query = useQuery({ ...options, enabled: name !== "mod" })
-  const community = query.data as CommunityWithSettings | undefined
+  const aggregate = name === "mod"
+
+  const communityOptions = getApiV1CommunityByNameOptions({ path: { name } })
+  const communityQuery = useQuery({ ...communityOptions, enabled: !aggregate })
+  const communityId = communityQuery.data?.id ?? null
+
+  const settingsOptions = getApiV1CommunityByIdSettingsOptions({ path: { id: communityId ?? "" } })
+  const settingsQuery = useQuery({
+    ...settingsOptions,
+    enabled: !aggregate && communityId !== null,
+  })
+  const community = settingsQuery.data
 
   const mutation = useMutation({
     ...patchApiV1CommunityByIdMutation(),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: options.queryKey })
+      void queryClient.invalidateQueries({ queryKey: settingsOptions.queryKey })
+      void queryClient.invalidateQueries({ queryKey: communityOptions.queryKey })
       toast.success("Settings saved")
     },
     onError: () => {
@@ -48,9 +56,9 @@ export function useCommunitySettings(name: string) {
 
   return {
     community,
-    communityId: community?.id ?? null,
-    isLoading: query.isLoading,
-    aggregate: name === "mod",
+    communityId,
+    isLoading: communityQuery.isLoading || settingsQuery.isLoading,
+    aggregate,
     save,
     saving: mutation.isPending,
   }
