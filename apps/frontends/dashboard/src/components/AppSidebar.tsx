@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Link } from "@tanstack/react-router"
+import { Link, useRouterState } from "@tanstack/react-router"
 import { cn } from "@ui/base/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/base/ui/collapsible"
 import {
@@ -109,11 +109,13 @@ function CommunityLink({
   community: { id: string; name: string; displayName: string | null; iconImageKey: string | null }
   withStar?: { isFavorite: boolean }
 }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
         render={<Link to="/r/$name" params={{ name: community.name }} />}
         tooltip={`r/${community.name}`}
+        isActive={pathname === `/r/${community.name}`}
         className={MENU_ROW_CLASS}
       >
         <CommunityIcon name={community.name} iconUrl={mediaUrl(community.iconImageKey)} size="sm" />
@@ -398,6 +400,7 @@ const MAIN_NAV = [
 ]
 
 export function AppSidebar() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
   const [wizardOpen, setWizardOpen] = useState(false)
   const { data: mine } = useQuery(getApiV1CommunityMemberMineOptions())
   const { data: moderated } = useQuery(getApiV1CommunityMemberModeratedOptions())
@@ -424,6 +427,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     render={<Link to={to} />}
                     tooltip={label}
+                    isActive={pathname === to}
                     className={MENU_ROW_CLASS}
                   >
                     <Icon />
