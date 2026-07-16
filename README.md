@@ -1,107 +1,55 @@
-# Next.js SPA Split
+# Reddit Clone
 
-Example at https://nextjs-spa-split.andrewcwang.com
+The purpose of this Reddit clone is to democratize creating online forums for certain niches, customizing via forking for your particular community's needs, and easing the deployment of forums from idea/necessity to production. The point is not to start a competitor of Reddit; r/RedditAlternatives, the Fediverse, etc. online forums trying to compete are usually created by techies looking to replace Reddit by offering better features (e.g. UI/UX, data sharing/data ownership), when the real driver of forum growth is the community and how you curate it.
 
-Tutorial for mixing Next.js with SPAs at different endpoints, namely the SPA being
-utilized for authenticated dashboard and Next.js for unauthenticated.
+Reddit at its core is a forum designed for discussing within niche communities. Online forums have been around for a long time, but the most populated online forums are coalescing around Reddit's form of threaded comments such as YouTube; as more adopt this style of discussion, it's become the dominant format for online discussions when Reddit's UI/UX has essentially become the native feel.
 
-This is primarily for B2C applications that need SEO. Specifically, the user shouldn't
-have to go to `app.domain.com` and the preferred outcome is that the user is always
-on `domain.com`. An example of this is Facebook.com. They have different dashboards
-all under `facebook.com` with different base route segments.
+With the dawn of LLMs, it's become even easier to copy this now dominant forum format. Reddit's most basic functionality is included in this clone. What I advocate readers is to fork this clone and edit it using coding agents like Claude Code to customize to how your want to curate your community.
 
-## Usage
+## What Edits Should I Make to Curate My Community
 
-This project template includes an admin and dashboard served via SPA only to authenticated
-(and authorized for admin) users. React Vite hot-reloading also works.
+To begin, think of a community you want to target. In my case, I want to start "To Your Credit", a community dedicated to politikers and policy nerds who want to discuss seriously, can control their emotions, and see the other side.
 
-First, copy the `.template.env` file to `.env` and fill out the rest of the variables.
-Second, run the following:
+The reason I chose this is that Reddit is dominated by very progressive individuals who abuse downvoting on Reddit to hide opposing opinions. This causes echo chambers via the upvoting system and dismisses and silences differing opinions. In particular, Reddit voting used to be about how informative a comment was. However, the expansion of Reddit to the most popular online format rendered it more for emotions rather than a curated community with core ideals of how the site should operate.
 
-```shell
-pnpm install
-docker compose up -d
-pnpm run -C apps/dbmigrator migrate:up
-lefthook install
-pnpm run dev
-```
+Now that I've stated my community and enumerated the problems, I want to make my own community. First, I would make a fork of this code base. Secondly, I need to add features that addresses the problems of the community at heart.
 
-Production configuration is also set up via OpenTofu (see the [tofu](./tofu) directory).
-It simply sets up IAM permission to deploy the SPA assets to an S3 bucket, and the smart
-deployment happens in GitHub Actions with IAM + GitHub Actions OIDC.
+Problem 1: Unserious, emotional, or people who are unwilling to listen to other perspectives shouldn't be allowed to participate. The solution: an invite-only system where we verify a user's previous public commentary and certify whether their commenting history attests to their personality and thus a good member of the community. This is a straight steal from Raya, but some notoriously elite discussion circles are like this (e.g. Thiel's political circles, many political circles have invite-only group chats).
 
-To set up, you'll need IAM credentials that can create the above resources.
+Problem 2: Downvoting dismisses viewpoints. Solution: in my fork, I would ask my coding agent to replace the upvote with a "coin" as if one we're giving credit to another person. It could be for making a good comment, or giving credit if it changes your mind. I would replace downvoting with a list of "reasons" for a user to choose from including a comment being poorly written, unsubstantiated such as using poor sources, etc. In my case, Reddit's algorithm still works very well in this system because our upvote/downvote system simply reflects Reddit's original upvote/downvote intent and algorithms.
 
-```shell
-brew bundle
-tofu plan
-tofu apply
-```
+# Deployment
 
-For the NextJS app, we're simply going to use Vercel.
+The assumption of this codebase is that you're somewhat technical and willing to use a coding agent. Though there's OpenTofu, I personally would deploy with Vercel, Supabase for a free Postgres instance, Neon Redis for our BullMQ worker, and AWS ECS instance for our BullMQ worker itself (BullMQ is an asynchronous background worker service, so it'll run tasks outside a request lifecycle). For search, though we use Elasticsearch during development, for your fork, unless you have a gaming server/spare computer with 8GB of RAM, you should replace the search service with Postgres FTS. If you do have a spare computer to host everything, I recommend deploying everything to there using Tailscale/Zrok in GitHub Actions.
 
-## Context
+If you have questions on how to deploy, I can give some recommendations based on your budget and whether you have a spare computer. If you have questions on a community reaching scaling issues, feel free to open an issue and Andrew is happy to consult (most likely for free; I'll just send a document of what you should do). Please use the discussion tab.
 
-Next.js and Vercel have been very useful in deploying applications quickly. Next.js is
-useful for SEO, but the client/server component dichotomy creates a sprawling codebase
-of client components with tons of server component `page.tsx` files. It also makes
-navigation a bit complicated, increases latency be loading new pages over and over
-(even if it is cached), and possibly leak security.
+The codebase is based on https://github.com/Andrew-Chen-Wang/nextjs-spa-split if you want to read more on how the code base is structured and how to deploy the frontend SPAs (and why your deploy-spas.yml is likely failing).
 
-A React SPA is totally fine behind authenticated, non-SEO optimized pages. A single
-bundle loaded on to the user's computer makes for a faster experience where the only
-data needed to be loaded are API endpoints and the main JS bundle comes from a CDN
-rather than a server.
+# Contributing
 
-To make sure the user is authenticated on initial load and to continue using
-session cookies, the initial loading of the page still goes through Next.js.
-After that, we redirect the user to the proper endpoint: either an unprotected
-page for login or the SPA.
+This repository serves to mirror Reddit functionality. Today, it looks a lot like ShadCN, and I'm happy to let someone contribute to make the UI more aligned with Reddit's. I'm not looking for better UI/UX or additional features. The point is to make a standard online forum format, and the most well-known (in the U.S.) is Reddit's.
 
-## Alternatives
+There are several UI elements that do not reflect Reddit's perfectly (margin, location, etc.), and there may be some features that simply don't exist in the clone. If so, please make a PR. In the PR, the only requirements I have is that you attach a video of your change, before and after, or an image, before and after. Feel free to use a coding agent, but please share the prompt and which one you used.
 
-### Hosting SPA on subdomain
+Here is a list of core functionality designated as not planned, so please don't implement it:
 
-Many B2B SaaS sites alternatively host their dashboard SPA on `app.domain.com`.
-This isn't very user-friendly, but many B2B applications are totally fine with it.
-It also makes the split much easier to handle: simply host the SPA in a bucket and
-update the built HTML file. Then whenever the user first enters the dashboard,
-the HTML/SPA will load, check if the user is authenticated, and, if not, redirect
-the user to a login page (which is still in the SPA) and perform authentication.
-That authentication flow still requires the user to refresh the SPA since an http-only
-cookie must be set (but the cookie can be set on any subdomain, so many applications
-simply have their API backend set the cookie with the Domain flag set to the top domain).
+- Awards (all forms)
+- Polls post type
+- Contest mode
+- AutoModerator / Automations / Crowd Control / Safety Filters
+- News tab (sidebar is Home/Popular/Explore only)
+- Reddit Pro, AMA post type, games/dev-platform, "Ask" AI search button
+- Discontinued Reddit features: coins/gold economy, live video (RPAN), Reddit Talk
+- Vote fuzzing (display-only anti-gaming; skip)
+- Other proposed-but-not-chosen extras (approved as excluded by Andrew):
+  - Keyword alerts (notification type for chosen keywords in followed communities)
+  - Achievements/badges (user profile trophies, incl. commenter achievement chips like "Top 1% Commenter" next to usernames in comments)
+  - Community status emoji (emoji next to community name in header)
+  - Community achievements (community-level member badges; General Settings toggle)
+  - Chat channels (per-community public chat rooms + Chat Operator mod permission; DMs/group chats remain IN scope)
+  - Q&A comment sort's OP-reply weighting (Best/Top/New/Old/Controversial comment sorts remain IN scope)
 
-### Vercel Microfrontend and Multi Zones
+# License
 
-See their docs https://vercel.com/docs/microfrontends and
-https://nextjs.org/docs/app/guides/multi-zones
-
-Microfrontends and multi zones are useful if you plan on sticking around with Vercel.
-Multi zones require you use Next.js. Microfrontends can route to an external application
-(i.e. our SPAs). There are two scenarios where microfrontends cannot handle your needs:
-
-1. If you have a route for a page that is hosted for SEO and for authenticated users,
-   but the content is different (e.g. for authenticated users you need to show a sidebar),
-   again assuming the pathname is the same and you tried using a microfrontend, your SPA
-   would need to redirect back to Next.js
-2. If you want to authenticate the user initially, you'll want to go through the main
-   Next.js application. You can theoretically re-authenticate an already authenticated
-   user by doing a quick `/login` check against your API server by setting the Domain flag
-   explicitly on your auth session cookie. But you'll have a weird redirect experience
-   where the user is first shown an inkling of the SPA and, if the user has been logged out
-   for too long, redirected back to the Next.js login page.
-
-Anyways, the way we're doing this is exactly like Vercel. Vercel's microfrontends simply
-uses `@vercel/microfrontends` where they modify your middleware. They handle the routing
-at the "network" level, but really it's just plain logic code that they handle for you but
-can be easily handled yourself for the same latency. Since Vercel’s microfrontend routing happens
-at their network infrastructure level, the external application needs to be represented as a Vercel
-project so it can be included in your microfrontends.json configuration.
-
-## Repo Structure
-
-Stack: Next.js, ShadCN, Kysely, Vitest, Tailwind, HonoJS, PostgreSQL
-
-Think of `lib` as a place to put custom, shared code. Think of `packages` as
-a place to put shared clients. Think of `apps` as actually deployed applications.
+The license for the code in the repository is Apache 2.0. You can find a copy of the license in [LICENSE](./LICENSE).
