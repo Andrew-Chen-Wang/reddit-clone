@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
+import { LegalFooter } from "@ui/seo-shared/LegalFooter"
 import { PostFeed, type FeedPost } from "@frontends/dashboard/components/PostFeed"
 import { RecentPostsRail } from "@frontends/dashboard/components/RecentPostsRail"
 import { SuggestedCommunitiesRail } from "@frontends/dashboard/components/SuggestedCommunitiesRail"
@@ -35,9 +36,10 @@ function DashboardHome() {
           emptyDescription="Join some communities to see posts here."
         />
       </div>
-      <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-80">
+      <aside className="flex w-full shrink-0 flex-col gap-4 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-4.5rem)] lg:w-80 lg:self-start lg:overflow-y-auto">
         <SuggestedCommunitiesRail />
         <RecentPostsRail />
+        <LegalFooter />
       </aside>
     </div>
   )

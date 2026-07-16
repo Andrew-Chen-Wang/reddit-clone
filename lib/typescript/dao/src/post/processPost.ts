@@ -18,6 +18,17 @@ export interface ProcessedPostAuthor {
   username: string
   displayName: string | null
   avatarImageKey: string | null
+  isAdmin: boolean
+}
+
+export interface ProcessedCrosspostOf {
+  id: string
+  title: string
+  score: number
+  commentCount: number
+  linkImageUrl: string | null
+  community: { id: string; name: string } | null
+  author: { id: string; username: string; displayName: string | null } | null
 }
 
 export interface ProcessedPostCommunity {
@@ -46,6 +57,7 @@ export interface ProcessedPost {
   id: string
   type: string
   title: string
+  slug: string | null
   bodyMd: string | null
   linkUrl: string | null
   linkImageUrl: string | null
@@ -58,7 +70,7 @@ export interface ProcessedPost {
   downs: number
   score: number
   commentCount: number
-  viewCount: number
+  viewCount: number | null
   shareCount: number
   createdAt: string
   editedAt: string | null
@@ -68,6 +80,7 @@ export interface ProcessedPost {
   community: (ProcessedPostCommunity & { isMember: boolean }) | null
   flair: ProcessedPostFlair | null
   media: ProcessedPostMedia[]
+  crosspostOf: ProcessedCrosspostOf | null
 }
 
 function unique(values: (string | null)[]): string[] {
@@ -99,7 +112,7 @@ export async function processPosts(
     authorIds.length
       ? db
           .selectFrom("user")
-          .select(["id", "username", "displayName", "avatarImageKey"])
+          .select(["id", "username", "displayName", "avatarImageKey", "isAdmin"])
           .where("id", "in", authorIds)
           .execute()
       : Promise.resolve([] as ProcessedPostAuthor[]),
@@ -147,14 +160,21 @@ export async function processPosts(
     mediaByPost.set(m.postId, list)
   }
 
+  const crosspostById = await hydrateCrossposts(db, unique(rows.map((r) => r.crosspostOfPostId)))
+
   return rows.map((r) => {
     const author = authorById.get(r.authorUserId) ?? null
     const community = r.communityId ? (communityById.get(r.communityId) ?? null) : null
     const flair = r.flairTemplateId ? (flairById.get(r.flairTemplateId) ?? null) : null
+    const isAuthor = viewerId !== null && r.authorUserId === viewerId
+    const crosspostOf = r.crosspostOfPostId
+      ? (crosspostById.get(r.crosspostOfPostId) ?? null)
+      : null
     return {
       id: r.id,
       type: r.type,
       title: r.title,
+      slug: r.slug,
       bodyMd: r.bodyMd,
       linkUrl: r.linkUrl,
       linkImageUrl: r.linkImageKey ? mediaPublicUrl(r.linkImageKey) : null,
@@ -167,20 +187,22 @@ export async function processPosts(
       downs: r.downs,
       score: r.score,
       commentCount: r.commentCount,
-      viewCount: Number(r.viewCount),
+      viewCount: isAuthor ? Number(r.viewCount) : null,
       shareCount: r.shareCount,
       createdAt: r.createdAt.toISOString(),
       editedAt: r.editedAt ? r.editedAt.toISOString() : null,
       userVote: voteByPost.get(r.id) ?? 0,
-      isAuthor: viewerId !== null && r.authorUserId === viewerId,
+      isAuthor,
       author: author
         ? {
             id: author.id,
             username: author.username,
             displayName: author.displayName,
             avatarImageKey: author.avatarImageKey,
+            isAdmin: author.isAdmin,
           }
         : null,
+      crosspostOf,
       community: community
         ? {
             id: community.id,
@@ -197,4 +219,54 @@ export async function processPosts(
       media: mediaByPost.get(r.id) ?? [],
     }
   })
+}
+
+async function hydrateCrossposts(
+  db: Kysely<DB>,
+  sourceIds: string[],
+): Promise<Map<string, ProcessedCrosspostOf>> {
+  const result = new Map<string, ProcessedCrosspostOf>()
+  if (sourceIds.length === 0) return result
+
+  const sources = await db
+    .selectFrom("post")
+    .select(["id", "title", "score", "commentCount", "linkImageKey", "communityId", "authorUserId"])
+    .where("id", "in", sourceIds)
+    .execute()
+  if (sources.length === 0) return result
+
+  const communityIds = unique(sources.map((s) => s.communityId))
+  const authorIds = unique(sources.map((s) => s.authorUserId))
+
+  const [communityRows, authorRows] = await Promise.all([
+    communityIds.length
+      ? db.selectFrom("community").select(["id", "name"]).where("id", "in", communityIds).execute()
+      : Promise.resolve([] as { id: string; name: string }[]),
+    authorIds.length
+      ? db
+          .selectFrom("user")
+          .select(["id", "username", "displayName"])
+          .where("id", "in", authorIds)
+          .execute()
+      : Promise.resolve([] as { id: string; username: string; displayName: string | null }[]),
+  ])
+  const communityById = new Map(communityRows.map((c) => [c.id, c]))
+  const authorById = new Map(authorRows.map((a) => [a.id, a]))
+
+  for (const s of sources) {
+    const community = s.communityId ? (communityById.get(s.communityId) ?? null) : null
+    const author = authorById.get(s.authorUserId) ?? null
+    result.set(s.id, {
+      id: s.id,
+      title: s.title,
+      score: s.score,
+      commentCount: s.commentCount,
+      linkImageUrl: s.linkImageKey ? mediaPublicUrl(s.linkImageKey) : null,
+      community: community ? { id: community.id, name: community.name } : null,
+      author: author
+        ? { id: author.id, username: author.username, displayName: author.displayName }
+        : null,
+    })
+  }
+  return result
 }

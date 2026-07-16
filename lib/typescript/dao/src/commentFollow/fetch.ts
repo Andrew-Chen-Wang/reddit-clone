@@ -12,5 +12,14 @@ export function fetchCommentFollow(db: Kysely<DB>) {
     return row !== undefined
   }
 
-  return { isFollowing }
+  async function listFollowerIds(commentId: string): Promise<string[]> {
+    const rows = await db
+      .selectFrom("commentFollow")
+      .select("userId")
+      .where("commentId", "=", commentId)
+      .execute()
+    return rows.map((r) => r.userId)
+  }
+
+  return { isFollowing, listFollowerIds }
 }

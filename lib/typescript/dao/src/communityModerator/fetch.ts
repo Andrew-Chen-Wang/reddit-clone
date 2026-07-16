@@ -52,6 +52,21 @@ export function fetchCommunityModerator(db: Kysely<DB>) {
       .execute()
   }
 
+  async function getModeratingPublic(userId: string) {
+    return await db
+      .selectFrom("communityModerator")
+      .innerJoin("community", "community.id", "communityModerator.communityId")
+      .where("communityModerator.userId", "=", userId)
+      .select([
+        "community.id as id",
+        "community.name as name",
+        "community.iconImageKey as iconImageKey",
+        "community.memberCount as memberCount",
+      ])
+      .orderBy((eb) => eb.fn("lower", ["community.name"]), "asc")
+      .execute()
+  }
+
   async function getModeratedCommunityIds(
     userId: string,
     permColumn: "permPostsComments" | "permUsers" | "permConfig" | "permFlair" | "permWiki",
@@ -78,6 +93,7 @@ export function fetchCommunityModerator(db: Kysely<DB>) {
     getOne,
     getManyForCommunity,
     getManyForUser,
+    getModeratingPublic,
     getModeratedCommunityIds,
     countForCommunity,
   }

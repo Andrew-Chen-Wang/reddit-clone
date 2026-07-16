@@ -79,8 +79,8 @@ export function PostCommentSearch({ postId, communityName }: PostCommentSearchPr
               {results.map(({ comment }) => (
                 <Link
                   key={comment.id}
-                  to="/r/$name/comments/$postId"
-                  params={{ name: communityName, postId }}
+                  to="/r/$name/comments/$"
+                  params={{ name: communityName, _splat: postId }}
                   search={{ comment: comment.id }}
                   className="rounded-md border bg-card p-2 hover:border-muted-foreground/30"
                 >

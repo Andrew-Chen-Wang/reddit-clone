@@ -2,6 +2,7 @@ import { getCommunityAuthz } from "@lib/dao/authz/community/get"
 import { crudComment } from "@lib/dao/comment/crud"
 import { CHILD_PAGE_SIZE, fetchComment, ROOT_PAGE_SIZE } from "@lib/dao/comment/fetch"
 import { processComments } from "@lib/dao/comment/processComment"
+import { crudCommentVote } from "@lib/dao/commentVote/crud"
 import { fetchCommunity } from "@lib/dao/community/fetch"
 import { emitCommentReplyAndMentions } from "@lib/dao/notification/emit-helpers"
 import { fetchPost } from "@lib/dao/post/fetch"
@@ -202,6 +203,8 @@ const app = new Hono()
         }
         return throwBadRequest(c, "Comment is nested too deeply")
       }
+
+      await crudCommentVote(db).setVote(result.comment.id, user.id, 1)
 
       await enqueueEsSyncComment(result.comment.id)
 

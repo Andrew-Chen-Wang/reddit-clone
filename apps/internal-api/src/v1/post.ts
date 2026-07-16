@@ -6,6 +6,7 @@ import { crudPost } from "@lib/dao/post/crud"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { processPosts } from "@lib/dao/post/processPost"
 import { crudPostMedia } from "@lib/dao/postMedia/crud"
+import { crudPostVote } from "@lib/dao/postVote/crud"
 import { fetchPostFlairTemplate } from "@lib/dao/postFlairTemplate/fetch"
 import { crudPostView } from "@lib/dao/postView/crud"
 import { db } from "@template-nextjs/db"
@@ -342,6 +343,8 @@ const app = new Hono()
         flairTemplateId: body.communityId ? (body.flairTemplateId ?? null) : null,
         crosspostOfPostId: body.crosspostOfPostId ?? null,
       })
+
+      await crudPostVote(db).setVote(created.id, user.id, 1)
 
       if (holdForReview) await crudPost(db).hold(created.id)
 

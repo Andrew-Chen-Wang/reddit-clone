@@ -44,11 +44,16 @@ export type PostRowPost = {
   score: number
   commentCount: number
   /** Total post views. Optional so callers without the field (e.g. mod queue) still fit. */
-  viewCount?: number
+  viewCount?: number | null
   createdAt: string | Date
   editedAt: string | Date | null
   userVote: number
-  author: { username: string; displayName: string | null } | null
+  /**
+   * `isAdmin` marks a site admin so the header renders an ADMIN badge next to the
+   * username (like the OP badge). Optional until the post serializer carries it.
+   * TODO(m17-backend): add `author.isAdmin` to the OpenAPI post serializer.
+   */
+  author: { username: string; displayName: string | null; isAdmin?: boolean } | null
   community: { name: string; displayName: string | null; iconImageKey: string | null } | null
   flair: { text: string; bgColor: string | null; textColor: string | null } | null
   media?: MediaGalleryItem[]
@@ -146,6 +151,8 @@ export type PostRowProps = {
   menuSlot?: ReactNode
   /** Right-aligned Join control in the header (shown on multi-community feeds). */
   joinSlot?: ReactNode
+  /** Links the author-only "See More Insights" label to the post's insights page. */
+  insightsHref?: string
   /**
    * Optionally enrich the r/community link with a hover card. Receives the plain
    * link element and the community name and returns the wrapped node. Omit on the
@@ -162,6 +169,46 @@ function domainFromUrl(url: string): string {
   } catch {
     return url
   }
+}
+
+/** Small red "ADMIN" chip shown after the username when the author is a site admin. */
+export function AdminBadge() {
+  return (
+    <span className="rounded-sm bg-red-600 px-1 text-[10px] font-bold uppercase leading-tight tracking-wide text-white dark:bg-red-500">
+      Admin
+    </span>
+  )
+}
+
+/**
+ * Reddit-style author-only insights row: "N views" on the left, "See More
+ * Insights" on the right. Rendered on its own line below the action row and only
+ * for the author (the backend sends `viewCount` to the author only, so callers
+ * gate on `viewCount != null`). When `insightsHref` is supplied the right label
+ * links to the post's insights page; otherwise it renders as a plain label.
+ */
+export function AuthorInsightsRow({
+  viewCount,
+  insightsHref,
+}: {
+  viewCount: number
+  insightsHref?: string
+}) {
+  return (
+    <div className="relative z-10 mt-1 flex items-center justify-between">
+      <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Eye className="size-4" />
+        {formatCompactNumber(viewCount)} views
+      </span>
+      {insightsHref ? (
+        <SeoLink href={insightsHref} className="text-xs font-semibold text-primary hover:underline">
+          See More Insights
+        </SeoLink>
+      ) : (
+        <span className="text-xs font-semibold text-muted-foreground">See More Insights</span>
+      )}
+    </div>
+  )
 }
 
 function flairStyle(flair: NonNullable<PostRowPost["flair"]>): CSSProperties | undefined {
@@ -259,20 +306,12 @@ function MetaLine({
           ) : (
             <span>u/{author.username}</span>
           )}
+          {author.isAdmin ? <AdminBadge /> : null}
           <span aria-hidden>·</span>
         </>
       ) : null}
       <RelativeTime date={post.createdAt} />
       {post.editedAt ? <span className="italic">(edited)</span> : null}
-      {post.viewCount != null ? (
-        <>
-          <span aria-hidden>·</span>
-          <span className="inline-flex items-center gap-1">
-            <Eye className="size-3.5" />
-            {formatCompactNumber(post.viewCount)} views
-          </span>
-        </>
-      ) : null}
     </div>
   )
 }
@@ -345,6 +384,7 @@ export function PostRow({
   showCommunity = true,
   menuSlot,
   joinSlot,
+  insightsHref,
   wrapCommunityLink,
   wrapAuthorLink,
 }: PostRowProps) {
@@ -402,6 +442,10 @@ export function PostRow({
             />
             {menuSlot ? <div className="relative z-10">{menuSlot}</div> : null}
           </div>
+
+          {post.viewCount != null ? (
+            <AuthorInsightsRow viewCount={post.viewCount} insightsHref={insightsHref} />
+          ) : null}
         </div>
       </article>
     )
@@ -499,6 +543,8 @@ export function PostRow({
         onShare={onShare}
         shareSlot={shareSlot}
       />
+
+      {post.viewCount != null ? <AuthorInsightsRow viewCount={post.viewCount} /> : null}
     </article>
   )
 }

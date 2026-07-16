@@ -2,14 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { Button, buttonVariants } from "@ui/base/ui/button"
 import { cn } from "@ui/base/lib/utils"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@ui/base/ui/dropdown-menu"
 import { CommunityHeader } from "@ui/seo-shared/community/CommunityHeader"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
+import { LegalFooter } from "@ui/seo-shared/LegalFooter"
 import { CommunityPostTypesCard } from "@ui/seo-shared/community/CommunityPostTypesCard"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@ui/base/ui/dialog"
 import { Markdown } from "@ui/seo-shared/Markdown"
@@ -26,7 +21,7 @@ import {
   postApiV1CommunityMemberByCommunityIdJoinMutation,
   postApiV1CommunityMemberByCommunityIdLeaveMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { Bell, Check, ImagePlus, Plus, ShieldHalf, Star } from "lucide-react"
+import { Bell, ImagePlus, Plus, ShieldHalf, Star } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -39,11 +34,8 @@ export const Route = createFileRoute("/r/$name")({
 
 type NotificationLevel = "off" | "low" | "frequent"
 
-const NOTIFICATION_LABELS: Record<NotificationLevel, string> = {
-  off: "Off",
-  low: "Low",
-  frequent: "Frequent",
-}
+/** The level applied when a member turns community notifications on. */
+const NOTIFY_ON_LEVEL: NotificationLevel = "frequent"
 
 const COMMUNITY_SORTS = [
   { value: "hot", label: "Hot" },
@@ -133,8 +125,13 @@ function CommunityPage() {
     })
   }
 
-  function setNotificationLevel(level: NotificationLevel) {
-    membershipMutation.mutate({ path: { communityId }, body: { notificationLevel: level } })
+  const notificationsOn = viewer.notificationLevel !== "off"
+
+  function toggleNotifications() {
+    membershipMutation.mutate({
+      path: { communityId },
+      body: { notificationLevel: notificationsOn ? "off" : NOTIFY_ON_LEVEL },
+    })
   }
 
   const joinSlot = viewer.isMember ? (
@@ -167,31 +164,16 @@ function CommunityPage() {
   )
 
   const bellSlot = viewer.isMember ? (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-label="Notification settings"
-        className={cn(buttonVariants({ variant: "outline", size: "icon-sm" }))}
-      >
-        <Bell className="size-4" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {(Object.keys(NOTIFICATION_LABELS) as NotificationLevel[]).map((level) => (
-          <DropdownMenuItem
-            key={level}
-            onClick={() => {
-              setNotificationLevel(level)
-            }}
-          >
-            {viewer.notificationLevel === level ? (
-              <Check className="size-4" />
-            ) : (
-              <span className="size-4" />
-            )}
-            {NOTIFICATION_LABELS[level]}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      variant="outline"
+      size="icon-sm"
+      aria-label={notificationsOn ? "Turn off notifications" : "Turn on notifications"}
+      aria-pressed={notificationsOn}
+      disabled={pending}
+      onClick={toggleNotifications}
+    >
+      <Bell className={cn("size-4", notificationsOn && "fill-current")} />
+    </Button>
   ) : null
 
   const createPostSlot = (
@@ -284,7 +266,7 @@ function CommunityPage() {
           />
         </div>
 
-        <aside className="w-full shrink-0 lg:w-80">
+        <aside className="flex w-full shrink-0 flex-col gap-4 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-4.5rem)] lg:w-80 lg:self-start lg:overflow-y-auto">
           <CommunityRightRail
             name={community.name}
             displayName={community.displayName}
@@ -331,6 +313,7 @@ function CommunityPage() {
               />
             }
           />
+          <LegalFooter />
         </aside>
       </div>
 

@@ -397,6 +397,7 @@ export interface Post {
   removedByUserId: string | null
   score: Generated<number>
   shareCount: Generated<number>
+  slug: string | null
   stickyPosition: number | null
   title: string
   type: string
@@ -619,6 +620,16 @@ export interface UserSettings {
   userId: string
 }
 
+export interface UserSocialLink {
+  createdAt: Generated<Timestamp>
+  id: string
+  label: string | null
+  platform: string
+  position: Generated<number>
+  url: string
+  userId: string
+}
+
 export interface WikiPage {
   communityId: string
   createdAt: Generated<Timestamp>
@@ -692,6 +703,7 @@ export interface DB {
   userMutedCommunity: UserMutedCommunity
   userNotificationPreference: UserNotificationPreference
   userSettings: UserSettings
+  userSocialLink: UserSocialLink
   wikiPage: WikiPage
   wikiRevision: WikiRevision
 }

@@ -40,6 +40,7 @@ import {
   deleteApiV1UserBlockByUsername,
   deleteApiV1UserFollowByUsername,
   deleteApiV1UserMeDelete,
+  deleteApiV1UserMeSocialLinksById,
   getApiV1AuthMe,
   getApiV1Chat,
   getApiV1ChatByConversationIdMessages,
@@ -98,7 +99,9 @@ import {
   getApiV1UserBlockMine,
   getApiV1UserByUsernameByUsername,
   getApiV1UserByUsernameByUsernameComments,
+  getApiV1UserByUsernameByUsernameModerating,
   getApiV1UserByUsernameByUsernameOverview,
+  getApiV1UserByUsernameByUsernameSocialLinks,
   getApiV1UserFollowMine,
   getApiV1UserMe,
   getApiV1UserMeDownvoted,
@@ -188,6 +191,7 @@ import {
   postApiV1ReportCommentByCommentId,
   postApiV1ReportPostByPostId,
   postApiV1ScheduledPost,
+  postApiV1UserMeSocialLinks,
   postApiV1WikiByCommunityName,
   postApiV1WikiByCommunityNameBySlugRevert,
   putApiV1CommentActionFollowByCommentId,
@@ -293,6 +297,9 @@ import type {
   DeleteApiV1UserMeDeleteData,
   DeleteApiV1UserMeDeleteError,
   DeleteApiV1UserMeDeleteResponse,
+  DeleteApiV1UserMeSocialLinksByIdData,
+  DeleteApiV1UserMeSocialLinksByIdError,
+  DeleteApiV1UserMeSocialLinksByIdResponse,
   GetApiV1AuthMeData,
   GetApiV1AuthMeResponse,
   GetApiV1ChatByConversationIdMessagesData,
@@ -438,10 +445,16 @@ import type {
   GetApiV1UserByUsernameByUsernameCommentsResponse,
   GetApiV1UserByUsernameByUsernameData,
   GetApiV1UserByUsernameByUsernameError,
+  GetApiV1UserByUsernameByUsernameModeratingData,
+  GetApiV1UserByUsernameByUsernameModeratingError,
+  GetApiV1UserByUsernameByUsernameModeratingResponse,
   GetApiV1UserByUsernameByUsernameOverviewData,
   GetApiV1UserByUsernameByUsernameOverviewError,
   GetApiV1UserByUsernameByUsernameOverviewResponse,
   GetApiV1UserByUsernameByUsernameResponse,
+  GetApiV1UserByUsernameByUsernameSocialLinksData,
+  GetApiV1UserByUsernameByUsernameSocialLinksError,
+  GetApiV1UserByUsernameByUsernameSocialLinksResponse,
   GetApiV1UserFollowMineData,
   GetApiV1UserFollowMineResponse,
   GetApiV1UserMeData,
@@ -696,6 +709,9 @@ import type {
   PostApiV1ScheduledPostData,
   PostApiV1ScheduledPostError,
   PostApiV1ScheduledPostResponse,
+  PostApiV1UserMeSocialLinksData,
+  PostApiV1UserMeSocialLinksError,
+  PostApiV1UserMeSocialLinksResponse,
   PostApiV1WikiByCommunityNameBySlugRevertData,
   PostApiV1WikiByCommunityNameBySlugRevertError,
   PostApiV1WikiByCommunityNameBySlugRevertResponse,
@@ -1065,6 +1081,62 @@ export const getApiV1UserByUsernameByUsernameOverviewInfiniteOptions = (
   return opts as Omit<typeof opts, "initialData">
 }
 
+export const getApiV1UserByUsernameByUsernameSocialLinksQueryKey = (
+  options: Options<GetApiV1UserByUsernameByUsernameSocialLinksData>,
+) => createQueryKey("getApiV1UserByUsernameByUsernameSocialLinks", options)
+
+/**
+ * Public social links for a username
+ */
+export const getApiV1UserByUsernameByUsernameSocialLinksOptions = (
+  options: Options<GetApiV1UserByUsernameByUsernameSocialLinksData>,
+) =>
+  queryOptions<
+    GetApiV1UserByUsernameByUsernameSocialLinksResponse,
+    GetApiV1UserByUsernameByUsernameSocialLinksError,
+    GetApiV1UserByUsernameByUsernameSocialLinksResponse,
+    ReturnType<typeof getApiV1UserByUsernameByUsernameSocialLinksQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserByUsernameByUsernameSocialLinks({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserByUsernameByUsernameSocialLinksQueryKey(options),
+  })
+
+export const getApiV1UserByUsernameByUsernameModeratingQueryKey = (
+  options: Options<GetApiV1UserByUsernameByUsernameModeratingData>,
+) => createQueryKey("getApiV1UserByUsernameByUsernameModerating", options)
+
+/**
+ * Communities a user moderates
+ */
+export const getApiV1UserByUsernameByUsernameModeratingOptions = (
+  options: Options<GetApiV1UserByUsernameByUsernameModeratingData>,
+) =>
+  queryOptions<
+    GetApiV1UserByUsernameByUsernameModeratingResponse,
+    GetApiV1UserByUsernameByUsernameModeratingError,
+    GetApiV1UserByUsernameByUsernameModeratingResponse,
+    ReturnType<typeof getApiV1UserByUsernameByUsernameModeratingQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1UserByUsernameByUsernameModerating({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1UserByUsernameByUsernameModeratingQueryKey(options),
+  })
+
 export const getApiV1UserMeSavedQueryKey = (options?: Options<GetApiV1UserMeSavedData>) =>
   createQueryKey("getApiV1UserMeSaved", options)
 
@@ -1357,6 +1429,60 @@ export const getApiV1UserMeDownvotedInfiniteOptions = (
     },
   )
   return opts as Omit<typeof opts, "initialData">
+}
+
+/**
+ * Add a social link to the current user's profile
+ */
+export const postApiV1UserMeSocialLinksMutation = (
+  options?: Partial<Options<PostApiV1UserMeSocialLinksData>>,
+): UseMutationOptions<
+  PostApiV1UserMeSocialLinksResponse,
+  PostApiV1UserMeSocialLinksError,
+  Options<PostApiV1UserMeSocialLinksData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1UserMeSocialLinksResponse,
+    PostApiV1UserMeSocialLinksError,
+    Options<PostApiV1UserMeSocialLinksData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1UserMeSocialLinks({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Remove a social link from the current user's profile
+ */
+export const deleteApiV1UserMeSocialLinksByIdMutation = (
+  options?: Partial<Options<DeleteApiV1UserMeSocialLinksByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1UserMeSocialLinksByIdResponse,
+  DeleteApiV1UserMeSocialLinksByIdError,
+  Options<DeleteApiV1UserMeSocialLinksByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1UserMeSocialLinksByIdResponse,
+    DeleteApiV1UserMeSocialLinksByIdError,
+    Options<DeleteApiV1UserMeSocialLinksByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1UserMeSocialLinksById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
 }
 
 export const getApiV1UserMeQueryKey = (options?: Options<GetApiV1UserMeData>) =>

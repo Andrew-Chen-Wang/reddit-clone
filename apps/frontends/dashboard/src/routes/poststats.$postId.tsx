@@ -78,8 +78,8 @@ function PostStatsPage() {
       <div className="flex flex-col gap-1">
         {communityName ? (
           <Link
-            to="/r/$name/comments/$postId"
-            params={{ name: communityName, postId }}
+            to="/r/$name/comments/$"
+            params={{ name: communityName, _splat: postId }}
             className="inline-flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />

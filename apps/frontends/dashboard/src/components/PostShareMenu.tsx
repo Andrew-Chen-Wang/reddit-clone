@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@ui/base/ui/button"
 import {
   Dialog,
@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@ui/base/ui/textarea"
 import { cn } from "@ui/base/lib/utils"
 import { getApiV1CommunityMemberMineOptions } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { postApiV1PostActionShareByPostId } from "@lib/api-client/generated/sdk.gen"
+import { postApiV1Post, postApiV1PostActionShareByPostId } from "@lib/api-client/generated/sdk.gen"
 import { Code2, Copy, Repeat2, Share2 } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -38,6 +38,9 @@ export type PostShareMenuProps = {
   className?: string
 }
 
+const FOOTER_BUTTON =
+  "inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/70"
+
 function absoluteUrl(path: string): string {
   if (typeof window === "undefined") return path
   return `${window.location.origin}${path}`
@@ -52,10 +55,34 @@ function CrosspostDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const queryClient = useQueryClient()
   const { data } = useQuery({ ...getApiV1CommunityMemberMineOptions(), enabled: open })
   const communities = data?.data ?? []
   const [targetId, setTargetId] = useState<string>("")
   const [title, setTitle] = useState(post.title)
+
+  // The backend records the source via `crosspostOfPostId` on the normal create
+  // route; a crosspost is a titled `text` post that references the original.
+  const create = useMutation({
+    mutationFn: async () =>
+      postApiV1Post({
+        body: {
+          communityId: targetId,
+          type: "text",
+          title: title.trim(),
+          crosspostOfPostId: post.id,
+        },
+        throwOnError: true,
+      }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: getApiV1CommunityMemberMineOptions().queryKey,
+      })
+      toast.success("Crossposted")
+      onOpenChange(false)
+    },
+    onError: () => toast.error("Could not crosspost"),
+  })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -107,11 +134,15 @@ function CrosspostDialog({
           </div>
         </div>
 
-        <DialogFooter className="flex-col items-stretch gap-2 sm:flex-col sm:items-stretch">
-          <p className="text-xs text-muted-foreground">
-            Crossposting is coming soon — the backend does not yet accept a crosspost source.
-          </p>
-          <Button disabled>Crosspost</Button>
+        <DialogFooter>
+          <Button
+            disabled={!targetId || title.trim().length === 0 || create.isPending}
+            onClick={() => {
+              create.mutate()
+            }}
+          >
+            {create.isPending ? "Crossposting…" : "Crosspost"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -155,12 +186,40 @@ function EmbedDialog({
 }
 
 /**
- * Share dropdown for a post: copy permalink (records a share), crosspost to a joined
- * community, or copy an embed snippet. Replaces the plain share button on PostRow and
- * the post detail card via their `shareSlot`.
+ * Standalone Crosspost button (reddit's retweet/repeat icon) plus its dialog.
+ * Rendered next to the Share menu — crossposting is no longer buried inside Share.
+ */
+export function PostCrosspostButton({
+  post,
+  className,
+}: {
+  post: PostShareMenuPost
+  className?: string
+}) {
+  const [open, setOpen] = useState(false)
+  return (
+    <>
+      <button
+        type="button"
+        aria-label="Crosspost"
+        className={cn(FOOTER_BUTTON, className)}
+        onClick={() => {
+          setOpen(true)
+        }}
+      >
+        <Repeat2 className="size-4" />
+      </button>
+      <CrosspostDialog post={post} open={open} onOpenChange={setOpen} />
+    </>
+  )
+}
+
+/**
+ * Share dropdown for a post: copy permalink (records a share) or copy an embed
+ * snippet. Mirrors reddit's share menu; crosspost lives in its own button now.
+ * Replaces the plain share button on PostRow / the post detail card via `shareSlot`.
  */
 export function PostShareMenu({ post, permalink, className }: PostShareMenuProps) {
-  const [crosspostOpen, setCrosspostOpen] = useState(false)
   const [embedOpen, setEmbedOpen] = useState(false)
 
   function copyLink() {
@@ -172,14 +231,9 @@ export function PostShareMenu({ post, permalink, className }: PostShareMenuProps
   }
 
   return (
-    <>
+    <div className="flex items-center gap-1.5">
       <DropdownMenu>
-        <DropdownMenuTrigger
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/70",
-            className,
-          )}
-        >
+        <DropdownMenuTrigger className={cn(FOOTER_BUTTON, className)}>
           <Share2 className="size-4" />
           Share
         </DropdownMenuTrigger>
@@ -187,14 +241,6 @@ export function PostShareMenu({ post, permalink, className }: PostShareMenuProps
           <DropdownMenuItem onClick={copyLink}>
             <Copy className="size-4" />
             Copy link
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              setCrosspostOpen(true)
-            }}
-          >
-            <Repeat2 className="size-4" />
-            Crosspost
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -207,8 +253,9 @@ export function PostShareMenu({ post, permalink, className }: PostShareMenuProps
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <CrosspostDialog post={post} open={crosspostOpen} onOpenChange={setCrosspostOpen} />
+      <PostCrosspostButton post={post} />
+
       <EmbedDialog permalink={permalink} open={embedOpen} onOpenChange={setEmbedOpen} />
-    </>
+    </div>
   )
 }

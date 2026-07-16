@@ -5,6 +5,12 @@ export type CommentAuthor = {
   username: string
   displayName: string | null
   avatarImageKey: string | null
+  /**
+   * Marks a site admin so the comment header renders an ADMIN badge. Optional
+   * until the comment serializer carries it.
+   * TODO(m17-backend): add `author.isAdmin` to the comment serializer.
+   */
+  isAdmin?: boolean
 }
 
 /**
@@ -30,6 +36,13 @@ export type CommentNode = {
   editedAt: string | Date | null
   userVote: number
   isAuthor: boolean
+  /**
+   * Total views for this comment's post-author insights row. The backend sends
+   * it to the author only, so the "N views / See More Insights" row renders just
+   * when it is present.
+   * TODO(m17-backend): send author-only `viewCount` on the comment serializer.
+   */
+  viewCount?: number
   author: CommentAuthor | null
 }
 

@@ -2,6 +2,7 @@ import { AnonCommentSection } from "@website/components/AnonCommentSection"
 import { AnonPostDetail } from "@website/components/AnonPostDetail"
 import { getCurrentSession } from "@website/lib/auth"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
+import { LegalFooter } from "@ui/seo-shared/LegalFooter"
 import type { CommentSortValue } from "@ui/seo-shared/comment/types"
 import { fetchComment, ROOT_PAGE_SIZE } from "@lib/dao/comment/fetch"
 import { processComments } from "@lib/dao/comment/processComment"
@@ -128,7 +129,7 @@ export default async function PostDetailPage({
         />
       </div>
 
-      <aside className="w-full shrink-0 lg:w-80">
+      <aside className="flex w-full shrink-0 flex-col gap-4 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-4.5rem)] lg:w-80 lg:self-start lg:overflow-y-auto">
         <CommunityRightRail
           name={community.name}
           displayName={community.displayName}
@@ -143,6 +144,7 @@ export default async function PostDetailPage({
             avatarImageKey: m.avatarImageKey,
           }))}
         />
+        <LegalFooter />
       </aside>
     </div>
   )

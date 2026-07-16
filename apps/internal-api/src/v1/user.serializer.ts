@@ -43,3 +43,37 @@ export const usernameAvailableSchemaResponse = Type.Object({
 export const userByUsernameSchemaParam = Type.Object({
   username: Type.String(),
 })
+
+export const userSocialLinksSchemaResponse = Type.Object({
+  data: Type.Array(
+    Type.Object({
+      id: UUID7String,
+      platform: Type.String(),
+      url: Type.String(),
+      label: Nullable(Type.String()),
+      position: Type.Number(),
+    }),
+  ),
+})
+
+export const userSocialLinkCreateSchemaRequest = Type.Object({
+  platform: Type.String({ minLength: 1, maxLength: 40 }),
+  url: Type.String({ minLength: 1, maxLength: 2000 }),
+  label: Type.Optional(Nullable(Type.String({ maxLength: 60 }))),
+  position: Type.Optional(Type.Number({ minimum: 0, multipleOf: 1 })),
+})
+
+export const userSocialLinkCreateSchemaResponse = Type.Object({
+  id: UUID7String,
+})
+
+export const userModeratingSchemaResponse = Type.Object({
+  data: Type.Array(
+    Type.Object({
+      id: UUID7String,
+      name: Type.String(),
+      iconImageKey: Nullable(Type.String()),
+      memberCount: Type.Number(),
+    }),
+  ),
+})

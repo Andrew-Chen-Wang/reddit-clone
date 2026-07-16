@@ -11,7 +11,7 @@ import { RelativeTime } from "@ui/seo-shared/RelativeTime"
 import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
 import { VoteCluster } from "@ui/seo-shared/post/VoteCluster"
 import { MediaGallery } from "@ui/seo-shared/post/MediaGallery"
-import type { PostRowPost } from "@ui/seo-shared/post/PostRow"
+import { AdminBadge, AuthorInsightsRow, type PostRowPost } from "@ui/seo-shared/post/PostRow"
 
 export type PostDetailCardProps = {
   post: PostRowPost
@@ -27,6 +27,8 @@ export type PostDetailCardProps = {
   shareSlot?: ReactNode
   /** Extra action slot (e.g. author/mod overflow menu). */
   menuSlot?: ReactNode
+  /** Links the author-only "See More Insights" label to the post's insights page. */
+  insightsHref?: string
   /** Optionally enrich the r/community link with a hover card (see PostRow). */
   wrapCommunityLink?: (link: ReactElement, name: string) => ReactNode
   /** Optionally enrich the u/author link with a hover card (see PostRow). */
@@ -53,6 +55,7 @@ export function PostDetailCard({
   onShare,
   shareSlot,
   menuSlot,
+  insightsHref,
   wrapCommunityLink,
   wrapAuthorLink,
 }: PostDetailCardProps) {
@@ -113,7 +116,7 @@ export function PostDetailCard({
             {post.editedAt ? <span className="italic">(edited)</span> : null}
           </div>
           {post.author ? (
-            <div className="text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               {authorLink ? (
                 wrapAuthorLink ? (
                   wrapAuthorLink(authorLink, post.author.username)
@@ -123,6 +126,7 @@ export function PostDetailCard({
               ) : (
                 <span>u/{post.author.username}</span>
               )}
+              {post.author.isAdmin ? <AdminBadge /> : null}
             </div>
           ) : null}
         </div>
@@ -230,6 +234,10 @@ export function PostDetailCard({
             </button>
           ) : null)}
       </div>
+
+      {post.viewCount != null ? (
+        <AuthorInsightsRow viewCount={post.viewCount} insightsHref={insightsHref} />
+      ) : null}
     </article>
   )
 }

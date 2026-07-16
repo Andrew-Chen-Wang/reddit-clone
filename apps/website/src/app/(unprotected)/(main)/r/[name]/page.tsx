@@ -6,6 +6,7 @@ import { buttonVariants } from "@ui/base/ui/button"
 import { CommunityHeader } from "@ui/seo-shared/community/CommunityHeader"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
 import { CommunityPostTypesCard } from "@ui/seo-shared/community/CommunityPostTypesCard"
+import { LegalFooter } from "@ui/seo-shared/LegalFooter"
 import { fetchCommunity } from "@lib/dao/community/fetch"
 import { fetchCommunityBookmark } from "@lib/dao/communityBookmark/fetch"
 import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
@@ -157,7 +158,7 @@ export default async function CommunityPage({
           )}
         </div>
 
-        <aside className="w-full shrink-0 lg:w-80">
+        <aside className="flex w-full shrink-0 flex-col gap-4 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-4.5rem)] lg:w-80 lg:self-start lg:overflow-y-auto">
           <CommunityRightRail
             name={community.name}
             displayName={community.displayName}
@@ -204,6 +205,7 @@ export default async function CommunityPage({
               />
             }
           />
+          <LegalFooter />
         </aside>
       </div>
     </div>

@@ -22,6 +22,8 @@ export const POST_COLUMNS = [
   "post.communityId",
   "post.profileUserId",
   "post.authorUserId",
+  "post.slug",
+  "post.crosspostOfPostId",
   "post.isNsfw",
   "post.isSpoiler",
   "post.isOc",
@@ -48,6 +50,8 @@ export type RawPostRow = {
   communityId: string | null
   profileUserId: string | null
   authorUserId: string
+  slug: string | null
+  crosspostOfPostId: string | null
   isNsfw: boolean
   isSpoiler: boolean
   isOc: boolean

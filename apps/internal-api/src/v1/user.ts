@@ -1,24 +1,31 @@
 import { enqueueEsSyncUser } from "@utils/queues"
 import { fetchComment } from "@lib/dao/comment/fetch"
+import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { processPosts } from "@lib/dao/post/processPost"
 import { crudUser } from "@lib/dao/user/crud"
 import { fetchUser } from "@lib/dao/user/fetch"
+import { crudUserSocialLink } from "@lib/dao/userSocialLink/crud"
+import { fetchUserSocialLink } from "@lib/dao/userSocialLink/fetch"
 import { fetchUserOverview } from "@lib/dao/userOverview/fetch"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
 import { resolver, validator } from "hono-typebox-openapi/typebox"
 import { authMiddleware, authNoThrowMiddleware } from "../middleware"
-import { EmptyObject, ErrorSchemaResponse } from "../utils/common.serializer"
+import { EmptyObject, ErrorSchemaResponse, IdParamT } from "../utils/common.serializer"
 import { cursorOffsetPaginate } from "../utils/pagination"
-import { throwInternalServerError, throwNotFound } from "../utils/http-exception"
+import { throwBadRequest, throwInternalServerError, throwNotFound } from "../utils/http-exception"
 import { buildCommentsWithPost } from "./comment-with-post"
 import { feedSchemaResponse } from "./feed.serializer"
 import {
   userByUsernameSchemaParam,
   userMeSchemaResponse,
+  userModeratingSchemaResponse,
   userPublicSchemaResponse,
+  userSocialLinkCreateSchemaRequest,
+  userSocialLinkCreateSchemaResponse,
+  userSocialLinksSchemaResponse,
   userUpdateSchemaRequest,
   usernameAvailableSchemaQuery,
   usernameAvailableSchemaResponse,
@@ -212,6 +219,62 @@ const app = new Hono()
       return c.json({ data, nextCursor })
     },
   )
+  .get(
+    "/by-username/:username/social-links",
+    describeRoute({
+      description: "Public social links for a username",
+      responses: {
+        200: {
+          description: "Social links",
+          content: { "application/json": { schema: resolver(userSocialLinksSchemaResponse) } },
+        },
+        404: {
+          description: "User not found",
+          content: { "application/json": { schema: resolver(ErrorSchemaResponse) } },
+        },
+      },
+    }),
+    validator("param", userByUsernameSchemaParam),
+    async (c) => {
+      const { username } = c.req.valid("param")
+      const profile = await fetchUser(db).getOneByUsername(username, ["id"])
+      if (!profile) return throwNotFound(c, "User not found")
+
+      const links = await fetchUserSocialLink(db).listByUserId(profile.id, [
+        "id",
+        "platform",
+        "url",
+        "label",
+        "position",
+      ])
+      return c.json({ data: links })
+    },
+  )
+  .get(
+    "/by-username/:username/moderating",
+    describeRoute({
+      description: "Communities a user moderates",
+      responses: {
+        200: {
+          description: "Moderated communities",
+          content: { "application/json": { schema: resolver(userModeratingSchemaResponse) } },
+        },
+        404: {
+          description: "User not found",
+          content: { "application/json": { schema: resolver(ErrorSchemaResponse) } },
+        },
+      },
+    }),
+    validator("param", userByUsernameSchemaParam),
+    async (c) => {
+      const { username } = c.req.valid("param")
+      const profile = await fetchUser(db).getOneByUsername(username, ["id"])
+      if (!profile) return throwNotFound(c, "User not found")
+
+      const data = await fetchCommunityModerator(db).getModeratingPublic(profile.id)
+      return c.json({ data })
+    },
+  )
   .use(authMiddleware)
   .get(
     "/me/saved",
@@ -330,6 +393,66 @@ const app = new Hono()
       })
       const data = await processPosts(db, results, user.id)
       return c.json({ data, nextCursor })
+    },
+  )
+  .post(
+    "/me/social-links",
+    describeRoute({
+      description: "Add a social link to the current user's profile",
+      responses: {
+        201: {
+          description: "Social link created",
+          content: {
+            "application/json": { schema: resolver(userSocialLinkCreateSchemaResponse) },
+          },
+        },
+        400: {
+          description: "Invalid request",
+          content: { "application/json": { schema: resolver(ErrorSchemaResponse) } },
+        },
+      },
+    }),
+    validator("json", userSocialLinkCreateSchemaRequest),
+    async (c) => {
+      const user = c.var.user
+      const body = c.req.valid("json")
+
+      const count = await fetchUserSocialLink(db).countByUserId(user.id)
+      if (count >= 10) return throwBadRequest(c, "You can add at most 10 social links")
+
+      const created = await crudUserSocialLink(db).create({
+        userId: user.id,
+        platform: body.platform,
+        url: body.url,
+        label: body.label ?? null,
+        position: body.position ?? count,
+      })
+      return c.json({ id: created.id }, 201)
+    },
+  )
+  .delete(
+    "/me/social-links/:id",
+    describeRoute({
+      description: "Remove a social link from the current user's profile",
+      responses: {
+        200: {
+          description: "Social link deleted",
+          content: { "application/json": { schema: resolver(EmptyObject) } },
+        },
+        404: {
+          description: "Social link not found",
+          content: { "application/json": { schema: resolver(ErrorSchemaResponse) } },
+        },
+      },
+    }),
+    validator("param", IdParamT),
+    async (c) => {
+      const user = c.var.user
+      const { id } = c.req.valid("param")
+
+      const deleted = await crudUserSocialLink(db).deleteOwn(id, user.id)
+      if (!deleted) return throwNotFound(c, "Social link not found")
+      return c.json({})
     },
   )
   .get(

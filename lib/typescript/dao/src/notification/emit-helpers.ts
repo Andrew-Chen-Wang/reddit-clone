@@ -1,8 +1,10 @@
 import type { DB } from "@template-nextjs/db"
 import type { Kysely } from "kysely"
 import { fetchComment } from "../comment/fetch"
+import { fetchCommentFollow } from "../commentFollow/fetch"
 import { fetchCommunity } from "../community/fetch"
 import { fetchPost } from "../post/fetch"
+import { fetchPostFollow } from "../postFollow/fetch"
 import { fetchRemovalReason } from "../removalReason/fetch"
 import { fetchUser } from "../user/fetch"
 import { crudNotification } from "./crud"
@@ -112,6 +114,36 @@ export async function emitCommentReplyAndMentions(
       communityId: args.communityId,
       previewSnapshot: baseSnapshot,
     })
+  }
+
+  const postFollowerIds = await fetchPostFollow(db).listFollowerIds(args.postId)
+  for (const followerId of postFollowerIds) {
+    if (claimed.has(followerId)) continue
+    claimed.add(followerId)
+    await crudNotification(db).emit("post_reply_follow", {
+      userId: followerId,
+      actorUserId: args.actorUserId,
+      postId: args.postId,
+      commentId: args.commentId,
+      communityId: args.communityId,
+      previewSnapshot: { ...baseSnapshot, title: replyTitle },
+    })
+  }
+
+  if (args.parentCommentId) {
+    const commentFollowerIds = await fetchCommentFollow(db).listFollowerIds(args.parentCommentId)
+    for (const followerId of commentFollowerIds) {
+      if (claimed.has(followerId)) continue
+      claimed.add(followerId)
+      await crudNotification(db).emit("comment_reply_follow", {
+        userId: followerId,
+        actorUserId: args.actorUserId,
+        postId: args.postId,
+        commentId: args.commentId,
+        communityId: args.communityId,
+        previewSnapshot: baseSnapshot,
+      })
+    }
   }
 }
 

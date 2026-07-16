@@ -86,6 +86,9 @@ import type {
   DeleteApiV1UserMeDeleteData,
   DeleteApiV1UserMeDeleteErrors,
   DeleteApiV1UserMeDeleteResponses,
+  DeleteApiV1UserMeSocialLinksByIdData,
+  DeleteApiV1UserMeSocialLinksByIdErrors,
+  DeleteApiV1UserMeSocialLinksByIdResponses,
   GetApiV1AuthMeData,
   GetApiV1AuthMeResponses,
   GetApiV1ChatByConversationIdMessagesData,
@@ -231,10 +234,16 @@ import type {
   GetApiV1UserByUsernameByUsernameCommentsResponses,
   GetApiV1UserByUsernameByUsernameData,
   GetApiV1UserByUsernameByUsernameErrors,
+  GetApiV1UserByUsernameByUsernameModeratingData,
+  GetApiV1UserByUsernameByUsernameModeratingErrors,
+  GetApiV1UserByUsernameByUsernameModeratingResponses,
   GetApiV1UserByUsernameByUsernameOverviewData,
   GetApiV1UserByUsernameByUsernameOverviewErrors,
   GetApiV1UserByUsernameByUsernameOverviewResponses,
   GetApiV1UserByUsernameByUsernameResponses,
+  GetApiV1UserByUsernameByUsernameSocialLinksData,
+  GetApiV1UserByUsernameByUsernameSocialLinksErrors,
+  GetApiV1UserByUsernameByUsernameSocialLinksResponses,
   GetApiV1UserFollowMineData,
   GetApiV1UserFollowMineResponses,
   GetApiV1UserMeData,
@@ -489,6 +498,9 @@ import type {
   PostApiV1ScheduledPostData,
   PostApiV1ScheduledPostErrors,
   PostApiV1ScheduledPostResponses,
+  PostApiV1UserMeSocialLinksData,
+  PostApiV1UserMeSocialLinksErrors,
+  PostApiV1UserMeSocialLinksResponses,
   PostApiV1WikiByCommunityNameBySlugRevertData,
   PostApiV1WikiByCommunityNameBySlugRevertErrors,
   PostApiV1WikiByCommunityNameBySlugRevertResponses,
@@ -635,6 +647,38 @@ export const getApiV1UserByUsernameByUsernameOverview = <ThrowOnError extends bo
   >({ url: "/api/v1/user/by-username/{username}/overview", ...options })
 
 /**
+ * Public social links for a username
+ */
+export const getApiV1UserByUsernameByUsernameSocialLinks = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1UserByUsernameByUsernameSocialLinksData, ThrowOnError>,
+): RequestResult<
+  GetApiV1UserByUsernameByUsernameSocialLinksResponses,
+  GetApiV1UserByUsernameByUsernameSocialLinksErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1UserByUsernameByUsernameSocialLinksResponses,
+    GetApiV1UserByUsernameByUsernameSocialLinksErrors,
+    ThrowOnError
+  >({ url: "/api/v1/user/by-username/{username}/social-links", ...options })
+
+/**
+ * Communities a user moderates
+ */
+export const getApiV1UserByUsernameByUsernameModerating = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1UserByUsernameByUsernameModeratingData, ThrowOnError>,
+): RequestResult<
+  GetApiV1UserByUsernameByUsernameModeratingResponses,
+  GetApiV1UserByUsernameByUsernameModeratingErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1UserByUsernameByUsernameModeratingResponses,
+    GetApiV1UserByUsernameByUsernameModeratingErrors,
+    ThrowOnError
+  >({ url: "/api/v1/user/by-username/{username}/moderating", ...options })
+
+/**
  * The current user's saved posts or comments
  */
 export const getApiV1UserMeSaved = <ThrowOnError extends boolean = false>(
@@ -677,6 +721,45 @@ export const getApiV1UserMeDownvoted = <ThrowOnError extends boolean = false>(
     url: "/api/v1/user/me/downvoted",
     ...options,
   })
+
+/**
+ * Add a social link to the current user's profile
+ */
+export const postApiV1UserMeSocialLinks = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1UserMeSocialLinksData, ThrowOnError>,
+): RequestResult<
+  PostApiV1UserMeSocialLinksResponses,
+  PostApiV1UserMeSocialLinksErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1UserMeSocialLinksResponses,
+    PostApiV1UserMeSocialLinksErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/user/me/social-links",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Remove a social link from the current user's profile
+ */
+export const deleteApiV1UserMeSocialLinksById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1UserMeSocialLinksByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1UserMeSocialLinksByIdResponses,
+  DeleteApiV1UserMeSocialLinksByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1UserMeSocialLinksByIdResponses,
+    DeleteApiV1UserMeSocialLinksByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/user/me/social-links/{id}", ...options })
 
 /**
  * Current authenticated user's profile

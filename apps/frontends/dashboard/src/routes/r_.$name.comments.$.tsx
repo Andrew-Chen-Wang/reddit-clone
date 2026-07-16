@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router"
-import { formatCompactNumber } from "@ui/seo-shared/format-number"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useEffect } from "react"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
+import { LegalFooter } from "@ui/seo-shared/LegalFooter"
 import { PostDetailCard } from "@ui/seo-shared/post/PostDetailCard"
 import type { CommentSortValue } from "@ui/seo-shared/comment/types"
 import { CommentSection } from "@frontends/dashboard/components/CommentSection"
@@ -30,7 +31,7 @@ function asCommentSort(value: unknown): CommentSortValue | undefined {
 
 type CommentSearch = { sort?: CommentSortValue; comment?: string }
 
-export const Route = createFileRoute("/r_/$name/comments/$postId")({
+export const Route = createFileRoute("/r_/$name/comments/$")({
   validateSearch: (search: Record<string, unknown>): CommentSearch => ({
     sort: asCommentSort(search.sort),
     comment: typeof search.comment === "string" ? search.comment : undefined,
@@ -50,7 +51,10 @@ function nextVoteValue(current: number, direction: 1 | -1): 1 | 0 | -1 {
 }
 
 function PostDetailPage() {
-  const { name, postId } = Route.useParams()
+  // Splat route: the URL is /r/:name/comments/:id[/:slug]. The id is the first
+  // splat segment; any trailing slug is cosmetic and ignored for lookup.
+  const { name, _splat } = Route.useParams()
+  const postId = (_splat ?? "").split("/")[0]
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const queryClient = useQueryClient()
@@ -78,6 +82,25 @@ function PostDetailPage() {
     voteMutation.mutate(newVote)
   }
 
+  // M17c: the title-slug in the URL is cosmetic — the post is always fetched by
+  // id. Once the post loads, append/replace its canonical slug onto the URL with
+  // a history REPLACE (never a push) so the back button still leaves the post.
+  // TODO(m17-backend): `slug` isn't on the generated post-by-id type yet; this
+  // reads it defensively and no-ops until the field is generated. It also needs
+  // a trailing-slug catch-all route so a slugged URL resolves the post by id on
+  // reload/direct navigation (the current route matches only .../$postId).
+  const postSlug = (postQuery.data as { slug?: string } | undefined)?.slug
+  useEffect(() => {
+    if (typeof window === "undefined" || !postSlug) return
+    const canonicalPath = `/r/${name}/comments/${postId}/${postSlug}`
+    if (window.location.pathname === canonicalPath) return
+    window.history.replaceState(
+      window.history.state,
+      "",
+      canonicalPath + window.location.search + window.location.hash,
+    )
+  }, [postSlug, name, postId])
+
   if (postQuery.isLoading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
@@ -104,17 +127,17 @@ function PostDetailPage() {
     <div className="mx-auto mt-4 flex w-full max-w-5xl flex-col gap-6 px-4 pb-10 lg:flex-row">
       <div className="min-w-0 flex-1">
         <PostDetailCard
-          post={
-            post.community
-              ? {
-                  ...post,
-                  community: {
-                    ...post.community,
-                    iconImageKey: mediaUrl(post.community.iconImageKey),
-                  },
-                }
-              : post
-          }
+          post={{
+            ...post,
+            // Insights (view count) are author-only; the generated response still
+            // sends viewCount to everyone, so gate it here until the backend does.
+            // TODO(m17-backend): send author-only `viewCount` on the post serializer.
+            viewCount: post.isAuthor ? post.viewCount : undefined,
+            community: post.community
+              ? { ...post.community, iconImageKey: mediaUrl(post.community.iconImageKey) }
+              : null,
+          }}
+          insightsHref={`/poststats/${postId}`}
           communityHref={post.community ? `/r/${post.community.name}` : undefined}
           authorHref={post.author ? `/user/${post.author.username}` : undefined}
           onBack={() => {
@@ -172,18 +195,6 @@ function PostDetailPage() {
           }
         />
 
-        {post.isAuthor ? (
-          <div className="mt-2 flex justify-end">
-            <Link
-              to="/poststats/$postId"
-              params={{ postId }}
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
-              {formatCompactNumber(post.viewCount)} views · See more insights →
-            </Link>
-          </div>
-        ) : null}
-
         <PostCommentSearch postId={postId} communityName={name} />
 
         <CommentSection
@@ -203,7 +214,7 @@ function PostDetailPage() {
       </div>
 
       {community ? (
-        <aside className="w-full shrink-0 lg:w-80">
+        <aside className="flex w-full shrink-0 flex-col gap-4 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-4.5rem)] lg:w-80 lg:self-start lg:overflow-y-auto">
           <CommunityRightRail
             name={community.name}
             displayName={community.displayName}
@@ -218,6 +229,7 @@ function PostDetailPage() {
               avatarImageKey: m.avatarImageKey,
             }))}
           />
+          <LegalFooter />
         </aside>
       ) : null}
     </div>
