@@ -30,7 +30,7 @@ const SECTIONS: NavSection[] = [
     heading: "Overview",
     items: [
       { label: "Queues", icon: ListChecks, to: "/mod/$name", exact: true },
-      { label: "Mod Mail", icon: Mail, to: "/mod/$name", disabled: true },
+      { label: "Mod Mail", icon: Mail, to: "/mod/$name/modmail" },
       { label: "Scheduled Posts", icon: CalendarClock, to: "/mod/$name/scheduled" },
       { label: "Restricted Users", icon: UserX, to: "/mod/$name/restricted" },
       { label: "Mods & Members", icon: Users, to: "/mod/$name/members" },

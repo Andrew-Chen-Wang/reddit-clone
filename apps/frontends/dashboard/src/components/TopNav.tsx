@@ -32,6 +32,7 @@ import {
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import { LogOut, Monitor, Moon, Plus, Settings, Sun, User } from "lucide-react"
 import { useState } from "react"
+import { ChatButton } from "@frontends/dashboard/components/ChatButton"
 import { toast } from "sonner"
 
 type DisplayMode = "auto" | "light" | "dark"
@@ -125,9 +126,12 @@ export function TopNav() {
           ReadIt
         </Link>
         <SearchSuggest />
+        <div className="ml-auto flex items-center gap-1">
+          <ChatButton />
+        </div>
         <Link
           to="/submit"
-          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "ml-auto gap-1.5")}
+          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-1.5")}
         >
           <Plus className="size-4" />
           <span className="hidden sm:inline">Create</span>

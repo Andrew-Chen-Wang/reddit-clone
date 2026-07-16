@@ -122,6 +122,10 @@ function BanDialog({
           <div className="flex flex-col gap-1.5">
             <Label>Rule</Label>
             <Select
+              items={{
+                none: "No specific rule",
+                ...Object.fromEntries(rules.map((r) => [r.id, r.name])),
+              }}
               value={ruleId}
               onValueChange={(v) => {
                 setRuleId(v ?? "none")
