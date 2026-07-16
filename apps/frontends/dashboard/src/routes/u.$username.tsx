@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { buttonVariants } from "@ui/base/ui/button"
 import { ProfileHeader } from "@ui/seo-shared/profile/ProfileHeader"
+import { PostFeed } from "@frontends/dashboard/components/PostFeed"
 import {
   getApiV1UserByUsernameByUsernameOptions,
   getApiV1UserMeOptions,
@@ -38,24 +39,43 @@ function ProfilePage() {
   const isOwnProfile = me?.username.toLowerCase() === data.username.toLowerCase()
 
   return (
-    <ProfileHeader
-      user={{
-        username: data.username,
-        displayName: data.displayName,
-        about: data.about,
-        avatarUrl: null,
-        bannerUrl: null,
-        postKarma: data.postKarma,
-        commentKarma: data.commentKarma,
-        createdAt: data.createdAt,
-      }}
-      action={
-        isOwnProfile ? (
-          <Link to="/settings" className={buttonVariants({ variant: "outline", size: "sm" })}>
-            Edit profile
-          </Link>
-        ) : null
-      }
-    />
+    <div className="pb-10">
+      <ProfileHeader
+        user={{
+          username: data.username,
+          displayName: data.displayName,
+          about: data.about,
+          avatarUrl: null,
+          bannerUrl: null,
+          postKarma: data.postKarma,
+          commentKarma: data.commentKarma,
+          createdAt: data.createdAt,
+        }}
+        action={
+          isOwnProfile ? (
+            <Link to="/settings" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Edit profile
+            </Link>
+          ) : null
+        }
+      />
+      <div className="mx-auto mt-4 w-full max-w-3xl px-4">
+        <PostFeed
+          source={{ kind: "profile", username: data.username }}
+          sorts={PROFILE_SORTS}
+          defaultSort="new"
+          showCommunity
+          permalinkFor={() => `/u/${data.username}`}
+          emptyTitle="No posts yet"
+          emptyDescription={`u/${data.username} hasn't posted to their profile yet.`}
+        />
+      </div>
+    </div>
   )
 }
+
+const PROFILE_SORTS = [
+  { value: "new", label: "New" },
+  { value: "top", label: "Top" },
+  { value: "hot", label: "Hot" },
+]

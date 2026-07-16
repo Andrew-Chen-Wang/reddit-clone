@@ -3,454 +3,455 @@
  * Please do not edit it manually.
  */
 
-import type { ColumnType } from "kysely";
+import type { ColumnType } from "kysely"
 
-export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
-  ? ColumnType<S, I | undefined, U>
-  : ColumnType<T, T | undefined, T>;
+export type Generated<T> =
+  T extends ColumnType<infer S, infer I, infer U>
+    ? ColumnType<S, I | undefined, U>
+    : ColumnType<T, T | undefined, T>
 
-export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
+export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>
 
-export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+export type Timestamp = ColumnType<Date, Date | string, Date | string>
 
 export interface Account {
-  accessToken: string | null;
-  expiresAt: Int8 | null;
-  id: string;
-  idToken: string | null;
-  provider: string;
-  providerAccountId: string;
-  refreshToken: string | null;
-  scope: string | null;
-  sessionState: string | null;
-  tokenType: string | null;
-  type: string;
-  userId: string;
+  accessToken: string | null
+  expiresAt: Int8 | null
+  id: string
+  idToken: string | null
+  provider: string
+  providerAccountId: string
+  refreshToken: string | null
+  scope: string | null
+  sessionState: string | null
+  tokenType: string | null
+  type: string
+  userId: string
 }
 
 export interface ChatConversation {
-  createdAt: Generated<Timestamp>;
-  createdByUserId: string | null;
-  id: string;
-  isGroup: Generated<boolean>;
-  lastMessageAt: Generated<Timestamp>;
-  name: string | null;
+  createdAt: Generated<Timestamp>
+  createdByUserId: string | null
+  id: string
+  isGroup: Generated<boolean>
+  lastMessageAt: Generated<Timestamp>
+  name: string | null
 }
 
 export interface ChatMessage {
-  body: string;
-  conversationId: string;
-  createdAt: Generated<Timestamp>;
-  deletedAt: Timestamp | null;
-  id: string;
-  senderUserId: string | null;
+  body: string
+  conversationId: string
+  createdAt: Generated<Timestamp>
+  deletedAt: Timestamp | null
+  id: string
+  senderUserId: string | null
 }
 
 export interface ChatParticipant {
-  conversationId: string;
-  createdAt: Generated<Timestamp>;
-  hiddenAt: Timestamp | null;
-  id: string;
-  lastReadAt: Timestamp | null;
-  role: Generated<string>;
-  status: Generated<string>;
-  userId: string;
+  conversationId: string
+  createdAt: Generated<Timestamp>
+  hiddenAt: Timestamp | null
+  id: string
+  lastReadAt: Timestamp | null
+  role: Generated<string>
+  status: Generated<string>
+  userId: string
 }
 
 export interface Comment {
-  approvedAt: Timestamp | null;
-  approvedByUserId: string | null;
-  authorUserId: string | null;
-  bodyMd: string | null;
-  childCount: Generated<number>;
-  controversialScore: Generated<number>;
-  createdAt: Generated<Timestamp>;
-  depth: Generated<number>;
-  downs: Generated<number>;
-  editedAt: Timestamp | null;
-  id: string;
-  isDeleted: Generated<boolean>;
-  isSticky: Generated<boolean>;
-  parentCommentId: string | null;
-  path: string[];
-  postId: string;
-  removedAt: Timestamp | null;
-  removedByUserId: string | null;
-  score: Generated<number>;
-  ups: Generated<number>;
-  wilsonScore: Generated<Int8>;
+  approvedAt: Timestamp | null
+  approvedByUserId: string | null
+  authorUserId: string | null
+  bodyMd: string | null
+  childCount: Generated<number>
+  controversialScore: Generated<number>
+  createdAt: Generated<Timestamp>
+  depth: Generated<number>
+  downs: Generated<number>
+  editedAt: Timestamp | null
+  id: string
+  isDeleted: Generated<boolean>
+  isSticky: Generated<boolean>
+  parentCommentId: string | null
+  path: string[]
+  postId: string
+  removedAt: Timestamp | null
+  removedByUserId: string | null
+  score: Generated<number>
+  ups: Generated<number>
+  wilsonScore: Generated<Int8>
 }
 
 export interface CommentFollow {
-  commentId: string;
-  createdAt: Generated<Timestamp>;
-  userId: string;
+  commentId: string
+  createdAt: Generated<Timestamp>
+  userId: string
 }
 
 export interface CommentSave {
-  commentId: string;
-  createdAt: Generated<Timestamp>;
-  userId: string;
+  commentId: string
+  createdAt: Generated<Timestamp>
+  userId: string
 }
 
 export interface CommentVote {
-  commentId: string;
-  createdAt: Generated<Timestamp>;
-  updatedAt: Generated<Timestamp>;
-  userId: string;
-  value: number;
+  commentId: string
+  createdAt: Generated<Timestamp>
+  updatedAt: Generated<Timestamp>
+  userId: string
+  value: number
 }
 
 export interface Community {
-  bannerImageKey: string | null;
-  createdAt: Generated<Timestamp>;
-  createdByUserId: string | null;
-  defaultCommentSort: Generated<string>;
-  description: string;
-  displayName: string | null;
-  iconImageKey: string | null;
-  id: string;
-  isNsfw: Generated<boolean>;
-  memberCount: Generated<number>;
-  name: string;
-  topicId: string | null;
-  visibility: Generated<string>;
+  bannerImageKey: string | null
+  createdAt: Generated<Timestamp>
+  createdByUserId: string | null
+  defaultCommentSort: Generated<string>
+  description: string
+  displayName: string | null
+  iconImageKey: string | null
+  id: string
+  isNsfw: Generated<boolean>
+  memberCount: Generated<number>
+  name: string
+  topicId: string | null
+  visibility: Generated<string>
 }
 
 export interface CommunityJoinRequest {
-  communityId: string;
-  createdAt: Generated<Timestamp>;
-  id: string;
-  message: string | null;
-  resolvedAt: Timestamp | null;
-  resolvedByUserId: string | null;
-  status: Generated<string>;
-  userId: string;
+  communityId: string
+  createdAt: Generated<Timestamp>
+  id: string
+  message: string | null
+  resolvedAt: Timestamp | null
+  resolvedByUserId: string | null
+  status: Generated<string>
+  userId: string
 }
 
 export interface CommunityMember {
-  communityId: string;
-  id: string;
-  isFavorite: Generated<boolean>;
-  joinedAt: Generated<Timestamp>;
-  notificationLevel: Generated<string>;
-  userId: string;
+  communityId: string
+  id: string
+  isFavorite: Generated<boolean>
+  joinedAt: Generated<Timestamp>
+  notificationLevel: Generated<string>
+  userId: string
 }
 
 export interface CommunityModerator {
-  addedAt: Generated<Timestamp>;
-  communityId: string;
-  id: string;
-  permConfig: Generated<boolean>;
-  permEverything: Generated<boolean>;
-  permFlair: Generated<boolean>;
-  permMail: Generated<boolean>;
-  permPostsComments: Generated<boolean>;
-  permUsers: Generated<boolean>;
-  permWiki: Generated<boolean>;
-  position: number;
-  userId: string;
+  addedAt: Generated<Timestamp>
+  communityId: string
+  id: string
+  permConfig: Generated<boolean>
+  permEverything: Generated<boolean>
+  permFlair: Generated<boolean>
+  permMail: Generated<boolean>
+  permPostsComments: Generated<boolean>
+  permUsers: Generated<boolean>
+  permWiki: Generated<boolean>
+  position: number
+  userId: string
 }
 
 export interface CommunityRule {
-  communityId: string;
-  createdAt: Generated<Timestamp>;
-  description: string | null;
-  id: string;
-  name: string;
-  position: number;
+  communityId: string
+  createdAt: Generated<Timestamp>
+  description: string | null
+  id: string
+  name: string
+  position: number
 }
 
 export interface CommunityUserFlair {
-  communityId: string;
-  customText: string | null;
-  id: string;
-  userFlairTemplateId: string | null;
-  userId: string;
+  communityId: string
+  customText: string | null
+  id: string
+  userFlairTemplateId: string | null
+  userId: string
 }
 
 export interface CommunityVisit {
-  communityId: string;
-  lastVisitedAt: Generated<Timestamp>;
-  userId: string;
+  communityId: string
+  lastVisitedAt: Generated<Timestamp>
+  userId: string
 }
 
 export interface ModmailConversation {
-  communityId: string;
-  createdAt: Generated<Timestamp>;
-  folder: Generated<string>;
-  id: string;
-  isHighlighted: Generated<boolean>;
-  lastMessageAt: Generated<Timestamp>;
-  participantUserId: string;
-  subject: string;
+  communityId: string
+  createdAt: Generated<Timestamp>
+  folder: Generated<string>
+  id: string
+  isHighlighted: Generated<boolean>
+  lastMessageAt: Generated<Timestamp>
+  participantUserId: string
+  subject: string
 }
 
 export interface ModmailMessage {
-  authorUserId: string | null;
-  bodyMd: string;
-  conversationId: string;
-  createdAt: Generated<Timestamp>;
-  id: string;
-  isInternalNote: Generated<boolean>;
+  authorUserId: string | null
+  bodyMd: string
+  conversationId: string
+  createdAt: Generated<Timestamp>
+  id: string
+  isInternalNote: Generated<boolean>
 }
 
 export interface Post {
-  approvedAt: Timestamp | null;
-  approvedByUserId: string | null;
-  authorUserId: string;
-  bodyMd: string | null;
-  commentCount: Generated<number>;
-  communityId: string | null;
-  controversialScore: Generated<number>;
-  createdAt: Generated<Timestamp>;
-  crosspostOfPostId: string | null;
-  downs: Generated<number>;
-  editedAt: Timestamp | null;
-  flairTemplateId: string | null;
-  hotScore: Generated<number>;
-  id: string;
-  isLocked: Generated<boolean>;
-  isNsfw: Generated<boolean>;
-  isOc: Generated<boolean>;
-  isSpoiler: Generated<boolean>;
-  linkUrl: string | null;
-  profileUserId: string | null;
-  removedAt: Timestamp | null;
-  removedByUserId: string | null;
-  score: Generated<number>;
-  shareCount: Generated<number>;
-  stickyPosition: number | null;
-  title: string;
-  type: string;
-  ups: Generated<number>;
-  viewCount: Generated<Int8>;
+  approvedAt: Timestamp | null
+  approvedByUserId: string | null
+  authorUserId: string
+  bodyMd: string | null
+  commentCount: Generated<number>
+  communityId: string | null
+  controversialScore: Generated<number>
+  createdAt: Generated<Timestamp>
+  crosspostOfPostId: string | null
+  downs: Generated<number>
+  editedAt: Timestamp | null
+  flairTemplateId: string | null
+  hotScore: Generated<number>
+  id: string
+  isLocked: Generated<boolean>
+  isNsfw: Generated<boolean>
+  isOc: Generated<boolean>
+  isSpoiler: Generated<boolean>
+  linkUrl: string | null
+  profileUserId: string | null
+  removedAt: Timestamp | null
+  removedByUserId: string | null
+  score: Generated<number>
+  shareCount: Generated<number>
+  stickyPosition: number | null
+  title: string
+  type: string
+  ups: Generated<number>
+  viewCount: Generated<Int8>
 }
 
 export interface PostDraft {
-  bodyMd: string | null;
-  communityId: string | null;
-  createdAt: Generated<Timestamp>;
-  flairTemplateId: string | null;
-  id: string;
-  isNsfw: Generated<boolean>;
-  isOc: Generated<boolean>;
-  isProfile: Generated<boolean>;
-  isSpoiler: Generated<boolean>;
-  linkUrl: string | null;
-  title: string | null;
-  type: Generated<string>;
-  updatedAt: Generated<Timestamp>;
-  userId: string;
+  bodyMd: string | null
+  communityId: string | null
+  createdAt: Generated<Timestamp>
+  flairTemplateId: string | null
+  id: string
+  isNsfw: Generated<boolean>
+  isOc: Generated<boolean>
+  isProfile: Generated<boolean>
+  isSpoiler: Generated<boolean>
+  linkUrl: string | null
+  title: string | null
+  type: Generated<string>
+  updatedAt: Generated<Timestamp>
+  userId: string
 }
 
 export interface PostFlairTemplate {
-  bgColor: string | null;
-  communityId: string;
-  createdAt: Generated<Timestamp>;
-  id: string;
-  modOnly: Generated<boolean>;
-  position: Generated<number>;
-  text: string;
-  textColor: string | null;
+  bgColor: string | null
+  communityId: string
+  createdAt: Generated<Timestamp>
+  id: string
+  modOnly: Generated<boolean>
+  position: Generated<number>
+  text: string
+  textColor: string | null
 }
 
 export interface PostFollow {
-  createdAt: Generated<Timestamp>;
-  postId: string;
-  userId: string;
+  createdAt: Generated<Timestamp>
+  postId: string
+  userId: string
 }
 
 export interface PostHide {
-  createdAt: Generated<Timestamp>;
-  postId: string;
-  userId: string;
+  createdAt: Generated<Timestamp>
+  postId: string
+  userId: string
 }
 
 export interface PostMedia {
-  byteSize: Int8 | null;
-  createdAt: Generated<Timestamp>;
-  height: number | null;
-  id: string;
-  mediaType: string;
-  mimeType: string | null;
-  position: Generated<number>;
-  postId: string;
-  s3Key: string;
-  uploadStatus: Generated<string>;
-  width: number | null;
+  byteSize: Int8 | null
+  createdAt: Generated<Timestamp>
+  height: number | null
+  id: string
+  mediaType: string
+  mimeType: string | null
+  position: Generated<number>
+  postId: string
+  s3Key: string
+  uploadStatus: Generated<string>
+  width: number | null
 }
 
 export interface PostRising {
-  communityId: string;
-  computedAt: Generated<Timestamp>;
-  postId: string;
-  score: number;
+  communityId: string
+  computedAt: Generated<Timestamp>
+  postId: string
+  score: number
 }
 
 export interface PostSave {
-  createdAt: Generated<Timestamp>;
-  postId: string;
-  userId: string;
+  createdAt: Generated<Timestamp>
+  postId: string
+  userId: string
 }
 
 export interface PostView {
-  postId: string;
-  userId: string;
-  viewedAt: Generated<Timestamp>;
+  postId: string
+  userId: string
+  viewedAt: Generated<Timestamp>
 }
 
 export interface PostViewHourly {
-  bucket: Timestamp;
-  postId: string;
-  viewCount: Generated<number>;
+  bucket: Timestamp
+  postId: string
+  viewCount: Generated<number>
 }
 
 export interface PostVote {
-  createdAt: Generated<Timestamp>;
-  postId: string;
-  updatedAt: Generated<Timestamp>;
-  userId: string;
-  value: number;
+  createdAt: Generated<Timestamp>
+  postId: string
+  updatedAt: Generated<Timestamp>
+  userId: string
+  value: number
 }
 
 export interface ScheduledPost {
-  authorUserId: string;
-  bodyMd: string | null;
-  communityId: string | null;
-  createdAt: Generated<Timestamp>;
-  flairTemplateId: string | null;
-  id: string;
-  isNsfw: Generated<boolean>;
-  isOc: Generated<boolean>;
-  isProfile: Generated<boolean>;
-  isSpoiler: Generated<boolean>;
-  jobId: string | null;
-  linkUrl: string | null;
-  publishedPostId: string | null;
-  recurrence: string | null;
-  scheduledAt: Timestamp;
-  status: Generated<string>;
-  title: string;
-  type: Generated<string>;
+  authorUserId: string
+  bodyMd: string | null
+  communityId: string | null
+  createdAt: Generated<Timestamp>
+  flairTemplateId: string | null
+  id: string
+  isNsfw: Generated<boolean>
+  isOc: Generated<boolean>
+  isProfile: Generated<boolean>
+  isSpoiler: Generated<boolean>
+  jobId: string | null
+  linkUrl: string | null
+  publishedPostId: string | null
+  recurrence: string | null
+  scheduledAt: Timestamp
+  status: Generated<string>
+  title: string
+  type: Generated<string>
 }
 
 export interface Session {
-  expires: Timestamp;
-  sessionKey: string;
-  userId: string;
+  expires: Timestamp
+  sessionKey: string
+  userId: string
 }
 
 export interface Topic {
-  displayOrder: number;
-  id: string;
-  name: string;
-  slug: string;
+  displayOrder: number
+  id: string
+  name: string
+  slug: string
 }
 
 export interface User {
-  about: string | null;
-  avatarImageKey: string | null;
-  bannerImageKey: string | null;
-  commentKarma: Generated<number>;
-  createdAt: Generated<Timestamp>;
-  displayName: string | null;
-  email: string;
-  id: string;
-  image: string | null;
-  isAdmin: Generated<boolean>;
-  name: string | null;
-  postKarma: Generated<number>;
-  suspendedAt: Timestamp | null;
-  suspensionReason: string | null;
-  username: string;
+  about: string | null
+  avatarImageKey: string | null
+  bannerImageKey: string | null
+  commentKarma: Generated<number>
+  createdAt: Generated<Timestamp>
+  displayName: string | null
+  email: string
+  id: string
+  image: string | null
+  isAdmin: Generated<boolean>
+  name: string | null
+  postKarma: Generated<number>
+  suspendedAt: Timestamp | null
+  suspensionReason: string | null
+  username: string
 }
 
 export interface UserBlock {
-  blockedUserId: string;
-  blockerUserId: string;
-  createdAt: Generated<Timestamp>;
+  blockedUserId: string
+  blockerUserId: string
+  createdAt: Generated<Timestamp>
 }
 
 export interface UserFlairTemplate {
-  bgColor: string | null;
-  communityId: string;
-  createdAt: Generated<Timestamp>;
-  id: string;
-  modOnly: Generated<boolean>;
-  position: Generated<number>;
-  selfAssignable: Generated<boolean>;
-  text: string;
-  textColor: string | null;
+  bgColor: string | null
+  communityId: string
+  createdAt: Generated<Timestamp>
+  id: string
+  modOnly: Generated<boolean>
+  position: Generated<number>
+  selfAssignable: Generated<boolean>
+  text: string
+  textColor: string | null
 }
 
 export interface UserFollow {
-  createdAt: Generated<Timestamp>;
-  followedUserId: string;
-  followerUserId: string;
+  createdAt: Generated<Timestamp>
+  followedUserId: string
+  followerUserId: string
 }
 
 export interface UserMutedCommunity {
-  communityId: string;
-  createdAt: Generated<Timestamp>;
-  userId: string;
+  communityId: string
+  createdAt: Generated<Timestamp>
+  userId: string
 }
 
 export interface UserSettings {
-  allowFollows: Generated<boolean>;
-  autoplayMedia: Generated<boolean>;
-  blurMature: Generated<boolean>;
-  chatRequestPolicy: Generated<string>;
-  createdAt: Generated<Timestamp>;
-  defaultMarkdownEditor: Generated<boolean>;
-  displayMode: Generated<string>;
-  feedView: Generated<string>;
-  openPostsNewTab: Generated<boolean>;
-  reduceMotion: Generated<boolean>;
-  safeSearch: Generated<boolean>;
-  showFollowerCount: Generated<boolean>;
-  showInSearch: Generated<boolean>;
-  showMature: Generated<boolean>;
-  showRecommendations: Generated<boolean>;
-  userId: string;
+  allowFollows: Generated<boolean>
+  autoplayMedia: Generated<boolean>
+  blurMature: Generated<boolean>
+  chatRequestPolicy: Generated<string>
+  createdAt: Generated<Timestamp>
+  defaultMarkdownEditor: Generated<boolean>
+  displayMode: Generated<string>
+  feedView: Generated<string>
+  openPostsNewTab: Generated<boolean>
+  reduceMotion: Generated<boolean>
+  safeSearch: Generated<boolean>
+  showFollowerCount: Generated<boolean>
+  showInSearch: Generated<boolean>
+  showMature: Generated<boolean>
+  showRecommendations: Generated<boolean>
+  userId: string
 }
 
 export interface DB {
-  account: Account;
-  chatConversation: ChatConversation;
-  chatMessage: ChatMessage;
-  chatParticipant: ChatParticipant;
-  comment: Comment;
-  commentFollow: CommentFollow;
-  commentSave: CommentSave;
-  commentVote: CommentVote;
-  community: Community;
-  communityJoinRequest: CommunityJoinRequest;
-  communityMember: CommunityMember;
-  communityModerator: CommunityModerator;
-  communityRule: CommunityRule;
-  communityUserFlair: CommunityUserFlair;
-  communityVisit: CommunityVisit;
-  modmailConversation: ModmailConversation;
-  modmailMessage: ModmailMessage;
-  post: Post;
-  postDraft: PostDraft;
-  postFlairTemplate: PostFlairTemplate;
-  postFollow: PostFollow;
-  postHide: PostHide;
-  postMedia: PostMedia;
-  postRising: PostRising;
-  postSave: PostSave;
-  postView: PostView;
-  postViewHourly: PostViewHourly;
-  postVote: PostVote;
-  scheduledPost: ScheduledPost;
-  session: Session;
-  topic: Topic;
-  user: User;
-  userBlock: UserBlock;
-  userFlairTemplate: UserFlairTemplate;
-  userFollow: UserFollow;
-  userMutedCommunity: UserMutedCommunity;
-  userSettings: UserSettings;
+  account: Account
+  chatConversation: ChatConversation
+  chatMessage: ChatMessage
+  chatParticipant: ChatParticipant
+  comment: Comment
+  commentFollow: CommentFollow
+  commentSave: CommentSave
+  commentVote: CommentVote
+  community: Community
+  communityJoinRequest: CommunityJoinRequest
+  communityMember: CommunityMember
+  communityModerator: CommunityModerator
+  communityRule: CommunityRule
+  communityUserFlair: CommunityUserFlair
+  communityVisit: CommunityVisit
+  modmailConversation: ModmailConversation
+  modmailMessage: ModmailMessage
+  post: Post
+  postDraft: PostDraft
+  postFlairTemplate: PostFlairTemplate
+  postFollow: PostFollow
+  postHide: PostHide
+  postMedia: PostMedia
+  postRising: PostRising
+  postSave: PostSave
+  postView: PostView
+  postViewHourly: PostViewHourly
+  postVote: PostVote
+  scheduledPost: ScheduledPost
+  session: Session
+  topic: Topic
+  user: User
+  userBlock: UserBlock
+  userFlairTemplate: UserFlairTemplate
+  userFollow: UserFollow
+  userMutedCommunity: UserMutedCommunity
+  userSettings: UserSettings
 }

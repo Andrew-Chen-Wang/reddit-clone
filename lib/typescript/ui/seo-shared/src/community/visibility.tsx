@@ -13,7 +13,7 @@ const META: Record<CommunityVisibility, VisibilityMeta> = {
   public: {
     label: "Public",
     description: "Anyone can view, post, and comment to this community",
-  icon: Globe,
+    icon: Globe,
   },
   restricted: {
     label: "Restricted",
@@ -28,5 +28,7 @@ const META: Record<CommunityVisibility, VisibilityMeta> = {
 }
 
 export function visibilityMeta(visibility: string): VisibilityMeta {
-  return META[(visibility as CommunityVisibility) in META ? (visibility as CommunityVisibility) : "public"]
+  return META[
+    (visibility as CommunityVisibility) in META ? (visibility as CommunityVisibility) : "public"
+  ]
 }
