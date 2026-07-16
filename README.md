@@ -4,11 +4,11 @@ The purpose of this Reddit clone is to democratize creating online forums for ce
 
 Reddit at its core is a forum designed for discussing within niche communities. Online forums have been around for a long time, but the most populated online forums are coalescing around Reddit's form of threaded comments such as YouTube; as more adopt this style of discussion, it's become the dominant format for online discussions when Reddit's UI/UX has essentially become the native feel.
 
-With the dawn of LLMs, it's become even easier to copy this now dominant forum format. Reddit's most basic functionality is included in this clone. What I advocate readers is to fork this clone and edit it using coding agents like Claude Code to customize to how your want to curate your community.
+With the dawn of LLMs, it's become even easier to copy this now dominant forum format. Reddit's most basic functionality is included in this clone. What I advocate readers is to fork this clone and edit it using coding agents like Claude Code to customize to how you want to curate your community.
 
 ## What Edits Should I Make to Curate My Community
 
-To begin, think of a community you want to target. In my case, I want to start "To Your Credit", a community dedicated to politikers and policy nerds who want to discuss seriously, can control their emotions, and see the other side.
+To begin, think of a community you want to target. In my case, I want to start "To Your Credit", a community dedicated to politikers and policy nerds who want to discuss seriously, can control their emotions, and see the other side. The name is based on the idiom To Your Credit or essentially saying in fairness to your comment.
 
 The reason I chose this is that Reddit is dominated by very progressive individuals who abuse downvoting on Reddit to hide opposing opinions. This causes echo chambers via the upvoting system and dismisses and silences differing opinions. In particular, Reddit voting used to be about how informative a comment was. However, the expansion of Reddit to the most popular online format rendered it more for emotions rather than a curated community with core ideals of how the site should operate.
 
@@ -26,7 +26,7 @@ We can skip agreed upon rules because that's been touched on already i.e. voting
 
 Because of how generalized Reddit is, it can't support every community in its best effort. Maybe the best solution for Reddit as a unicorn company is to figure out how to allow communities to specialize in creation, but that makes other features of Reddit, in particular the personalization of the home page and recommendation system, more difficult. For example, changing the voting system (like adding multiple voting types) for one subreddit would make the recommendation system difficult to normalize/reconcile in addition to strange scaling requirements. Thus, the upper bound on Reddit's creativity was reached simply because of financial requirements (i.e. taking as much user attention) and competition to be the largest online discussion forum.
 
-Thus the only solution is to democratize allowing communities to specialize in technical features that caters to the ideals and needs of the community itself. Democratization of more communities across different domains has its own downsides, namely discovery. This is something the Fediverse tried to solve via democratizing content, but finding community is still difficult, not because there aren't listservs, but because it's time consuming. It feels like discovering in-person meetups where you have to get the feel whereas a centralized, dominant forum like Reddit already gives you both a large user base and a certain vibe before even an interaction is needed.
+Thus, the only solution is to democratize allowing communities to specialize in technical features that caters to the ideals and needs of the community itself. Democratization of more communities across different domains has its own downsides, namely discovery. This is something the Fediverse tried to solve via democratizing content, but finding community is still difficult, not because there aren't listservs, but because it's time-consuming. It feels like discovering in-person meetups where you have to get the feel whereas a centralized, dominant forum like Reddit already gives you both a large user base and a certain vibe before even an interaction is needed.
 
 # Deployment
 
