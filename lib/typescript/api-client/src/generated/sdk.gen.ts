@@ -24,6 +24,24 @@ import type {
   DeleteApiV1FlairUserTemplatesByIdResponses,
   DeleteApiV1HistoryRecentPostsData,
   DeleteApiV1HistoryRecentPostsResponses,
+  DeleteApiV1ModSavedResponseResponseByIdData,
+  DeleteApiV1ModSavedResponseResponseByIdErrors,
+  DeleteApiV1ModSavedResponseResponseByIdResponses,
+  DeleteApiV1ModTeamByCommunityIdModByUserIdData,
+  DeleteApiV1ModTeamByCommunityIdModByUserIdErrors,
+  DeleteApiV1ModTeamByCommunityIdModByUserIdResponses,
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameData,
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameErrors,
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameResponses,
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameData,
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameErrors,
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameResponses,
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameData,
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameErrors,
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameResponses,
+  DeleteApiV1ModUsersNotesByIdData,
+  DeleteApiV1ModUsersNotesByIdErrors,
+  DeleteApiV1ModUsersNotesByIdResponses,
   DeleteApiV1MutedCommunityByCommunityIdData,
   DeleteApiV1MutedCommunityByCommunityIdResponses,
   DeleteApiV1PostActionFollowByPostIdData,
@@ -35,6 +53,9 @@ import type {
   DeleteApiV1PostByIdData,
   DeleteApiV1PostByIdErrors,
   DeleteApiV1PostByIdResponses,
+  DeleteApiV1RemovalReasonReasonByIdData,
+  DeleteApiV1RemovalReasonReasonByIdErrors,
+  DeleteApiV1RemovalReasonReasonByIdResponses,
   DeleteApiV1ScheduledPostByIdData,
   DeleteApiV1ScheduledPostByIdErrors,
   DeleteApiV1ScheduledPostByIdResponses,
@@ -92,16 +113,53 @@ import type {
   GetApiV1HistoryRecentCommunitiesResponses,
   GetApiV1HistoryRecentPostsData,
   GetApiV1HistoryRecentPostsResponses,
+  GetApiV1ModLogByCommunityIdData,
+  GetApiV1ModLogByCommunityIdErrors,
+  GetApiV1ModLogByCommunityIdResponses,
+  GetApiV1ModQueueByCommunityIdData,
+  GetApiV1ModQueueByCommunityIdErrors,
+  GetApiV1ModQueueByCommunityIdResponses,
+  GetApiV1ModSavedResponseByCommunityIdData,
+  GetApiV1ModSavedResponseByCommunityIdErrors,
+  GetApiV1ModSavedResponseByCommunityIdResponses,
+  GetApiV1ModTeamByCommunityIdData,
+  GetApiV1ModTeamByCommunityIdErrors,
+  GetApiV1ModTeamByCommunityIdResponses,
+  GetApiV1ModTeamMyInvitesData,
+  GetApiV1ModTeamMyInvitesResponses,
+  GetApiV1ModUsersByCommunityIdApprovedData,
+  GetApiV1ModUsersByCommunityIdApprovedErrors,
+  GetApiV1ModUsersByCommunityIdApprovedResponses,
+  GetApiV1ModUsersByCommunityIdBannedData,
+  GetApiV1ModUsersByCommunityIdBannedErrors,
+  GetApiV1ModUsersByCommunityIdBannedResponses,
+  GetApiV1ModUsersByCommunityIdMutedData,
+  GetApiV1ModUsersByCommunityIdMutedErrors,
+  GetApiV1ModUsersByCommunityIdMutedResponses,
+  GetApiV1ModUsersByCommunityIdNotesByUsernameData,
+  GetApiV1ModUsersByCommunityIdNotesByUsernameErrors,
+  GetApiV1ModUsersByCommunityIdNotesByUsernameResponses,
+  GetApiV1ModUsersByCommunityIdRestrictedData,
+  GetApiV1ModUsersByCommunityIdRestrictedErrors,
+  GetApiV1ModUsersByCommunityIdRestrictedResponses,
   GetApiV1MutedCommunityMineData,
   GetApiV1MutedCommunityMineResponses,
   GetApiV1PostByIdData,
   GetApiV1PostByIdErrors,
   GetApiV1PostByIdResponses,
+  GetApiV1RemovalReasonByCommunityIdData,
+  GetApiV1RemovalReasonByCommunityIdErrors,
+  GetApiV1RemovalReasonByCommunityIdResponses,
   GetApiV1ScheduledPostCommunityByCommunityIdData,
   GetApiV1ScheduledPostCommunityByCommunityIdErrors,
   GetApiV1ScheduledPostCommunityByCommunityIdResponses,
   GetApiV1ScheduledPostMineData,
   GetApiV1ScheduledPostMineResponses,
+  GetApiV1SearchData,
+  GetApiV1SearchErrors,
+  GetApiV1SearchResponses,
+  GetApiV1SearchSuggestData,
+  GetApiV1SearchSuggestResponses,
   GetApiV1TopicData,
   GetApiV1TopicResponses,
   GetApiV1UserBlockMineData,
@@ -151,9 +209,21 @@ import type {
   PatchApiV1FlairUserTemplatesByIdData,
   PatchApiV1FlairUserTemplatesByIdErrors,
   PatchApiV1FlairUserTemplatesByIdResponses,
+  PatchApiV1ModSavedResponseResponseByIdData,
+  PatchApiV1ModSavedResponseResponseByIdErrors,
+  PatchApiV1ModSavedResponseResponseByIdResponses,
+  PatchApiV1ModTeamByCommunityIdModByUserIdData,
+  PatchApiV1ModTeamByCommunityIdModByUserIdErrors,
+  PatchApiV1ModTeamByCommunityIdModByUserIdResponses,
   PatchApiV1PostByIdData,
   PatchApiV1PostByIdErrors,
   PatchApiV1PostByIdResponses,
+  PatchApiV1RemovalReasonByCommunityIdReorderData,
+  PatchApiV1RemovalReasonByCommunityIdReorderErrors,
+  PatchApiV1RemovalReasonByCommunityIdReorderResponses,
+  PatchApiV1RemovalReasonReasonByIdData,
+  PatchApiV1RemovalReasonReasonByIdErrors,
+  PatchApiV1RemovalReasonReasonByIdResponses,
   PatchApiV1UserMeData,
   PatchApiV1UserMeErrors,
   PatchApiV1UserMeResponses,
@@ -219,12 +289,63 @@ import type {
   PostApiV1MediaConfirmData,
   PostApiV1MediaConfirmErrors,
   PostApiV1MediaConfirmResponses,
+  PostApiV1ModQueueApproveData,
+  PostApiV1ModQueueApproveErrors,
+  PostApiV1ModQueueApproveResponses,
+  PostApiV1ModQueueLockData,
+  PostApiV1ModQueueLockErrors,
+  PostApiV1ModQueueLockResponses,
+  PostApiV1ModQueueRemoveData,
+  PostApiV1ModQueueRemoveErrors,
+  PostApiV1ModQueueRemoveResponses,
+  PostApiV1ModQueueStickyCommentData,
+  PostApiV1ModQueueStickyCommentErrors,
+  PostApiV1ModQueueStickyCommentResponses,
+  PostApiV1ModQueueStickyData,
+  PostApiV1ModQueueStickyErrors,
+  PostApiV1ModQueueStickyResponses,
+  PostApiV1ModQueueUnlockData,
+  PostApiV1ModQueueUnlockErrors,
+  PostApiV1ModQueueUnlockResponses,
+  PostApiV1ModSavedResponseByCommunityIdData,
+  PostApiV1ModSavedResponseByCommunityIdErrors,
+  PostApiV1ModSavedResponseByCommunityIdResponses,
+  PostApiV1ModTeamByCommunityIdInviteData,
+  PostApiV1ModTeamByCommunityIdInviteErrors,
+  PostApiV1ModTeamByCommunityIdInviteResponses,
+  PostApiV1ModTeamInviteByIdAcceptData,
+  PostApiV1ModTeamInviteByIdAcceptErrors,
+  PostApiV1ModTeamInviteByIdAcceptResponses,
+  PostApiV1ModTeamInviteByIdDeclineData,
+  PostApiV1ModTeamInviteByIdDeclineErrors,
+  PostApiV1ModTeamInviteByIdDeclineResponses,
+  PostApiV1ModUsersByCommunityIdApprovedData,
+  PostApiV1ModUsersByCommunityIdApprovedErrors,
+  PostApiV1ModUsersByCommunityIdApprovedResponses,
+  PostApiV1ModUsersByCommunityIdBanData,
+  PostApiV1ModUsersByCommunityIdBanErrors,
+  PostApiV1ModUsersByCommunityIdBanResponses,
+  PostApiV1ModUsersByCommunityIdMuteData,
+  PostApiV1ModUsersByCommunityIdMuteErrors,
+  PostApiV1ModUsersByCommunityIdMuteResponses,
+  PostApiV1ModUsersByCommunityIdNotesByUsernameData,
+  PostApiV1ModUsersByCommunityIdNotesByUsernameErrors,
+  PostApiV1ModUsersByCommunityIdNotesByUsernameResponses,
   PostApiV1PostActionShareByPostIdData,
   PostApiV1PostActionShareByPostIdErrors,
   PostApiV1PostActionShareByPostIdResponses,
   PostApiV1PostData,
   PostApiV1PostErrors,
   PostApiV1PostResponses,
+  PostApiV1RemovalReasonByCommunityIdData,
+  PostApiV1RemovalReasonByCommunityIdErrors,
+  PostApiV1RemovalReasonByCommunityIdResponses,
+  PostApiV1ReportCommentByCommentIdData,
+  PostApiV1ReportCommentByCommentIdErrors,
+  PostApiV1ReportCommentByCommentIdResponses,
+  PostApiV1ReportPostByPostIdData,
+  PostApiV1ReportPostByPostIdErrors,
+  PostApiV1ReportPostByPostIdResponses,
   PostApiV1ScheduledPostData,
   PostApiV1ScheduledPostErrors,
   PostApiV1ScheduledPostResponses,
@@ -932,7 +1053,7 @@ export const putApiV1FlairByCommunityIdMyFlair = <ThrowOnError extends boolean =
   })
 
 /**
- * Explore communities grouped by topic
+ * Explore communities grouped by topic, with recommendations for signed-in users
  */
 export const getApiV1Explore = <ThrowOnError extends boolean = false>(
   options?: Options<GetApiV1ExploreData, ThrowOnError>,
@@ -1802,3 +1923,761 @@ export const deleteApiV1ScheduledPostById = <ThrowOnError extends boolean = fals
     DeleteApiV1ScheduledPostByIdErrors,
     ThrowOnError
   >({ url: "/api/v1/scheduled-post/{id}", ...options })
+
+/**
+ * Full-text search across posts, comments, communities and profiles
+ */
+export const getApiV1Search = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1SearchData, ThrowOnError>,
+): RequestResult<GetApiV1SearchResponses, GetApiV1SearchErrors, ThrowOnError> =>
+  (options.client ?? client).get<GetApiV1SearchResponses, GetApiV1SearchErrors, ThrowOnError>({
+    url: "/api/v1/search",
+    ...options,
+  })
+
+/**
+ * Typeahead suggestions for communities and profiles
+ */
+export const getApiV1SearchSuggest = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1SearchSuggestData, ThrowOnError>,
+): RequestResult<GetApiV1SearchSuggestResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).get<GetApiV1SearchSuggestResponses, unknown, ThrowOnError>({
+    url: "/api/v1/search/suggest",
+    ...options,
+  })
+
+/**
+ * Report a post
+ */
+export const postApiV1ReportPostByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ReportPostByPostIdData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ReportPostByPostIdResponses,
+  PostApiV1ReportPostByPostIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ReportPostByPostIdResponses,
+    PostApiV1ReportPostByPostIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/report/post/{postId}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Report a comment
+ */
+export const postApiV1ReportCommentByCommentId = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ReportCommentByCommentIdData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ReportCommentByCommentIdResponses,
+  PostApiV1ReportCommentByCommentIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ReportCommentByCommentIdResponses,
+    PostApiV1ReportCommentByCommentIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/report/comment/{commentId}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Fetch a moderation queue page for a community (or 'mod' for all moderated)
+ */
+export const getApiV1ModQueueByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModQueueByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModQueueByCommunityIdResponses,
+  GetApiV1ModQueueByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModQueueByCommunityIdResponses,
+    GetApiV1ModQueueByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-queue/{communityId}", ...options })
+
+/**
+ * Approve a post or comment (clears removal, resolves reports)
+ */
+export const postApiV1ModQueueApprove = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ModQueueApproveData, ThrowOnError>,
+): RequestResult<PostApiV1ModQueueApproveResponses, PostApiV1ModQueueApproveErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1ModQueueApproveResponses,
+    PostApiV1ModQueueApproveErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-queue/approve",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Remove (soft-hide) a post or comment and resolve reports
+ */
+export const postApiV1ModQueueRemove = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ModQueueRemoveData, ThrowOnError>,
+): RequestResult<PostApiV1ModQueueRemoveResponses, PostApiV1ModQueueRemoveErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1ModQueueRemoveResponses,
+    PostApiV1ModQueueRemoveErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-queue/remove",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Lock a post
+ */
+export const postApiV1ModQueueLock = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ModQueueLockData, ThrowOnError>,
+): RequestResult<PostApiV1ModQueueLockResponses, PostApiV1ModQueueLockErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1ModQueueLockResponses,
+    PostApiV1ModQueueLockErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-queue/lock",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Unlock a post
+ */
+export const postApiV1ModQueueUnlock = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ModQueueUnlockData, ThrowOnError>,
+): RequestResult<PostApiV1ModQueueUnlockResponses, PostApiV1ModQueueUnlockErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1ModQueueUnlockResponses,
+    PostApiV1ModQueueUnlockErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-queue/unlock",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Set or clear a post's sticky position
+ */
+export const postApiV1ModQueueSticky = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ModQueueStickyData, ThrowOnError>,
+): RequestResult<PostApiV1ModQueueStickyResponses, PostApiV1ModQueueStickyErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1ModQueueStickyResponses,
+    PostApiV1ModQueueStickyErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-queue/sticky",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Sticky or unsticky a comment
+ */
+export const postApiV1ModQueueStickyComment = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ModQueueStickyCommentData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModQueueStickyCommentResponses,
+  PostApiV1ModQueueStickyCommentErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1ModQueueStickyCommentResponses,
+    PostApiV1ModQueueStickyCommentErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-queue/sticky-comment",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * List the current user's pending moderator invites
+ */
+export const getApiV1ModTeamMyInvites = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1ModTeamMyInvitesData, ThrowOnError>,
+): RequestResult<GetApiV1ModTeamMyInvitesResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1ModTeamMyInvitesResponses, unknown, ThrowOnError>({
+    url: "/api/v1/mod-team/my-invites",
+    ...options,
+  })
+
+/**
+ * List the moderator team and pending invites (moderators)
+ */
+export const getApiV1ModTeamByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModTeamByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModTeamByCommunityIdResponses,
+  GetApiV1ModTeamByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModTeamByCommunityIdResponses,
+    GetApiV1ModTeamByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-team/{communityId}", ...options })
+
+/**
+ * Invite a user to the moderator team (full moderators only)
+ */
+export const postApiV1ModTeamByCommunityIdInvite = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModTeamByCommunityIdInviteData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModTeamByCommunityIdInviteResponses,
+  PostApiV1ModTeamByCommunityIdInviteErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModTeamByCommunityIdInviteResponses,
+    PostApiV1ModTeamByCommunityIdInviteErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-team/{communityId}/invite",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Accept a moderator invite
+ */
+export const postApiV1ModTeamInviteByIdAccept = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModTeamInviteByIdAcceptData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModTeamInviteByIdAcceptResponses,
+  PostApiV1ModTeamInviteByIdAcceptErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModTeamInviteByIdAcceptResponses,
+    PostApiV1ModTeamInviteByIdAcceptErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-team/invite/{id}/accept", ...options })
+
+/**
+ * Decline a moderator invite
+ */
+export const postApiV1ModTeamInviteByIdDecline = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModTeamInviteByIdDeclineData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModTeamInviteByIdDeclineResponses,
+  PostApiV1ModTeamInviteByIdDeclineErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModTeamInviteByIdDeclineResponses,
+    PostApiV1ModTeamInviteByIdDeclineErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-team/invite/{id}/decline", ...options })
+
+/**
+ * Remove a moderator (full moderators, or self)
+ */
+export const deleteApiV1ModTeamByCommunityIdModByUserId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1ModTeamByCommunityIdModByUserIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1ModTeamByCommunityIdModByUserIdResponses,
+  DeleteApiV1ModTeamByCommunityIdModByUserIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1ModTeamByCommunityIdModByUserIdResponses,
+    DeleteApiV1ModTeamByCommunityIdModByUserIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-team/{communityId}/mod/{userId}", ...options })
+
+/**
+ * Update a moderator's permissions (full moderators only)
+ */
+export const patchApiV1ModTeamByCommunityIdModByUserId = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1ModTeamByCommunityIdModByUserIdData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1ModTeamByCommunityIdModByUserIdResponses,
+  PatchApiV1ModTeamByCommunityIdModByUserIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1ModTeamByCommunityIdModByUserIdResponses,
+    PatchApiV1ModTeamByCommunityIdModByUserIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-team/{communityId}/mod/{userId}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * List banned users (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdBanned = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModUsersByCommunityIdBannedData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModUsersByCommunityIdBannedResponses,
+  GetApiV1ModUsersByCommunityIdBannedErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModUsersByCommunityIdBannedResponses,
+    GetApiV1ModUsersByCommunityIdBannedErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-users/{communityId}/banned", ...options })
+
+/**
+ * List muted users (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdMuted = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModUsersByCommunityIdMutedData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModUsersByCommunityIdMutedResponses,
+  GetApiV1ModUsersByCommunityIdMutedErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModUsersByCommunityIdMutedResponses,
+    GetApiV1ModUsersByCommunityIdMutedErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-users/{communityId}/muted", ...options })
+
+/**
+ * List approved users (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdApproved = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModUsersByCommunityIdApprovedData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModUsersByCommunityIdApprovedResponses,
+  GetApiV1ModUsersByCommunityIdApprovedErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModUsersByCommunityIdApprovedResponses,
+    GetApiV1ModUsersByCommunityIdApprovedErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-users/{communityId}/approved", ...options })
+
+/**
+ * Approve a user (moderators with users permission)
+ */
+export const postApiV1ModUsersByCommunityIdApproved = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModUsersByCommunityIdApprovedData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModUsersByCommunityIdApprovedResponses,
+  PostApiV1ModUsersByCommunityIdApprovedErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModUsersByCommunityIdApprovedResponses,
+    PostApiV1ModUsersByCommunityIdApprovedErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-users/{communityId}/approved",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * List banned and muted users (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdRestricted = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModUsersByCommunityIdRestrictedData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModUsersByCommunityIdRestrictedResponses,
+  GetApiV1ModUsersByCommunityIdRestrictedErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModUsersByCommunityIdRestrictedResponses,
+    GetApiV1ModUsersByCommunityIdRestrictedErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-users/{communityId}/restricted", ...options })
+
+/**
+ * List mod notes for a user (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdNotesByUsername = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModUsersByCommunityIdNotesByUsernameData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModUsersByCommunityIdNotesByUsernameResponses,
+  GetApiV1ModUsersByCommunityIdNotesByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModUsersByCommunityIdNotesByUsernameResponses,
+    GetApiV1ModUsersByCommunityIdNotesByUsernameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-users/{communityId}/notes/{username}", ...options })
+
+/**
+ * Create a mod note for a user (moderators with users permission)
+ */
+export const postApiV1ModUsersByCommunityIdNotesByUsername = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModUsersByCommunityIdNotesByUsernameData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModUsersByCommunityIdNotesByUsernameResponses,
+  PostApiV1ModUsersByCommunityIdNotesByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModUsersByCommunityIdNotesByUsernameResponses,
+    PostApiV1ModUsersByCommunityIdNotesByUsernameErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-users/{communityId}/notes/{username}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Ban a user (moderators with users permission)
+ */
+export const postApiV1ModUsersByCommunityIdBan = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModUsersByCommunityIdBanData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModUsersByCommunityIdBanResponses,
+  PostApiV1ModUsersByCommunityIdBanErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModUsersByCommunityIdBanResponses,
+    PostApiV1ModUsersByCommunityIdBanErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-users/{communityId}/ban",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Unban a user (moderators with users permission)
+ */
+export const deleteApiV1ModUsersByCommunityIdBanByUsername = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1ModUsersByCommunityIdBanByUsernameData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameResponses,
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1ModUsersByCommunityIdBanByUsernameResponses,
+    DeleteApiV1ModUsersByCommunityIdBanByUsernameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-users/{communityId}/ban/{username}", ...options })
+
+/**
+ * Mute a user (moderators with users permission)
+ */
+export const postApiV1ModUsersByCommunityIdMute = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModUsersByCommunityIdMuteData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModUsersByCommunityIdMuteResponses,
+  PostApiV1ModUsersByCommunityIdMuteErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModUsersByCommunityIdMuteResponses,
+    PostApiV1ModUsersByCommunityIdMuteErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-users/{communityId}/mute",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Unmute a user (moderators with users permission)
+ */
+export const deleteApiV1ModUsersByCommunityIdMuteByUsername = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteApiV1ModUsersByCommunityIdMuteByUsernameData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameResponses,
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1ModUsersByCommunityIdMuteByUsernameResponses,
+    DeleteApiV1ModUsersByCommunityIdMuteByUsernameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-users/{communityId}/mute/{username}", ...options })
+
+/**
+ * Remove an approved user (moderators with users permission)
+ */
+export const deleteApiV1ModUsersByCommunityIdApprovedByUsername = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<DeleteApiV1ModUsersByCommunityIdApprovedByUsernameData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameResponses,
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1ModUsersByCommunityIdApprovedByUsernameResponses,
+    DeleteApiV1ModUsersByCommunityIdApprovedByUsernameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-users/{communityId}/approved/{username}", ...options })
+
+/**
+ * Delete a mod note (moderators with users permission)
+ */
+export const deleteApiV1ModUsersNotesById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1ModUsersNotesByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1ModUsersNotesByIdResponses,
+  DeleteApiV1ModUsersNotesByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1ModUsersNotesByIdResponses,
+    DeleteApiV1ModUsersNotesByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-users/notes/{id}", ...options })
+
+/**
+ * Fetch a community's moderation log (moderators)
+ */
+export const getApiV1ModLogByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModLogByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModLogByCommunityIdResponses,
+  GetApiV1ModLogByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModLogByCommunityIdResponses,
+    GetApiV1ModLogByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-log/{communityId}", ...options })
+
+/**
+ * List a community's saved responses (moderators)
+ */
+export const getApiV1ModSavedResponseByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ModSavedResponseByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ModSavedResponseByCommunityIdResponses,
+  GetApiV1ModSavedResponseByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ModSavedResponseByCommunityIdResponses,
+    GetApiV1ModSavedResponseByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-saved-response/{communityId}", ...options })
+
+/**
+ * Create a saved response (moderators with posts_comments permission)
+ */
+export const postApiV1ModSavedResponseByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1ModSavedResponseByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  PostApiV1ModSavedResponseByCommunityIdResponses,
+  PostApiV1ModSavedResponseByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1ModSavedResponseByCommunityIdResponses,
+    PostApiV1ModSavedResponseByCommunityIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-saved-response/{communityId}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Delete a saved response (moderators with posts_comments permission)
+ */
+export const deleteApiV1ModSavedResponseResponseById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1ModSavedResponseResponseByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1ModSavedResponseResponseByIdResponses,
+  DeleteApiV1ModSavedResponseResponseByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1ModSavedResponseResponseByIdResponses,
+    DeleteApiV1ModSavedResponseResponseByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/mod-saved-response/response/{id}", ...options })
+
+/**
+ * Update a saved response (moderators with posts_comments permission)
+ */
+export const patchApiV1ModSavedResponseResponseById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1ModSavedResponseResponseByIdData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1ModSavedResponseResponseByIdResponses,
+  PatchApiV1ModSavedResponseResponseByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1ModSavedResponseResponseByIdResponses,
+    PatchApiV1ModSavedResponseResponseByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/mod-saved-response/response/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * List a community's removal reasons (moderators)
+ */
+export const getApiV1RemovalReasonByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1RemovalReasonByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  GetApiV1RemovalReasonByCommunityIdResponses,
+  GetApiV1RemovalReasonByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1RemovalReasonByCommunityIdResponses,
+    GetApiV1RemovalReasonByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/removal-reason/{communityId}", ...options })
+
+/**
+ * Create a removal reason (config permission)
+ */
+export const postApiV1RemovalReasonByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1RemovalReasonByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  PostApiV1RemovalReasonByCommunityIdResponses,
+  PostApiV1RemovalReasonByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1RemovalReasonByCommunityIdResponses,
+    PostApiV1RemovalReasonByCommunityIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/removal-reason/{communityId}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Reorder removal reasons (config permission)
+ */
+export const patchApiV1RemovalReasonByCommunityIdReorder = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1RemovalReasonByCommunityIdReorderData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1RemovalReasonByCommunityIdReorderResponses,
+  PatchApiV1RemovalReasonByCommunityIdReorderErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1RemovalReasonByCommunityIdReorderResponses,
+    PatchApiV1RemovalReasonByCommunityIdReorderErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/removal-reason/{communityId}/reorder",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * Delete a removal reason (config permission)
+ */
+export const deleteApiV1RemovalReasonReasonById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1RemovalReasonReasonByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1RemovalReasonReasonByIdResponses,
+  DeleteApiV1RemovalReasonReasonByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1RemovalReasonReasonByIdResponses,
+    DeleteApiV1RemovalReasonReasonByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/removal-reason/reason/{id}", ...options })
+
+/**
+ * Update a removal reason (config permission)
+ */
+export const patchApiV1RemovalReasonReasonById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1RemovalReasonReasonByIdData, ThrowOnError>,
+): RequestResult<
+  PatchApiV1RemovalReasonReasonByIdResponses,
+  PatchApiV1RemovalReasonReasonByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).patch<
+    PatchApiV1RemovalReasonReasonByIdResponses,
+    PatchApiV1RemovalReasonReasonByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/removal-reason/reason/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })

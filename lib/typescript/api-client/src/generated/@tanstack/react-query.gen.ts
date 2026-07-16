@@ -18,11 +18,18 @@ import {
   deleteApiV1FlairPostTemplatesById,
   deleteApiV1FlairUserTemplatesById,
   deleteApiV1HistoryRecentPosts,
+  deleteApiV1ModSavedResponseResponseById,
+  deleteApiV1ModTeamByCommunityIdModByUserId,
+  deleteApiV1ModUsersByCommunityIdApprovedByUsername,
+  deleteApiV1ModUsersByCommunityIdBanByUsername,
+  deleteApiV1ModUsersByCommunityIdMuteByUsername,
+  deleteApiV1ModUsersNotesById,
   deleteApiV1MutedCommunityByCommunityId,
   deleteApiV1PostActionFollowByPostId,
   deleteApiV1PostActionHideByPostId,
   deleteApiV1PostActionSaveByPostId,
   deleteApiV1PostById,
+  deleteApiV1RemovalReasonReasonById,
   deleteApiV1ScheduledPostById,
   deleteApiV1UserBlockByUsername,
   deleteApiV1UserFollowByUsername,
@@ -46,10 +53,23 @@ import {
   getApiV1FlairByCommunityIdUserTemplates,
   getApiV1HistoryRecentCommunities,
   getApiV1HistoryRecentPosts,
+  getApiV1ModLogByCommunityId,
+  getApiV1ModQueueByCommunityId,
+  getApiV1ModSavedResponseByCommunityId,
+  getApiV1ModTeamByCommunityId,
+  getApiV1ModTeamMyInvites,
+  getApiV1ModUsersByCommunityIdApproved,
+  getApiV1ModUsersByCommunityIdBanned,
+  getApiV1ModUsersByCommunityIdMuted,
+  getApiV1ModUsersByCommunityIdNotesByUsername,
+  getApiV1ModUsersByCommunityIdRestricted,
   getApiV1MutedCommunityMine,
   getApiV1PostById,
+  getApiV1RemovalReasonByCommunityId,
   getApiV1ScheduledPostCommunityByCommunityId,
   getApiV1ScheduledPostMine,
+  getApiV1Search,
+  getApiV1SearchSuggest,
   getApiV1Topic,
   getApiV1UserBlockMine,
   getApiV1UserByUsernameByUsername,
@@ -70,7 +90,11 @@ import {
   patchApiV1DraftById,
   patchApiV1FlairPostTemplatesById,
   patchApiV1FlairUserTemplatesById,
+  patchApiV1ModSavedResponseResponseById,
+  patchApiV1ModTeamByCommunityIdModByUserId,
   patchApiV1PostById,
+  patchApiV1RemovalReasonByCommunityIdReorder,
+  patchApiV1RemovalReasonReasonById,
   patchApiV1UserMe,
   patchApiV1UserMeSettings,
   postApiV1AuthLogout,
@@ -93,8 +117,25 @@ import {
   postApiV1MediaCommunityIconConfirm,
   postApiV1MediaCommunityIconUpload,
   postApiV1MediaConfirm,
+  postApiV1ModQueueApprove,
+  postApiV1ModQueueLock,
+  postApiV1ModQueueRemove,
+  postApiV1ModQueueSticky,
+  postApiV1ModQueueStickyComment,
+  postApiV1ModQueueUnlock,
+  postApiV1ModSavedResponseByCommunityId,
+  postApiV1ModTeamByCommunityIdInvite,
+  postApiV1ModTeamInviteByIdAccept,
+  postApiV1ModTeamInviteByIdDecline,
+  postApiV1ModUsersByCommunityIdApproved,
+  postApiV1ModUsersByCommunityIdBan,
+  postApiV1ModUsersByCommunityIdMute,
+  postApiV1ModUsersByCommunityIdNotesByUsername,
   postApiV1Post,
   postApiV1PostActionShareByPostId,
+  postApiV1RemovalReasonByCommunityId,
+  postApiV1ReportCommentByCommentId,
+  postApiV1ReportPostByPostId,
   postApiV1ScheduledPost,
   putApiV1CommentActionFollowByCommentId,
   putApiV1CommentActionSaveByCommentId,
@@ -131,6 +172,24 @@ import type {
   DeleteApiV1FlairUserTemplatesByIdResponse,
   DeleteApiV1HistoryRecentPostsData,
   DeleteApiV1HistoryRecentPostsResponse,
+  DeleteApiV1ModSavedResponseResponseByIdData,
+  DeleteApiV1ModSavedResponseResponseByIdError,
+  DeleteApiV1ModSavedResponseResponseByIdResponse,
+  DeleteApiV1ModTeamByCommunityIdModByUserIdData,
+  DeleteApiV1ModTeamByCommunityIdModByUserIdError,
+  DeleteApiV1ModTeamByCommunityIdModByUserIdResponse,
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameData,
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameError,
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameResponse,
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameData,
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameError,
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameResponse,
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameData,
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameError,
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameResponse,
+  DeleteApiV1ModUsersNotesByIdData,
+  DeleteApiV1ModUsersNotesByIdError,
+  DeleteApiV1ModUsersNotesByIdResponse,
   DeleteApiV1MutedCommunityByCommunityIdData,
   DeleteApiV1MutedCommunityByCommunityIdResponse,
   DeleteApiV1PostActionFollowByPostIdData,
@@ -142,6 +201,9 @@ import type {
   DeleteApiV1PostByIdData,
   DeleteApiV1PostByIdError,
   DeleteApiV1PostByIdResponse,
+  DeleteApiV1RemovalReasonReasonByIdData,
+  DeleteApiV1RemovalReasonReasonByIdError,
+  DeleteApiV1RemovalReasonReasonByIdResponse,
   DeleteApiV1ScheduledPostByIdData,
   DeleteApiV1ScheduledPostByIdError,
   DeleteApiV1ScheduledPostByIdResponse,
@@ -199,16 +261,53 @@ import type {
   GetApiV1HistoryRecentCommunitiesResponse,
   GetApiV1HistoryRecentPostsData,
   GetApiV1HistoryRecentPostsResponse,
+  GetApiV1ModLogByCommunityIdData,
+  GetApiV1ModLogByCommunityIdError,
+  GetApiV1ModLogByCommunityIdResponse,
+  GetApiV1ModQueueByCommunityIdData,
+  GetApiV1ModQueueByCommunityIdError,
+  GetApiV1ModQueueByCommunityIdResponse,
+  GetApiV1ModSavedResponseByCommunityIdData,
+  GetApiV1ModSavedResponseByCommunityIdError,
+  GetApiV1ModSavedResponseByCommunityIdResponse,
+  GetApiV1ModTeamByCommunityIdData,
+  GetApiV1ModTeamByCommunityIdError,
+  GetApiV1ModTeamByCommunityIdResponse,
+  GetApiV1ModTeamMyInvitesData,
+  GetApiV1ModTeamMyInvitesResponse,
+  GetApiV1ModUsersByCommunityIdApprovedData,
+  GetApiV1ModUsersByCommunityIdApprovedError,
+  GetApiV1ModUsersByCommunityIdApprovedResponse,
+  GetApiV1ModUsersByCommunityIdBannedData,
+  GetApiV1ModUsersByCommunityIdBannedError,
+  GetApiV1ModUsersByCommunityIdBannedResponse,
+  GetApiV1ModUsersByCommunityIdMutedData,
+  GetApiV1ModUsersByCommunityIdMutedError,
+  GetApiV1ModUsersByCommunityIdMutedResponse,
+  GetApiV1ModUsersByCommunityIdNotesByUsernameData,
+  GetApiV1ModUsersByCommunityIdNotesByUsernameError,
+  GetApiV1ModUsersByCommunityIdNotesByUsernameResponse,
+  GetApiV1ModUsersByCommunityIdRestrictedData,
+  GetApiV1ModUsersByCommunityIdRestrictedError,
+  GetApiV1ModUsersByCommunityIdRestrictedResponse,
   GetApiV1MutedCommunityMineData,
   GetApiV1MutedCommunityMineResponse,
   GetApiV1PostByIdData,
   GetApiV1PostByIdError,
   GetApiV1PostByIdResponse,
+  GetApiV1RemovalReasonByCommunityIdData,
+  GetApiV1RemovalReasonByCommunityIdError,
+  GetApiV1RemovalReasonByCommunityIdResponse,
   GetApiV1ScheduledPostCommunityByCommunityIdData,
   GetApiV1ScheduledPostCommunityByCommunityIdError,
   GetApiV1ScheduledPostCommunityByCommunityIdResponse,
   GetApiV1ScheduledPostMineData,
   GetApiV1ScheduledPostMineResponse,
+  GetApiV1SearchData,
+  GetApiV1SearchError,
+  GetApiV1SearchResponse,
+  GetApiV1SearchSuggestData,
+  GetApiV1SearchSuggestResponse,
   GetApiV1TopicData,
   GetApiV1TopicResponse,
   GetApiV1UserBlockMineData,
@@ -258,9 +357,21 @@ import type {
   PatchApiV1FlairUserTemplatesByIdData,
   PatchApiV1FlairUserTemplatesByIdError,
   PatchApiV1FlairUserTemplatesByIdResponse,
+  PatchApiV1ModSavedResponseResponseByIdData,
+  PatchApiV1ModSavedResponseResponseByIdError,
+  PatchApiV1ModSavedResponseResponseByIdResponse,
+  PatchApiV1ModTeamByCommunityIdModByUserIdData,
+  PatchApiV1ModTeamByCommunityIdModByUserIdError,
+  PatchApiV1ModTeamByCommunityIdModByUserIdResponse,
   PatchApiV1PostByIdData,
   PatchApiV1PostByIdError,
   PatchApiV1PostByIdResponse,
+  PatchApiV1RemovalReasonByCommunityIdReorderData,
+  PatchApiV1RemovalReasonByCommunityIdReorderError,
+  PatchApiV1RemovalReasonByCommunityIdReorderResponse,
+  PatchApiV1RemovalReasonReasonByIdData,
+  PatchApiV1RemovalReasonReasonByIdError,
+  PatchApiV1RemovalReasonReasonByIdResponse,
   PatchApiV1UserMeData,
   PatchApiV1UserMeError,
   PatchApiV1UserMeResponse,
@@ -326,12 +437,63 @@ import type {
   PostApiV1MediaConfirmData,
   PostApiV1MediaConfirmError,
   PostApiV1MediaConfirmResponse,
+  PostApiV1ModQueueApproveData,
+  PostApiV1ModQueueApproveError,
+  PostApiV1ModQueueApproveResponse,
+  PostApiV1ModQueueLockData,
+  PostApiV1ModQueueLockError,
+  PostApiV1ModQueueLockResponse,
+  PostApiV1ModQueueRemoveData,
+  PostApiV1ModQueueRemoveError,
+  PostApiV1ModQueueRemoveResponse,
+  PostApiV1ModQueueStickyCommentData,
+  PostApiV1ModQueueStickyCommentError,
+  PostApiV1ModQueueStickyCommentResponse,
+  PostApiV1ModQueueStickyData,
+  PostApiV1ModQueueStickyError,
+  PostApiV1ModQueueStickyResponse,
+  PostApiV1ModQueueUnlockData,
+  PostApiV1ModQueueUnlockError,
+  PostApiV1ModQueueUnlockResponse,
+  PostApiV1ModSavedResponseByCommunityIdData,
+  PostApiV1ModSavedResponseByCommunityIdError,
+  PostApiV1ModSavedResponseByCommunityIdResponse,
+  PostApiV1ModTeamByCommunityIdInviteData,
+  PostApiV1ModTeamByCommunityIdInviteError,
+  PostApiV1ModTeamByCommunityIdInviteResponse,
+  PostApiV1ModTeamInviteByIdAcceptData,
+  PostApiV1ModTeamInviteByIdAcceptError,
+  PostApiV1ModTeamInviteByIdAcceptResponse,
+  PostApiV1ModTeamInviteByIdDeclineData,
+  PostApiV1ModTeamInviteByIdDeclineError,
+  PostApiV1ModTeamInviteByIdDeclineResponse,
+  PostApiV1ModUsersByCommunityIdApprovedData,
+  PostApiV1ModUsersByCommunityIdApprovedError,
+  PostApiV1ModUsersByCommunityIdApprovedResponse,
+  PostApiV1ModUsersByCommunityIdBanData,
+  PostApiV1ModUsersByCommunityIdBanError,
+  PostApiV1ModUsersByCommunityIdBanResponse,
+  PostApiV1ModUsersByCommunityIdMuteData,
+  PostApiV1ModUsersByCommunityIdMuteError,
+  PostApiV1ModUsersByCommunityIdMuteResponse,
+  PostApiV1ModUsersByCommunityIdNotesByUsernameData,
+  PostApiV1ModUsersByCommunityIdNotesByUsernameError,
+  PostApiV1ModUsersByCommunityIdNotesByUsernameResponse,
   PostApiV1PostActionShareByPostIdData,
   PostApiV1PostActionShareByPostIdError,
   PostApiV1PostActionShareByPostIdResponse,
   PostApiV1PostData,
   PostApiV1PostError,
   PostApiV1PostResponse,
+  PostApiV1RemovalReasonByCommunityIdData,
+  PostApiV1RemovalReasonByCommunityIdError,
+  PostApiV1RemovalReasonByCommunityIdResponse,
+  PostApiV1ReportCommentByCommentIdData,
+  PostApiV1ReportCommentByCommentIdError,
+  PostApiV1ReportCommentByCommentIdResponse,
+  PostApiV1ReportPostByPostIdData,
+  PostApiV1ReportPostByPostIdError,
+  PostApiV1ReportPostByPostIdResponse,
   PostApiV1ScheduledPostData,
   PostApiV1ScheduledPostError,
   PostApiV1ScheduledPostResponse,
@@ -1786,7 +1948,7 @@ export const getApiV1ExploreQueryKey = (options?: Options<GetApiV1ExploreData>) 
   createQueryKey("getApiV1Explore", options)
 
 /**
- * Explore communities grouped by topic
+ * Explore communities grouped by topic, with recommendations for signed-in users
  */
 export const getApiV1ExploreOptions = (options?: Options<GetApiV1ExploreData>) =>
   queryOptions<
@@ -1812,7 +1974,7 @@ export const getApiV1ExploreInfiniteQueryKey = (
 ): QueryKey<Options<GetApiV1ExploreData>> => createQueryKey("getApiV1Explore", options, true)
 
 /**
- * Explore communities grouped by topic
+ * Explore communities grouped by topic, with recommendations for signed-in users
  */
 export const getApiV1ExploreInfiniteOptions = (options?: Options<GetApiV1ExploreData>) => {
   const opts = infiniteQueryOptions<
@@ -3561,6 +3723,1266 @@ export const deleteApiV1ScheduledPostByIdMutation = (
   > = {
     mutationFn: async (fnOptions) => {
       const { data } = await deleteApiV1ScheduledPostById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1SearchQueryKey = (options: Options<GetApiV1SearchData>) =>
+  createQueryKey("getApiV1Search", options)
+
+/**
+ * Full-text search across posts, comments, communities and profiles
+ */
+export const getApiV1SearchOptions = (options: Options<GetApiV1SearchData>) =>
+  queryOptions<
+    GetApiV1SearchResponse,
+    GetApiV1SearchError,
+    GetApiV1SearchResponse,
+    ReturnType<typeof getApiV1SearchQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1Search({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1SearchQueryKey(options),
+  })
+
+export const getApiV1SearchInfiniteQueryKey = (
+  options: Options<GetApiV1SearchData>,
+): QueryKey<Options<GetApiV1SearchData>> => createQueryKey("getApiV1Search", options, true)
+
+/**
+ * Full-text search across posts, comments, communities and profiles
+ */
+export const getApiV1SearchInfiniteOptions = (options: Options<GetApiV1SearchData>) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1SearchResponse,
+    GetApiV1SearchError,
+    InfiniteData<GetApiV1SearchResponse>,
+    QueryKey<Options<GetApiV1SearchData>>,
+    string | Pick<QueryKey<Options<GetApiV1SearchData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1SearchData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1Search({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1SearchInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1SearchSuggestQueryKey = (options: Options<GetApiV1SearchSuggestData>) =>
+  createQueryKey("getApiV1SearchSuggest", options)
+
+/**
+ * Typeahead suggestions for communities and profiles
+ */
+export const getApiV1SearchSuggestOptions = (options: Options<GetApiV1SearchSuggestData>) =>
+  queryOptions<
+    GetApiV1SearchSuggestResponse,
+    DefaultError,
+    GetApiV1SearchSuggestResponse,
+    ReturnType<typeof getApiV1SearchSuggestQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1SearchSuggest({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1SearchSuggestQueryKey(options),
+  })
+
+/**
+ * Report a post
+ */
+export const postApiV1ReportPostByPostIdMutation = (
+  options?: Partial<Options<PostApiV1ReportPostByPostIdData>>,
+): UseMutationOptions<
+  PostApiV1ReportPostByPostIdResponse,
+  PostApiV1ReportPostByPostIdError,
+  Options<PostApiV1ReportPostByPostIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ReportPostByPostIdResponse,
+    PostApiV1ReportPostByPostIdError,
+    Options<PostApiV1ReportPostByPostIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ReportPostByPostId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Report a comment
+ */
+export const postApiV1ReportCommentByCommentIdMutation = (
+  options?: Partial<Options<PostApiV1ReportCommentByCommentIdData>>,
+): UseMutationOptions<
+  PostApiV1ReportCommentByCommentIdResponse,
+  PostApiV1ReportCommentByCommentIdError,
+  Options<PostApiV1ReportCommentByCommentIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ReportCommentByCommentIdResponse,
+    PostApiV1ReportCommentByCommentIdError,
+    Options<PostApiV1ReportCommentByCommentIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ReportCommentByCommentId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1ModQueueByCommunityIdQueryKey = (
+  options: Options<GetApiV1ModQueueByCommunityIdData>,
+) => createQueryKey("getApiV1ModQueueByCommunityId", options)
+
+/**
+ * Fetch a moderation queue page for a community (or 'mod' for all moderated)
+ */
+export const getApiV1ModQueueByCommunityIdOptions = (
+  options: Options<GetApiV1ModQueueByCommunityIdData>,
+) =>
+  queryOptions<
+    GetApiV1ModQueueByCommunityIdResponse,
+    GetApiV1ModQueueByCommunityIdError,
+    GetApiV1ModQueueByCommunityIdResponse,
+    ReturnType<typeof getApiV1ModQueueByCommunityIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModQueueByCommunityId({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModQueueByCommunityIdQueryKey(options),
+  })
+
+export const getApiV1ModQueueByCommunityIdInfiniteQueryKey = (
+  options: Options<GetApiV1ModQueueByCommunityIdData>,
+): QueryKey<Options<GetApiV1ModQueueByCommunityIdData>> =>
+  createQueryKey("getApiV1ModQueueByCommunityId", options, true)
+
+/**
+ * Fetch a moderation queue page for a community (or 'mod' for all moderated)
+ */
+export const getApiV1ModQueueByCommunityIdInfiniteOptions = (
+  options: Options<GetApiV1ModQueueByCommunityIdData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1ModQueueByCommunityIdResponse,
+    GetApiV1ModQueueByCommunityIdError,
+    InfiniteData<GetApiV1ModQueueByCommunityIdResponse>,
+    QueryKey<Options<GetApiV1ModQueueByCommunityIdData>>,
+    | string
+    | Pick<
+        QueryKey<Options<GetApiV1ModQueueByCommunityIdData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1ModQueueByCommunityIdData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1ModQueueByCommunityId({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1ModQueueByCommunityIdInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+/**
+ * Approve a post or comment (clears removal, resolves reports)
+ */
+export const postApiV1ModQueueApproveMutation = (
+  options?: Partial<Options<PostApiV1ModQueueApproveData>>,
+): UseMutationOptions<
+  PostApiV1ModQueueApproveResponse,
+  PostApiV1ModQueueApproveError,
+  Options<PostApiV1ModQueueApproveData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModQueueApproveResponse,
+    PostApiV1ModQueueApproveError,
+    Options<PostApiV1ModQueueApproveData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModQueueApprove({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Remove (soft-hide) a post or comment and resolve reports
+ */
+export const postApiV1ModQueueRemoveMutation = (
+  options?: Partial<Options<PostApiV1ModQueueRemoveData>>,
+): UseMutationOptions<
+  PostApiV1ModQueueRemoveResponse,
+  PostApiV1ModQueueRemoveError,
+  Options<PostApiV1ModQueueRemoveData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModQueueRemoveResponse,
+    PostApiV1ModQueueRemoveError,
+    Options<PostApiV1ModQueueRemoveData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModQueueRemove({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Lock a post
+ */
+export const postApiV1ModQueueLockMutation = (
+  options?: Partial<Options<PostApiV1ModQueueLockData>>,
+): UseMutationOptions<
+  PostApiV1ModQueueLockResponse,
+  PostApiV1ModQueueLockError,
+  Options<PostApiV1ModQueueLockData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModQueueLockResponse,
+    PostApiV1ModQueueLockError,
+    Options<PostApiV1ModQueueLockData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModQueueLock({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Unlock a post
+ */
+export const postApiV1ModQueueUnlockMutation = (
+  options?: Partial<Options<PostApiV1ModQueueUnlockData>>,
+): UseMutationOptions<
+  PostApiV1ModQueueUnlockResponse,
+  PostApiV1ModQueueUnlockError,
+  Options<PostApiV1ModQueueUnlockData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModQueueUnlockResponse,
+    PostApiV1ModQueueUnlockError,
+    Options<PostApiV1ModQueueUnlockData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModQueueUnlock({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Set or clear a post's sticky position
+ */
+export const postApiV1ModQueueStickyMutation = (
+  options?: Partial<Options<PostApiV1ModQueueStickyData>>,
+): UseMutationOptions<
+  PostApiV1ModQueueStickyResponse,
+  PostApiV1ModQueueStickyError,
+  Options<PostApiV1ModQueueStickyData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModQueueStickyResponse,
+    PostApiV1ModQueueStickyError,
+    Options<PostApiV1ModQueueStickyData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModQueueSticky({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Sticky or unsticky a comment
+ */
+export const postApiV1ModQueueStickyCommentMutation = (
+  options?: Partial<Options<PostApiV1ModQueueStickyCommentData>>,
+): UseMutationOptions<
+  PostApiV1ModQueueStickyCommentResponse,
+  PostApiV1ModQueueStickyCommentError,
+  Options<PostApiV1ModQueueStickyCommentData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModQueueStickyCommentResponse,
+    PostApiV1ModQueueStickyCommentError,
+    Options<PostApiV1ModQueueStickyCommentData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModQueueStickyComment({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1ModTeamMyInvitesQueryKey = (options?: Options<GetApiV1ModTeamMyInvitesData>) =>
+  createQueryKey("getApiV1ModTeamMyInvites", options)
+
+/**
+ * List the current user's pending moderator invites
+ */
+export const getApiV1ModTeamMyInvitesOptions = (options?: Options<GetApiV1ModTeamMyInvitesData>) =>
+  queryOptions<
+    GetApiV1ModTeamMyInvitesResponse,
+    DefaultError,
+    GetApiV1ModTeamMyInvitesResponse,
+    ReturnType<typeof getApiV1ModTeamMyInvitesQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModTeamMyInvites({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModTeamMyInvitesQueryKey(options),
+  })
+
+export const getApiV1ModTeamByCommunityIdQueryKey = (
+  options: Options<GetApiV1ModTeamByCommunityIdData>,
+) => createQueryKey("getApiV1ModTeamByCommunityId", options)
+
+/**
+ * List the moderator team and pending invites (moderators)
+ */
+export const getApiV1ModTeamByCommunityIdOptions = (
+  options: Options<GetApiV1ModTeamByCommunityIdData>,
+) =>
+  queryOptions<
+    GetApiV1ModTeamByCommunityIdResponse,
+    GetApiV1ModTeamByCommunityIdError,
+    GetApiV1ModTeamByCommunityIdResponse,
+    ReturnType<typeof getApiV1ModTeamByCommunityIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModTeamByCommunityId({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModTeamByCommunityIdQueryKey(options),
+  })
+
+/**
+ * Invite a user to the moderator team (full moderators only)
+ */
+export const postApiV1ModTeamByCommunityIdInviteMutation = (
+  options?: Partial<Options<PostApiV1ModTeamByCommunityIdInviteData>>,
+): UseMutationOptions<
+  PostApiV1ModTeamByCommunityIdInviteResponse,
+  PostApiV1ModTeamByCommunityIdInviteError,
+  Options<PostApiV1ModTeamByCommunityIdInviteData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModTeamByCommunityIdInviteResponse,
+    PostApiV1ModTeamByCommunityIdInviteError,
+    Options<PostApiV1ModTeamByCommunityIdInviteData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModTeamByCommunityIdInvite({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Accept a moderator invite
+ */
+export const postApiV1ModTeamInviteByIdAcceptMutation = (
+  options?: Partial<Options<PostApiV1ModTeamInviteByIdAcceptData>>,
+): UseMutationOptions<
+  PostApiV1ModTeamInviteByIdAcceptResponse,
+  PostApiV1ModTeamInviteByIdAcceptError,
+  Options<PostApiV1ModTeamInviteByIdAcceptData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModTeamInviteByIdAcceptResponse,
+    PostApiV1ModTeamInviteByIdAcceptError,
+    Options<PostApiV1ModTeamInviteByIdAcceptData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModTeamInviteByIdAccept({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Decline a moderator invite
+ */
+export const postApiV1ModTeamInviteByIdDeclineMutation = (
+  options?: Partial<Options<PostApiV1ModTeamInviteByIdDeclineData>>,
+): UseMutationOptions<
+  PostApiV1ModTeamInviteByIdDeclineResponse,
+  PostApiV1ModTeamInviteByIdDeclineError,
+  Options<PostApiV1ModTeamInviteByIdDeclineData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModTeamInviteByIdDeclineResponse,
+    PostApiV1ModTeamInviteByIdDeclineError,
+    Options<PostApiV1ModTeamInviteByIdDeclineData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModTeamInviteByIdDecline({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Remove a moderator (full moderators, or self)
+ */
+export const deleteApiV1ModTeamByCommunityIdModByUserIdMutation = (
+  options?: Partial<Options<DeleteApiV1ModTeamByCommunityIdModByUserIdData>>,
+): UseMutationOptions<
+  DeleteApiV1ModTeamByCommunityIdModByUserIdResponse,
+  DeleteApiV1ModTeamByCommunityIdModByUserIdError,
+  Options<DeleteApiV1ModTeamByCommunityIdModByUserIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1ModTeamByCommunityIdModByUserIdResponse,
+    DeleteApiV1ModTeamByCommunityIdModByUserIdError,
+    Options<DeleteApiV1ModTeamByCommunityIdModByUserIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1ModTeamByCommunityIdModByUserId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Update a moderator's permissions (full moderators only)
+ */
+export const patchApiV1ModTeamByCommunityIdModByUserIdMutation = (
+  options?: Partial<Options<PatchApiV1ModTeamByCommunityIdModByUserIdData>>,
+): UseMutationOptions<
+  PatchApiV1ModTeamByCommunityIdModByUserIdResponse,
+  PatchApiV1ModTeamByCommunityIdModByUserIdError,
+  Options<PatchApiV1ModTeamByCommunityIdModByUserIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1ModTeamByCommunityIdModByUserIdResponse,
+    PatchApiV1ModTeamByCommunityIdModByUserIdError,
+    Options<PatchApiV1ModTeamByCommunityIdModByUserIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1ModTeamByCommunityIdModByUserId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1ModUsersByCommunityIdBannedQueryKey = (
+  options: Options<GetApiV1ModUsersByCommunityIdBannedData>,
+) => createQueryKey("getApiV1ModUsersByCommunityIdBanned", options)
+
+/**
+ * List banned users (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdBannedOptions = (
+  options: Options<GetApiV1ModUsersByCommunityIdBannedData>,
+) =>
+  queryOptions<
+    GetApiV1ModUsersByCommunityIdBannedResponse,
+    GetApiV1ModUsersByCommunityIdBannedError,
+    GetApiV1ModUsersByCommunityIdBannedResponse,
+    ReturnType<typeof getApiV1ModUsersByCommunityIdBannedQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModUsersByCommunityIdBanned({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModUsersByCommunityIdBannedQueryKey(options),
+  })
+
+export const getApiV1ModUsersByCommunityIdMutedQueryKey = (
+  options: Options<GetApiV1ModUsersByCommunityIdMutedData>,
+) => createQueryKey("getApiV1ModUsersByCommunityIdMuted", options)
+
+/**
+ * List muted users (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdMutedOptions = (
+  options: Options<GetApiV1ModUsersByCommunityIdMutedData>,
+) =>
+  queryOptions<
+    GetApiV1ModUsersByCommunityIdMutedResponse,
+    GetApiV1ModUsersByCommunityIdMutedError,
+    GetApiV1ModUsersByCommunityIdMutedResponse,
+    ReturnType<typeof getApiV1ModUsersByCommunityIdMutedQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModUsersByCommunityIdMuted({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModUsersByCommunityIdMutedQueryKey(options),
+  })
+
+export const getApiV1ModUsersByCommunityIdApprovedQueryKey = (
+  options: Options<GetApiV1ModUsersByCommunityIdApprovedData>,
+) => createQueryKey("getApiV1ModUsersByCommunityIdApproved", options)
+
+/**
+ * List approved users (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdApprovedOptions = (
+  options: Options<GetApiV1ModUsersByCommunityIdApprovedData>,
+) =>
+  queryOptions<
+    GetApiV1ModUsersByCommunityIdApprovedResponse,
+    GetApiV1ModUsersByCommunityIdApprovedError,
+    GetApiV1ModUsersByCommunityIdApprovedResponse,
+    ReturnType<typeof getApiV1ModUsersByCommunityIdApprovedQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModUsersByCommunityIdApproved({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModUsersByCommunityIdApprovedQueryKey(options),
+  })
+
+/**
+ * Approve a user (moderators with users permission)
+ */
+export const postApiV1ModUsersByCommunityIdApprovedMutation = (
+  options?: Partial<Options<PostApiV1ModUsersByCommunityIdApprovedData>>,
+): UseMutationOptions<
+  PostApiV1ModUsersByCommunityIdApprovedResponse,
+  PostApiV1ModUsersByCommunityIdApprovedError,
+  Options<PostApiV1ModUsersByCommunityIdApprovedData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModUsersByCommunityIdApprovedResponse,
+    PostApiV1ModUsersByCommunityIdApprovedError,
+    Options<PostApiV1ModUsersByCommunityIdApprovedData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModUsersByCommunityIdApproved({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1ModUsersByCommunityIdRestrictedQueryKey = (
+  options: Options<GetApiV1ModUsersByCommunityIdRestrictedData>,
+) => createQueryKey("getApiV1ModUsersByCommunityIdRestricted", options)
+
+/**
+ * List banned and muted users (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdRestrictedOptions = (
+  options: Options<GetApiV1ModUsersByCommunityIdRestrictedData>,
+) =>
+  queryOptions<
+    GetApiV1ModUsersByCommunityIdRestrictedResponse,
+    GetApiV1ModUsersByCommunityIdRestrictedError,
+    GetApiV1ModUsersByCommunityIdRestrictedResponse,
+    ReturnType<typeof getApiV1ModUsersByCommunityIdRestrictedQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModUsersByCommunityIdRestricted({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModUsersByCommunityIdRestrictedQueryKey(options),
+  })
+
+export const getApiV1ModUsersByCommunityIdNotesByUsernameQueryKey = (
+  options: Options<GetApiV1ModUsersByCommunityIdNotesByUsernameData>,
+) => createQueryKey("getApiV1ModUsersByCommunityIdNotesByUsername", options)
+
+/**
+ * List mod notes for a user (moderators with users permission)
+ */
+export const getApiV1ModUsersByCommunityIdNotesByUsernameOptions = (
+  options: Options<GetApiV1ModUsersByCommunityIdNotesByUsernameData>,
+) =>
+  queryOptions<
+    GetApiV1ModUsersByCommunityIdNotesByUsernameResponse,
+    GetApiV1ModUsersByCommunityIdNotesByUsernameError,
+    GetApiV1ModUsersByCommunityIdNotesByUsernameResponse,
+    ReturnType<typeof getApiV1ModUsersByCommunityIdNotesByUsernameQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModUsersByCommunityIdNotesByUsername({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModUsersByCommunityIdNotesByUsernameQueryKey(options),
+  })
+
+/**
+ * Create a mod note for a user (moderators with users permission)
+ */
+export const postApiV1ModUsersByCommunityIdNotesByUsernameMutation = (
+  options?: Partial<Options<PostApiV1ModUsersByCommunityIdNotesByUsernameData>>,
+): UseMutationOptions<
+  PostApiV1ModUsersByCommunityIdNotesByUsernameResponse,
+  PostApiV1ModUsersByCommunityIdNotesByUsernameError,
+  Options<PostApiV1ModUsersByCommunityIdNotesByUsernameData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModUsersByCommunityIdNotesByUsernameResponse,
+    PostApiV1ModUsersByCommunityIdNotesByUsernameError,
+    Options<PostApiV1ModUsersByCommunityIdNotesByUsernameData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModUsersByCommunityIdNotesByUsername({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Ban a user (moderators with users permission)
+ */
+export const postApiV1ModUsersByCommunityIdBanMutation = (
+  options?: Partial<Options<PostApiV1ModUsersByCommunityIdBanData>>,
+): UseMutationOptions<
+  PostApiV1ModUsersByCommunityIdBanResponse,
+  PostApiV1ModUsersByCommunityIdBanError,
+  Options<PostApiV1ModUsersByCommunityIdBanData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModUsersByCommunityIdBanResponse,
+    PostApiV1ModUsersByCommunityIdBanError,
+    Options<PostApiV1ModUsersByCommunityIdBanData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModUsersByCommunityIdBan({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Unban a user (moderators with users permission)
+ */
+export const deleteApiV1ModUsersByCommunityIdBanByUsernameMutation = (
+  options?: Partial<Options<DeleteApiV1ModUsersByCommunityIdBanByUsernameData>>,
+): UseMutationOptions<
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameResponse,
+  DeleteApiV1ModUsersByCommunityIdBanByUsernameError,
+  Options<DeleteApiV1ModUsersByCommunityIdBanByUsernameData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1ModUsersByCommunityIdBanByUsernameResponse,
+    DeleteApiV1ModUsersByCommunityIdBanByUsernameError,
+    Options<DeleteApiV1ModUsersByCommunityIdBanByUsernameData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1ModUsersByCommunityIdBanByUsername({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Mute a user (moderators with users permission)
+ */
+export const postApiV1ModUsersByCommunityIdMuteMutation = (
+  options?: Partial<Options<PostApiV1ModUsersByCommunityIdMuteData>>,
+): UseMutationOptions<
+  PostApiV1ModUsersByCommunityIdMuteResponse,
+  PostApiV1ModUsersByCommunityIdMuteError,
+  Options<PostApiV1ModUsersByCommunityIdMuteData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModUsersByCommunityIdMuteResponse,
+    PostApiV1ModUsersByCommunityIdMuteError,
+    Options<PostApiV1ModUsersByCommunityIdMuteData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModUsersByCommunityIdMute({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Unmute a user (moderators with users permission)
+ */
+export const deleteApiV1ModUsersByCommunityIdMuteByUsernameMutation = (
+  options?: Partial<Options<DeleteApiV1ModUsersByCommunityIdMuteByUsernameData>>,
+): UseMutationOptions<
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameResponse,
+  DeleteApiV1ModUsersByCommunityIdMuteByUsernameError,
+  Options<DeleteApiV1ModUsersByCommunityIdMuteByUsernameData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1ModUsersByCommunityIdMuteByUsernameResponse,
+    DeleteApiV1ModUsersByCommunityIdMuteByUsernameError,
+    Options<DeleteApiV1ModUsersByCommunityIdMuteByUsernameData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1ModUsersByCommunityIdMuteByUsername({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Remove an approved user (moderators with users permission)
+ */
+export const deleteApiV1ModUsersByCommunityIdApprovedByUsernameMutation = (
+  options?: Partial<Options<DeleteApiV1ModUsersByCommunityIdApprovedByUsernameData>>,
+): UseMutationOptions<
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameResponse,
+  DeleteApiV1ModUsersByCommunityIdApprovedByUsernameError,
+  Options<DeleteApiV1ModUsersByCommunityIdApprovedByUsernameData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1ModUsersByCommunityIdApprovedByUsernameResponse,
+    DeleteApiV1ModUsersByCommunityIdApprovedByUsernameError,
+    Options<DeleteApiV1ModUsersByCommunityIdApprovedByUsernameData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1ModUsersByCommunityIdApprovedByUsername({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Delete a mod note (moderators with users permission)
+ */
+export const deleteApiV1ModUsersNotesByIdMutation = (
+  options?: Partial<Options<DeleteApiV1ModUsersNotesByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1ModUsersNotesByIdResponse,
+  DeleteApiV1ModUsersNotesByIdError,
+  Options<DeleteApiV1ModUsersNotesByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1ModUsersNotesByIdResponse,
+    DeleteApiV1ModUsersNotesByIdError,
+    Options<DeleteApiV1ModUsersNotesByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1ModUsersNotesById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1ModLogByCommunityIdQueryKey = (
+  options: Options<GetApiV1ModLogByCommunityIdData>,
+) => createQueryKey("getApiV1ModLogByCommunityId", options)
+
+/**
+ * Fetch a community's moderation log (moderators)
+ */
+export const getApiV1ModLogByCommunityIdOptions = (
+  options: Options<GetApiV1ModLogByCommunityIdData>,
+) =>
+  queryOptions<
+    GetApiV1ModLogByCommunityIdResponse,
+    GetApiV1ModLogByCommunityIdError,
+    GetApiV1ModLogByCommunityIdResponse,
+    ReturnType<typeof getApiV1ModLogByCommunityIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModLogByCommunityId({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModLogByCommunityIdQueryKey(options),
+  })
+
+export const getApiV1ModLogByCommunityIdInfiniteQueryKey = (
+  options: Options<GetApiV1ModLogByCommunityIdData>,
+): QueryKey<Options<GetApiV1ModLogByCommunityIdData>> =>
+  createQueryKey("getApiV1ModLogByCommunityId", options, true)
+
+/**
+ * Fetch a community's moderation log (moderators)
+ */
+export const getApiV1ModLogByCommunityIdInfiniteOptions = (
+  options: Options<GetApiV1ModLogByCommunityIdData>,
+) => {
+  const opts = infiniteQueryOptions<
+    GetApiV1ModLogByCommunityIdResponse,
+    GetApiV1ModLogByCommunityIdError,
+    InfiniteData<GetApiV1ModLogByCommunityIdResponse>,
+    QueryKey<Options<GetApiV1ModLogByCommunityIdData>>,
+    | string
+    | Pick<
+        QueryKey<Options<GetApiV1ModLogByCommunityIdData>>[0],
+        "body" | "headers" | "path" | "query"
+      >
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetApiV1ModLogByCommunityIdData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam,
+                },
+              }
+        const params = createInfiniteParams(queryKey, page)
+        const { data } = await getApiV1ModLogByCommunityId({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true,
+        })
+        return data
+      },
+      queryKey: getApiV1ModLogByCommunityIdInfiniteQueryKey(options),
+    },
+  )
+  return opts as Omit<typeof opts, "initialData">
+}
+
+export const getApiV1ModSavedResponseByCommunityIdQueryKey = (
+  options: Options<GetApiV1ModSavedResponseByCommunityIdData>,
+) => createQueryKey("getApiV1ModSavedResponseByCommunityId", options)
+
+/**
+ * List a community's saved responses (moderators)
+ */
+export const getApiV1ModSavedResponseByCommunityIdOptions = (
+  options: Options<GetApiV1ModSavedResponseByCommunityIdData>,
+) =>
+  queryOptions<
+    GetApiV1ModSavedResponseByCommunityIdResponse,
+    GetApiV1ModSavedResponseByCommunityIdError,
+    GetApiV1ModSavedResponseByCommunityIdResponse,
+    ReturnType<typeof getApiV1ModSavedResponseByCommunityIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1ModSavedResponseByCommunityId({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1ModSavedResponseByCommunityIdQueryKey(options),
+  })
+
+/**
+ * Create a saved response (moderators with posts_comments permission)
+ */
+export const postApiV1ModSavedResponseByCommunityIdMutation = (
+  options?: Partial<Options<PostApiV1ModSavedResponseByCommunityIdData>>,
+): UseMutationOptions<
+  PostApiV1ModSavedResponseByCommunityIdResponse,
+  PostApiV1ModSavedResponseByCommunityIdError,
+  Options<PostApiV1ModSavedResponseByCommunityIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1ModSavedResponseByCommunityIdResponse,
+    PostApiV1ModSavedResponseByCommunityIdError,
+    Options<PostApiV1ModSavedResponseByCommunityIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1ModSavedResponseByCommunityId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Delete a saved response (moderators with posts_comments permission)
+ */
+export const deleteApiV1ModSavedResponseResponseByIdMutation = (
+  options?: Partial<Options<DeleteApiV1ModSavedResponseResponseByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1ModSavedResponseResponseByIdResponse,
+  DeleteApiV1ModSavedResponseResponseByIdError,
+  Options<DeleteApiV1ModSavedResponseResponseByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1ModSavedResponseResponseByIdResponse,
+    DeleteApiV1ModSavedResponseResponseByIdError,
+    Options<DeleteApiV1ModSavedResponseResponseByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1ModSavedResponseResponseById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Update a saved response (moderators with posts_comments permission)
+ */
+export const patchApiV1ModSavedResponseResponseByIdMutation = (
+  options?: Partial<Options<PatchApiV1ModSavedResponseResponseByIdData>>,
+): UseMutationOptions<
+  PatchApiV1ModSavedResponseResponseByIdResponse,
+  PatchApiV1ModSavedResponseResponseByIdError,
+  Options<PatchApiV1ModSavedResponseResponseByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1ModSavedResponseResponseByIdResponse,
+    PatchApiV1ModSavedResponseResponseByIdError,
+    Options<PatchApiV1ModSavedResponseResponseByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1ModSavedResponseResponseById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+export const getApiV1RemovalReasonByCommunityIdQueryKey = (
+  options: Options<GetApiV1RemovalReasonByCommunityIdData>,
+) => createQueryKey("getApiV1RemovalReasonByCommunityId", options)
+
+/**
+ * List a community's removal reasons (moderators)
+ */
+export const getApiV1RemovalReasonByCommunityIdOptions = (
+  options: Options<GetApiV1RemovalReasonByCommunityIdData>,
+) =>
+  queryOptions<
+    GetApiV1RemovalReasonByCommunityIdResponse,
+    GetApiV1RemovalReasonByCommunityIdError,
+    GetApiV1RemovalReasonByCommunityIdResponse,
+    ReturnType<typeof getApiV1RemovalReasonByCommunityIdQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiV1RemovalReasonByCommunityId({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      })
+      return data
+    },
+    queryKey: getApiV1RemovalReasonByCommunityIdQueryKey(options),
+  })
+
+/**
+ * Create a removal reason (config permission)
+ */
+export const postApiV1RemovalReasonByCommunityIdMutation = (
+  options?: Partial<Options<PostApiV1RemovalReasonByCommunityIdData>>,
+): UseMutationOptions<
+  PostApiV1RemovalReasonByCommunityIdResponse,
+  PostApiV1RemovalReasonByCommunityIdError,
+  Options<PostApiV1RemovalReasonByCommunityIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PostApiV1RemovalReasonByCommunityIdResponse,
+    PostApiV1RemovalReasonByCommunityIdError,
+    Options<PostApiV1RemovalReasonByCommunityIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await postApiV1RemovalReasonByCommunityId({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Reorder removal reasons (config permission)
+ */
+export const patchApiV1RemovalReasonByCommunityIdReorderMutation = (
+  options?: Partial<Options<PatchApiV1RemovalReasonByCommunityIdReorderData>>,
+): UseMutationOptions<
+  PatchApiV1RemovalReasonByCommunityIdReorderResponse,
+  PatchApiV1RemovalReasonByCommunityIdReorderError,
+  Options<PatchApiV1RemovalReasonByCommunityIdReorderData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1RemovalReasonByCommunityIdReorderResponse,
+    PatchApiV1RemovalReasonByCommunityIdReorderError,
+    Options<PatchApiV1RemovalReasonByCommunityIdReorderData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1RemovalReasonByCommunityIdReorder({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Delete a removal reason (config permission)
+ */
+export const deleteApiV1RemovalReasonReasonByIdMutation = (
+  options?: Partial<Options<DeleteApiV1RemovalReasonReasonByIdData>>,
+): UseMutationOptions<
+  DeleteApiV1RemovalReasonReasonByIdResponse,
+  DeleteApiV1RemovalReasonReasonByIdError,
+  Options<DeleteApiV1RemovalReasonReasonByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    DeleteApiV1RemovalReasonReasonByIdResponse,
+    DeleteApiV1RemovalReasonReasonByIdError,
+    Options<DeleteApiV1RemovalReasonReasonByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await deleteApiV1RemovalReasonReasonById({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      })
+      return data
+    },
+  }
+  return mutationOptions
+}
+
+/**
+ * Update a removal reason (config permission)
+ */
+export const patchApiV1RemovalReasonReasonByIdMutation = (
+  options?: Partial<Options<PatchApiV1RemovalReasonReasonByIdData>>,
+): UseMutationOptions<
+  PatchApiV1RemovalReasonReasonByIdResponse,
+  PatchApiV1RemovalReasonReasonByIdError,
+  Options<PatchApiV1RemovalReasonReasonByIdData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PatchApiV1RemovalReasonReasonByIdResponse,
+    PatchApiV1RemovalReasonReasonByIdError,
+    Options<PatchApiV1RemovalReasonReasonByIdData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await patchApiV1RemovalReasonReasonById({
         ...options,
         ...fnOptions,
         throwOnError: true,

@@ -12,10 +12,20 @@ import type {
   GetApiV1FeedProfileByUsernameResponse,
   GetApiV1HistoryRecentCommunitiesResponse,
   GetApiV1HistoryRecentPostsResponse,
+  GetApiV1ModLogByCommunityIdResponse,
+  GetApiV1ModQueueByCommunityIdResponse,
+  GetApiV1ModTeamByCommunityIdResponse,
+  GetApiV1ModTeamMyInvitesResponse,
+  GetApiV1ModUsersByCommunityIdApprovedResponse,
+  GetApiV1ModUsersByCommunityIdBannedResponse,
+  GetApiV1ModUsersByCommunityIdMutedResponse,
+  GetApiV1ModUsersByCommunityIdNotesByUsernameResponse,
+  GetApiV1ModUsersByCommunityIdRestrictedResponse,
   GetApiV1MutedCommunityMineResponse,
   GetApiV1PostByIdResponse,
   GetApiV1ScheduledPostCommunityByCommunityIdResponse,
   GetApiV1ScheduledPostMineResponse,
+  GetApiV1SearchResponse,
   GetApiV1UserBlockMineResponse,
   GetApiV1UserByUsernameByUsernameCommentsResponse,
   GetApiV1UserByUsernameByUsernameResponse,
@@ -314,6 +324,144 @@ export const getApiV1ScheduledPostCommunityByCommunityIdResponseTransformer = as
 ): Promise<GetApiV1ScheduledPostCommunityByCommunityIdResponse> => {
   data.data = data.data.map((item: any) => {
     item.scheduledAt = new Date(item.scheduledAt)
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1SearchResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1SearchResponse> => {
+  data.posts = data.posts.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  data.comments = data.comments.map((item: any) => {
+    item.comment.createdAt = new Date(item.comment.createdAt)
+    if (item.comment.editedAt) {
+      item.comment.editedAt = new Date(item.comment.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1ModQueueByCommunityIdResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ModQueueByCommunityIdResponse> => {
+  data.data = data.data.map((item: any) => {
+    if (item.post) {
+      item.post.createdAt = new Date(item.post.createdAt)
+      if (item.post.editedAt) {
+        item.post.editedAt = new Date(item.post.editedAt)
+      }
+    }
+    if (item.comment) {
+      item.comment.createdAt = new Date(item.comment.createdAt)
+      if (item.comment.editedAt) {
+        item.comment.editedAt = new Date(item.comment.editedAt)
+      }
+    }
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1ModTeamMyInvitesResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ModTeamMyInvitesResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1ModTeamByCommunityIdResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ModTeamByCommunityIdResponse> => {
+  data.invites = data.invites.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1ModUsersByCommunityIdBannedResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ModUsersByCommunityIdBannedResponse> => {
+  data.data = data.data.map((item: any) => {
+    if (item.expiresAt) {
+      item.expiresAt = new Date(item.expiresAt)
+    }
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1ModUsersByCommunityIdMutedResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ModUsersByCommunityIdMutedResponse> => {
+  data.data = data.data.map((item: any) => {
+    if (item.expiresAt) {
+      item.expiresAt = new Date(item.expiresAt)
+    }
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1ModUsersByCommunityIdApprovedResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ModUsersByCommunityIdApprovedResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1ModUsersByCommunityIdRestrictedResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ModUsersByCommunityIdRestrictedResponse> => {
+  data.banned = data.banned.map((item: any) => {
+    if (item.expiresAt) {
+      item.expiresAt = new Date(item.expiresAt)
+    }
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  data.muted = data.muted.map((item: any) => {
+    if (item.expiresAt) {
+      item.expiresAt = new Date(item.expiresAt)
+    }
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1ModUsersByCommunityIdNotesByUsernameResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ModUsersByCommunityIdNotesByUsernameResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1ModLogByCommunityIdResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1ModLogByCommunityIdResponse> => {
+  data.data = data.data.map((item: any) => {
     item.createdAt = new Date(item.createdAt)
     return item
   })
