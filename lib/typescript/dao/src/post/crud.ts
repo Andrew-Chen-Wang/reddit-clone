@@ -118,6 +118,11 @@ export function crudPost(db: Kysely<DB>) {
     return (result.numDeletedRows ?? 0n) > 0n
   }
 
+  async function deleteById(id: string): Promise<boolean> {
+    const result = await db.deleteFrom("post").where("id", "=", id).executeTakeFirst()
+    return (result.numDeletedRows ?? 0n) > 0n
+  }
+
   async function setFlair(
     id: string,
     authorUserId: string,
@@ -147,5 +152,13 @@ export function crudPost(db: Kysely<DB>) {
       .execute()
   }
 
-  return { create, update, deleteOwn, setFlair, incrementShareCount, incrementViewCount }
+  return {
+    create,
+    update,
+    deleteOwn,
+    deleteById,
+    setFlair,
+    incrementShareCount,
+    incrementViewCount,
+  }
 }

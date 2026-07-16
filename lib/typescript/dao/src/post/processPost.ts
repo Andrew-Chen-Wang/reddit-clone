@@ -1,6 +1,16 @@
 import type { DB } from "@template-nextjs/db"
 import type { Kysely } from "kysely"
+import { fetchPostMedia } from "../postMedia/fetch"
 import type { RawPostRow } from "./fetch"
+
+declare const process: { env: Record<string, string | undefined> }
+
+function mediaPublicUrl(key: string): string {
+  const base = process.env.PUBLIC_MEDIA_BASE_URL ?? ""
+  const trimmedBase = base.endsWith("/") ? base.slice(0, -1) : base
+  const trimmedKey = key.startsWith("/") ? key.slice(1) : key
+  return `${trimmedBase}/${trimmedKey}`
+}
 
 export interface ProcessedPostAuthor {
   id: string
@@ -22,6 +32,13 @@ export interface ProcessedPostFlair {
   text: string
   bgColor: string | null
   textColor: string | null
+}
+
+export interface ProcessedPostMedia {
+  mediaType: string
+  url: string
+  width: number | null
+  height: number | null
 }
 
 export interface ProcessedPost {
@@ -48,6 +65,7 @@ export interface ProcessedPost {
   author: ProcessedPostAuthor | null
   community: ProcessedPostCommunity | null
   flair: ProcessedPostFlair | null
+  media: ProcessedPostMedia[]
 }
 
 function unique(values: (string | null)[]): string[] {
@@ -65,8 +83,9 @@ export async function processPosts(
   const authorIds = unique(rows.map((r) => r.authorUserId))
   const communityIds = unique(rows.map((r) => r.communityId))
   const flairIds = unique(rows.map((r) => r.flairTemplateId))
+  const mediaPostIds = rows.filter((r) => r.type === "media").map((r) => r.id)
 
-  const [voteRows, authorRows, communityRows, flairRows] = await Promise.all([
+  const [voteRows, authorRows, communityRows, flairRows, mediaRows] = await Promise.all([
     viewerId
       ? db
           .selectFrom("postVote")
@@ -96,12 +115,31 @@ export async function processPosts(
           .where("id", "in", flairIds)
           .execute()
       : Promise.resolve([] as ProcessedPostFlair[]),
+    fetchPostMedia(db).getCompletedByPosts(mediaPostIds, [
+      "postId",
+      "mediaType",
+      "s3Key",
+      "width",
+      "height",
+    ]),
   ])
 
   const voteByPost = new Map(voteRows.map((v) => [v.postId, v.value]))
   const authorById = new Map(authorRows.map((a) => [a.id, a]))
   const communityById = new Map(communityRows.map((c) => [c.id, c]))
   const flairById = new Map(flairRows.map((f) => [f.id, f]))
+
+  const mediaByPost = new Map<string, ProcessedPostMedia[]>()
+  for (const m of mediaRows) {
+    const list = mediaByPost.get(m.postId) ?? []
+    list.push({
+      mediaType: m.mediaType,
+      url: mediaPublicUrl(m.s3Key),
+      width: m.width,
+      height: m.height,
+    })
+    mediaByPost.set(m.postId, list)
+  }
 
   return rows.map((r) => {
     const author = authorById.get(r.authorUserId) ?? null
@@ -148,6 +186,7 @@ export async function processPosts(
       flair: flair
         ? { id: flair.id, text: flair.text, bgColor: flair.bgColor, textColor: flair.textColor }
         : null,
+      media: mediaByPost.get(r.id) ?? [],
     }
   })
 }

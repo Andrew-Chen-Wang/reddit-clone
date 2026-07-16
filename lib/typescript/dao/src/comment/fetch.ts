@@ -171,6 +171,29 @@ export function fetchComment(db: Kysely<DB>) {
     return Number(row.count)
   }
 
+  function authorCommentsQuery(authorUserId: string): CommentQuery {
+    return db
+      .selectFrom("comment")
+      .where("comment.authorUserId", "=", authorUserId)
+      .where("comment.isDeleted", "=", false)
+      .where("comment.removedAt", "is", null)
+      .select(COMMENT_COLUMNS)
+      .orderBy("comment.createdAt", "desc")
+      .orderBy("comment.id", "desc")
+  }
+
+  function savedCommentsQuery(userId: string): CommentQuery {
+    return db
+      .selectFrom("comment")
+      .innerJoin("commentSave", "commentSave.commentId", "comment.id")
+      .where("commentSave.userId", "=", userId)
+      .where("comment.isDeleted", "=", false)
+      .where("comment.removedAt", "is", null)
+      .select(COMMENT_COLUMNS)
+      .orderBy("commentSave.createdAt", "desc")
+      .orderBy("comment.id", "desc")
+  }
+
   function childrenQuery(
     postId: string,
     parentCommentId: string | null,
@@ -315,6 +338,8 @@ export function fetchComment(db: Kysely<DB>) {
     getOne,
     getRawById,
     countRecentByAuthor,
+    authorCommentsQuery,
+    savedCommentsQuery,
     getTreePage,
     getChildrenPage,
     getSubtreeWithAncestors,

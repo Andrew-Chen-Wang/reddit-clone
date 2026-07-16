@@ -3,6 +3,7 @@ import { crudComment } from "@lib/dao/comment/crud"
 import { CHILD_PAGE_SIZE, fetchComment, ROOT_PAGE_SIZE } from "@lib/dao/comment/fetch"
 import { processComments } from "@lib/dao/comment/processComment"
 import { fetchPost } from "@lib/dao/post/fetch"
+import { fetchUserBlock } from "@lib/dao/userBlock/fetch"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
@@ -80,6 +81,12 @@ const app = new Hono()
         return throwNotFound(c, "Post not found")
       }
 
+      const blockedIds = user
+        ? new Set(await fetchUserBlock(db).listBlockedEitherIds(user.id))
+        : new Set<string>()
+      const notBlocked = (comment: { author: { id: string } | null }): boolean =>
+        !comment.author || !blockedIds.has(comment.author.id)
+
       if (parentId) {
         const subtree = await fetchComment(db).getSubtreeWithAncestors({
           commentId: parentId,
@@ -88,14 +95,18 @@ const app = new Hono()
         if (!subtree || subtree.focus.postId !== postId) {
           return throwNotFound(c, "Comment not found")
         }
-        const data = await processComments(db, [subtree.focus, ...subtree.rows], user?.id ?? null)
-        const ancestors = await processComments(db, subtree.ancestors, user?.id ?? null)
+        const data = (
+          await processComments(db, [subtree.focus, ...subtree.rows], user?.id ?? null)
+        ).filter(notBlocked)
+        const ancestors = (await processComments(db, subtree.ancestors, user?.id ?? null)).filter(
+          notBlocked,
+        )
         const nextCursor = subtree.hasMore ? encodeOffset(offset + CHILD_PAGE_SIZE) : null
         return c.json({ data, ancestors, nextCursor })
       }
 
       const { rows, hasMore } = await fetchComment(db).getTreePage({ postId, sort, offset })
-      const data = await processComments(db, rows, user?.id ?? null)
+      const data = (await processComments(db, rows, user?.id ?? null)).filter(notBlocked)
       const nextCursor = hasMore ? encodeOffset(offset + ROOT_PAGE_SIZE) : null
       return c.json({ data, ancestors: [], nextCursor })
     },

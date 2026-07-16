@@ -2,6 +2,7 @@ import { Hono } from "hono"
 import { RegExpRouter } from "hono/router/reg-exp-router"
 import auth from "./auth"
 import comment from "./comment"
+import commentAction from "./comment-action"
 import commentVote from "./comment-vote"
 import community from "./community"
 import communityJoinRequest from "./community-join-request"
@@ -11,6 +12,13 @@ import explore from "./explore"
 import feed from "./feed"
 import flair from "./flair"
 import history from "./history"
+import draft from "./draft"
+import media from "./media"
+import mutedCommunity from "./muted-community"
+import postAction from "./post-action"
+import scheduledPost from "./scheduled-post"
+import userBlock from "./user-block"
+import userFollow from "./user-follow"
 import post from "./post"
 import postVote from "./post-vote"
 import topic from "./topic"
@@ -37,5 +45,13 @@ const app = new Hono({
   .route("/post-vote", postVote)
   .route("/feed", feed)
   .route("/history", history)
+  .route("/media", media)
+  .route("/post-action", postAction)
+  .route("/comment-action", commentAction)
+  .route("/user-follow", userFollow)
+  .route("/user-block", userBlock)
+  .route("/muted-community", mutedCommunity)
+  .route("/draft", draft)
+  .route("/scheduled-post", scheduledPost)
 
 export default app

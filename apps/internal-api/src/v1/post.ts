@@ -1,11 +1,15 @@
+import { randomUUID } from "node:crypto"
 import { getCommunityAuthz } from "@lib/dao/authz/community/get"
 import { crudCommunityVisit } from "@lib/dao/communityVisit/crud"
 import { crudPost } from "@lib/dao/post/crud"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { processPosts } from "@lib/dao/post/processPost"
+import { crudPostMedia } from "@lib/dao/postMedia/crud"
 import { fetchPostFlairTemplate } from "@lib/dao/postFlairTemplate/fetch"
 import { crudPostView } from "@lib/dao/postView/crud"
 import { db } from "@template-nextjs/db"
+import { createMediaUploadPost, getExtensionForMediaContentType } from "@utils/aws"
+import { enqueueMediaCleanup } from "@utils/queues"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
 import { resolver, validator } from "hono-typebox-openapi/typebox"
@@ -26,6 +30,33 @@ function isValidHttpUrl(value: string): boolean {
   } catch {
     return false
   }
+}
+
+const IMAGE_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"])
+const VIDEO_MIME_TYPES = new Set(["video/mp4", "video/webm"])
+const IMAGE_MAX_BYTES = 20 * 1024 * 1024
+const VIDEO_MAX_BYTES = 200 * 1024 * 1024
+
+interface MediaInput {
+  mediaType: string
+  mimeType: string
+  byteSize: number
+  width?: number | null
+  height?: number | null
+}
+
+function validateMediaFile(file: MediaInput): string | null {
+  if (file.mediaType === "image") {
+    if (!IMAGE_MIME_TYPES.has(file.mimeType)) return `Unsupported image type: ${file.mimeType}`
+    if (file.byteSize > IMAGE_MAX_BYTES) return "Images must be 20MB or smaller"
+    return null
+  }
+  if (file.mediaType === "video") {
+    if (!VIDEO_MIME_TYPES.has(file.mimeType)) return `Unsupported video type: ${file.mimeType}`
+    if (file.byteSize > VIDEO_MAX_BYTES) return "Videos must be 200MB or smaller"
+    return null
+  }
+  return `Unsupported media type: ${file.mediaType}`
 }
 
 const app = new Hono()
@@ -114,6 +145,21 @@ const app = new Hono()
         }
       }
 
+      if (body.type === "media") {
+        if (!body.media || body.media.length === 0) {
+          return throwBadRequest(
+            c,
+            "At least one media file is required for media posts",
+            undefined,
+            { target: "media" },
+          )
+        }
+        for (const file of body.media) {
+          const err = validateMediaFile(file)
+          if (err) return throwBadRequest(c, err, undefined, { target: "media" })
+        }
+      }
+
       if (body.communityId) {
         const canPost = await getCommunityAuthz(db).canPost(body.communityId, user.id)
         if (!canPost.ok) return throwForbidden(c, "You cannot post in this community")
@@ -152,6 +198,40 @@ const app = new Hono()
         isOc: body.isOc ?? false,
         flairTemplateId: body.communityId ? (body.flairTemplateId ?? null) : null,
       })
+
+      if (body.type === "media" && body.media) {
+        const items = body.media.map((file, i) => {
+          const ext = getExtensionForMediaContentType(file.mimeType) ?? "bin"
+          return {
+            position: i,
+            mediaType: file.mediaType,
+            s3Key: `post-media/${created.id}/${i}-${randomUUID()}.${ext}`,
+            mimeType: file.mimeType,
+            byteSize: file.byteSize,
+            width: file.width ?? null,
+            height: file.height ?? null,
+          }
+        })
+        await crudPostMedia(db).createMany(created.id, items)
+        const uploads = await Promise.all(
+          items.map(async (item) => {
+            const maxSizeBytes = item.mediaType === "image" ? IMAGE_MAX_BYTES : VIDEO_MAX_BYTES
+            const presigned = await createMediaUploadPost({
+              key: item.s3Key,
+              contentType: item.mimeType,
+              maxSizeBytes,
+            })
+            return {
+              position: item.position,
+              key: item.s3Key,
+              url: presigned.url,
+              fields: presigned.fields,
+            }
+          }),
+        )
+        await enqueueMediaCleanup(created.id)
+        return c.json({ id: created.id, uploads }, 201)
+      }
 
       return c.json({ id: created.id }, 201)
     },

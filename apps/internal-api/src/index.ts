@@ -68,6 +68,12 @@ if (process.argv.includes("--openapi")) {
   generateSpecs(app, spec)
     .then((specs) => {
       console.log(JSON.stringify(specs, null, 2))
+      // BullMQ queues imported by routes hold Valkey connections that keep the
+      // event loop alive, so the CLI must exit explicitly.
+      process.exit(0)
     })
-    .catch(console.error)
+    .catch((err: unknown) => {
+      console.error(err)
+      process.exit(1)
+    })
 }

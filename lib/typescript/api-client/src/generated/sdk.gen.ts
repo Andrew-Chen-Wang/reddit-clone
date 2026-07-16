@@ -3,12 +3,19 @@
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from "./client"
 import { client } from "./client.gen"
 import type {
+  DeleteApiV1CommentActionFollowByCommentIdData,
+  DeleteApiV1CommentActionFollowByCommentIdResponses,
+  DeleteApiV1CommentActionSaveByCommentIdData,
+  DeleteApiV1CommentActionSaveByCommentIdResponses,
   DeleteApiV1CommentByIdData,
   DeleteApiV1CommentByIdErrors,
   DeleteApiV1CommentByIdResponses,
   DeleteApiV1CommunityRuleByIdData,
   DeleteApiV1CommunityRuleByIdErrors,
   DeleteApiV1CommunityRuleByIdResponses,
+  DeleteApiV1DraftByIdData,
+  DeleteApiV1DraftByIdErrors,
+  DeleteApiV1DraftByIdResponses,
   DeleteApiV1FlairPostTemplatesByIdData,
   DeleteApiV1FlairPostTemplatesByIdErrors,
   DeleteApiV1FlairPostTemplatesByIdResponses,
@@ -17,9 +24,26 @@ import type {
   DeleteApiV1FlairUserTemplatesByIdResponses,
   DeleteApiV1HistoryRecentPostsData,
   DeleteApiV1HistoryRecentPostsResponses,
+  DeleteApiV1MutedCommunityByCommunityIdData,
+  DeleteApiV1MutedCommunityByCommunityIdResponses,
+  DeleteApiV1PostActionFollowByPostIdData,
+  DeleteApiV1PostActionFollowByPostIdResponses,
+  DeleteApiV1PostActionHideByPostIdData,
+  DeleteApiV1PostActionHideByPostIdResponses,
+  DeleteApiV1PostActionSaveByPostIdData,
+  DeleteApiV1PostActionSaveByPostIdResponses,
   DeleteApiV1PostByIdData,
   DeleteApiV1PostByIdErrors,
   DeleteApiV1PostByIdResponses,
+  DeleteApiV1ScheduledPostByIdData,
+  DeleteApiV1ScheduledPostByIdErrors,
+  DeleteApiV1ScheduledPostByIdResponses,
+  DeleteApiV1UserBlockByUsernameData,
+  DeleteApiV1UserBlockByUsernameErrors,
+  DeleteApiV1UserBlockByUsernameResponses,
+  DeleteApiV1UserFollowByUsernameData,
+  DeleteApiV1UserFollowByUsernameErrors,
+  DeleteApiV1UserFollowByUsernameResponses,
   DeleteApiV1UserMeDeleteData,
   DeleteApiV1UserMeDeleteErrors,
   DeleteApiV1UserMeDeleteResponses,
@@ -43,6 +67,11 @@ import type {
   GetApiV1CommunityNameAvailableResponses,
   GetApiV1CommunityRuleByCommunityIdData,
   GetApiV1CommunityRuleByCommunityIdResponses,
+  GetApiV1DraftByIdData,
+  GetApiV1DraftByIdErrors,
+  GetApiV1DraftByIdResponses,
+  GetApiV1DraftData,
+  GetApiV1DraftResponses,
   GetApiV1ExploreData,
   GetApiV1ExploreResponses,
   GetApiV1FeedCommunityByNameData,
@@ -63,19 +92,41 @@ import type {
   GetApiV1HistoryRecentCommunitiesResponses,
   GetApiV1HistoryRecentPostsData,
   GetApiV1HistoryRecentPostsResponses,
+  GetApiV1MutedCommunityMineData,
+  GetApiV1MutedCommunityMineResponses,
   GetApiV1PostByIdData,
   GetApiV1PostByIdErrors,
   GetApiV1PostByIdResponses,
+  GetApiV1ScheduledPostCommunityByCommunityIdData,
+  GetApiV1ScheduledPostCommunityByCommunityIdErrors,
+  GetApiV1ScheduledPostCommunityByCommunityIdResponses,
+  GetApiV1ScheduledPostMineData,
+  GetApiV1ScheduledPostMineResponses,
   GetApiV1TopicData,
   GetApiV1TopicResponses,
+  GetApiV1UserBlockMineData,
+  GetApiV1UserBlockMineResponses,
+  GetApiV1UserByUsernameByUsernameCommentsData,
+  GetApiV1UserByUsernameByUsernameCommentsErrors,
+  GetApiV1UserByUsernameByUsernameCommentsResponses,
   GetApiV1UserByUsernameByUsernameData,
   GetApiV1UserByUsernameByUsernameErrors,
   GetApiV1UserByUsernameByUsernameResponses,
+  GetApiV1UserFollowMineData,
+  GetApiV1UserFollowMineResponses,
   GetApiV1UserMeData,
+  GetApiV1UserMeDownvotedData,
+  GetApiV1UserMeDownvotedResponses,
   GetApiV1UserMeErrors,
+  GetApiV1UserMeHiddenData,
+  GetApiV1UserMeHiddenResponses,
   GetApiV1UserMeResponses,
+  GetApiV1UserMeSavedData,
+  GetApiV1UserMeSavedResponses,
   GetApiV1UserMeSettingsData,
   GetApiV1UserMeSettingsResponses,
+  GetApiV1UserMeUpvotedData,
+  GetApiV1UserMeUpvotedResponses,
   GetApiV1UserUsernameAvailableData,
   GetApiV1UserUsernameAvailableErrors,
   GetApiV1UserUsernameAvailableResponses,
@@ -91,6 +142,9 @@ import type {
   PatchApiV1CommunityRuleByIdData,
   PatchApiV1CommunityRuleByIdErrors,
   PatchApiV1CommunityRuleByIdResponses,
+  PatchApiV1DraftByIdData,
+  PatchApiV1DraftByIdErrors,
+  PatchApiV1DraftByIdResponses,
   PatchApiV1FlairPostTemplatesByIdData,
   PatchApiV1FlairPostTemplatesByIdErrors,
   PatchApiV1FlairPostTemplatesByIdResponses,
@@ -129,15 +183,57 @@ import type {
   PostApiV1CommunityRuleByCommunityIdData,
   PostApiV1CommunityRuleByCommunityIdErrors,
   PostApiV1CommunityRuleByCommunityIdResponses,
+  PostApiV1DraftData,
+  PostApiV1DraftErrors,
+  PostApiV1DraftResponses,
   PostApiV1FlairByCommunityIdPostTemplatesData,
   PostApiV1FlairByCommunityIdPostTemplatesErrors,
   PostApiV1FlairByCommunityIdPostTemplatesResponses,
   PostApiV1FlairByCommunityIdUserTemplatesData,
   PostApiV1FlairByCommunityIdUserTemplatesErrors,
   PostApiV1FlairByCommunityIdUserTemplatesResponses,
+  PostApiV1MediaAvatarConfirmData,
+  PostApiV1MediaAvatarConfirmErrors,
+  PostApiV1MediaAvatarConfirmResponses,
+  PostApiV1MediaAvatarUploadData,
+  PostApiV1MediaAvatarUploadErrors,
+  PostApiV1MediaAvatarUploadResponses,
+  PostApiV1MediaBannerConfirmData,
+  PostApiV1MediaBannerConfirmErrors,
+  PostApiV1MediaBannerConfirmResponses,
+  PostApiV1MediaBannerUploadData,
+  PostApiV1MediaBannerUploadErrors,
+  PostApiV1MediaBannerUploadResponses,
+  PostApiV1MediaCommunityBannerConfirmData,
+  PostApiV1MediaCommunityBannerConfirmErrors,
+  PostApiV1MediaCommunityBannerConfirmResponses,
+  PostApiV1MediaCommunityBannerUploadData,
+  PostApiV1MediaCommunityBannerUploadErrors,
+  PostApiV1MediaCommunityBannerUploadResponses,
+  PostApiV1MediaCommunityIconConfirmData,
+  PostApiV1MediaCommunityIconConfirmErrors,
+  PostApiV1MediaCommunityIconConfirmResponses,
+  PostApiV1MediaCommunityIconUploadData,
+  PostApiV1MediaCommunityIconUploadErrors,
+  PostApiV1MediaCommunityIconUploadResponses,
+  PostApiV1MediaConfirmData,
+  PostApiV1MediaConfirmErrors,
+  PostApiV1MediaConfirmResponses,
+  PostApiV1PostActionShareByPostIdData,
+  PostApiV1PostActionShareByPostIdErrors,
+  PostApiV1PostActionShareByPostIdResponses,
   PostApiV1PostData,
   PostApiV1PostErrors,
   PostApiV1PostResponses,
+  PostApiV1ScheduledPostData,
+  PostApiV1ScheduledPostErrors,
+  PostApiV1ScheduledPostResponses,
+  PutApiV1CommentActionFollowByCommentIdData,
+  PutApiV1CommentActionFollowByCommentIdErrors,
+  PutApiV1CommentActionFollowByCommentIdResponses,
+  PutApiV1CommentActionSaveByCommentIdData,
+  PutApiV1CommentActionSaveByCommentIdErrors,
+  PutApiV1CommentActionSaveByCommentIdResponses,
   PutApiV1CommentVoteByCommentIdData,
   PutApiV1CommentVoteByCommentIdErrors,
   PutApiV1CommentVoteByCommentIdResponses,
@@ -147,9 +243,27 @@ import type {
   PutApiV1FlairByCommunityIdMyFlairData,
   PutApiV1FlairByCommunityIdMyFlairErrors,
   PutApiV1FlairByCommunityIdMyFlairResponses,
+  PutApiV1MutedCommunityByCommunityIdData,
+  PutApiV1MutedCommunityByCommunityIdErrors,
+  PutApiV1MutedCommunityByCommunityIdResponses,
+  PutApiV1PostActionFollowByPostIdData,
+  PutApiV1PostActionFollowByPostIdErrors,
+  PutApiV1PostActionFollowByPostIdResponses,
+  PutApiV1PostActionHideByPostIdData,
+  PutApiV1PostActionHideByPostIdErrors,
+  PutApiV1PostActionHideByPostIdResponses,
+  PutApiV1PostActionSaveByPostIdData,
+  PutApiV1PostActionSaveByPostIdErrors,
+  PutApiV1PostActionSaveByPostIdResponses,
   PutApiV1PostVoteByPostIdData,
   PutApiV1PostVoteByPostIdErrors,
   PutApiV1PostVoteByPostIdResponses,
+  PutApiV1UserBlockByUsernameData,
+  PutApiV1UserBlockByUsernameErrors,
+  PutApiV1UserBlockByUsernameResponses,
+  PutApiV1UserFollowByUsernameData,
+  PutApiV1UserFollowByUsernameErrors,
+  PutApiV1UserFollowByUsernameResponses,
 } from "./types.gen"
 
 export type Options<
@@ -202,6 +316,66 @@ export const getApiV1UserByUsernameByUsername = <ThrowOnError extends boolean = 
     GetApiV1UserByUsernameByUsernameErrors,
     ThrowOnError
   >({ url: "/api/v1/user/by-username/{username}", ...options })
+
+/**
+ * A user's comments with post context, newest first
+ */
+export const getApiV1UserByUsernameByUsernameComments = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1UserByUsernameByUsernameCommentsData, ThrowOnError>,
+): RequestResult<
+  GetApiV1UserByUsernameByUsernameCommentsResponses,
+  GetApiV1UserByUsernameByUsernameCommentsErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1UserByUsernameByUsernameCommentsResponses,
+    GetApiV1UserByUsernameByUsernameCommentsErrors,
+    ThrowOnError
+  >({ url: "/api/v1/user/by-username/{username}/comments", ...options })
+
+/**
+ * The current user's saved posts or comments
+ */
+export const getApiV1UserMeSaved = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1UserMeSavedData, ThrowOnError>,
+): RequestResult<GetApiV1UserMeSavedResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1UserMeSavedResponses, unknown, ThrowOnError>({
+    url: "/api/v1/user/me/saved",
+    ...options,
+  })
+
+/**
+ * The current user's hidden posts
+ */
+export const getApiV1UserMeHidden = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1UserMeHiddenData, ThrowOnError>,
+): RequestResult<GetApiV1UserMeHiddenResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1UserMeHiddenResponses, unknown, ThrowOnError>({
+    url: "/api/v1/user/me/hidden",
+    ...options,
+  })
+
+/**
+ * Posts the current user has upvoted
+ */
+export const getApiV1UserMeUpvoted = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1UserMeUpvotedData, ThrowOnError>,
+): RequestResult<GetApiV1UserMeUpvotedResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1UserMeUpvotedResponses, unknown, ThrowOnError>({
+    url: "/api/v1/user/me/upvoted",
+    ...options,
+  })
+
+/**
+ * Posts the current user has downvoted
+ */
+export const getApiV1UserMeDownvoted = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1UserMeDownvotedData, ThrowOnError>,
+): RequestResult<GetApiV1UserMeDownvotedResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1UserMeDownvotedResponses, unknown, ThrowOnError>({
+    url: "/api/v1/user/me/downvoted",
+    ...options,
+  })
 
 /**
  * Current authenticated user's profile
@@ -1015,3 +1189,616 @@ export const getApiV1HistoryRecentCommunities = <ThrowOnError extends boolean = 
   (options?.client ?? client).get<GetApiV1HistoryRecentCommunitiesResponses, unknown, ThrowOnError>(
     { url: "/api/v1/history/recent-communities", ...options },
   )
+
+/**
+ * Confirm a media post's uploads finished, promoting its cleanup job
+ */
+export const postApiV1MediaConfirm = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1MediaConfirmData, ThrowOnError>,
+): RequestResult<PostApiV1MediaConfirmResponses, PostApiV1MediaConfirmErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1MediaConfirmResponses,
+    PostApiV1MediaConfirmErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/media/confirm",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Presigned upload for the current user's avatar
+ */
+export const postApiV1MediaAvatarUpload = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1MediaAvatarUploadData, ThrowOnError>,
+): RequestResult<
+  PostApiV1MediaAvatarUploadResponses,
+  PostApiV1MediaAvatarUploadErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1MediaAvatarUploadResponses,
+    PostApiV1MediaAvatarUploadErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/media/avatar-upload",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Confirm an uploaded avatar and set it on the current user
+ */
+export const postApiV1MediaAvatarConfirm = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1MediaAvatarConfirmData, ThrowOnError>,
+): RequestResult<
+  PostApiV1MediaAvatarConfirmResponses,
+  PostApiV1MediaAvatarConfirmErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1MediaAvatarConfirmResponses,
+    PostApiV1MediaAvatarConfirmErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/media/avatar-confirm",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Presigned upload for the current user's profile banner
+ */
+export const postApiV1MediaBannerUpload = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1MediaBannerUploadData, ThrowOnError>,
+): RequestResult<
+  PostApiV1MediaBannerUploadResponses,
+  PostApiV1MediaBannerUploadErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1MediaBannerUploadResponses,
+    PostApiV1MediaBannerUploadErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/media/banner-upload",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Confirm an uploaded banner and set it on the current user
+ */
+export const postApiV1MediaBannerConfirm = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1MediaBannerConfirmData, ThrowOnError>,
+): RequestResult<
+  PostApiV1MediaBannerConfirmResponses,
+  PostApiV1MediaBannerConfirmErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1MediaBannerConfirmResponses,
+    PostApiV1MediaBannerConfirmErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/media/banner-confirm",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Presigned upload for a community icon (mod config permission required)
+ */
+export const postApiV1MediaCommunityIconUpload = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1MediaCommunityIconUploadData, ThrowOnError>,
+): RequestResult<
+  PostApiV1MediaCommunityIconUploadResponses,
+  PostApiV1MediaCommunityIconUploadErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1MediaCommunityIconUploadResponses,
+    PostApiV1MediaCommunityIconUploadErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/media/community-icon-upload",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Confirm an uploaded community icon (mod config permission required)
+ */
+export const postApiV1MediaCommunityIconConfirm = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1MediaCommunityIconConfirmData, ThrowOnError>,
+): RequestResult<
+  PostApiV1MediaCommunityIconConfirmResponses,
+  PostApiV1MediaCommunityIconConfirmErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1MediaCommunityIconConfirmResponses,
+    PostApiV1MediaCommunityIconConfirmErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/media/community-icon-confirm",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Presigned upload for a community banner (mod config permission required)
+ */
+export const postApiV1MediaCommunityBannerUpload = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1MediaCommunityBannerUploadData, ThrowOnError>,
+): RequestResult<
+  PostApiV1MediaCommunityBannerUploadResponses,
+  PostApiV1MediaCommunityBannerUploadErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1MediaCommunityBannerUploadResponses,
+    PostApiV1MediaCommunityBannerUploadErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/media/community-banner-upload",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Confirm an uploaded community banner (mod config permission required)
+ */
+export const postApiV1MediaCommunityBannerConfirm = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1MediaCommunityBannerConfirmData, ThrowOnError>,
+): RequestResult<
+  PostApiV1MediaCommunityBannerConfirmResponses,
+  PostApiV1MediaCommunityBannerConfirmErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PostApiV1MediaCommunityBannerConfirmResponses,
+    PostApiV1MediaCommunityBannerConfirmErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/media/community-banner-confirm",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Unsave a post
+ */
+export const deleteApiV1PostActionSaveByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1PostActionSaveByPostIdData, ThrowOnError>,
+): RequestResult<DeleteApiV1PostActionSaveByPostIdResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteApiV1PostActionSaveByPostIdResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/post-action/save/{postId}", ...options })
+
+/**
+ * Save a post
+ */
+export const putApiV1PostActionSaveByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1PostActionSaveByPostIdData, ThrowOnError>,
+): RequestResult<
+  PutApiV1PostActionSaveByPostIdResponses,
+  PutApiV1PostActionSaveByPostIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1PostActionSaveByPostIdResponses,
+    PutApiV1PostActionSaveByPostIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/post-action/save/{postId}", ...options })
+
+/**
+ * Unhide a post
+ */
+export const deleteApiV1PostActionHideByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1PostActionHideByPostIdData, ThrowOnError>,
+): RequestResult<DeleteApiV1PostActionHideByPostIdResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteApiV1PostActionHideByPostIdResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/post-action/hide/{postId}", ...options })
+
+/**
+ * Hide a post from the current user's feeds
+ */
+export const putApiV1PostActionHideByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1PostActionHideByPostIdData, ThrowOnError>,
+): RequestResult<
+  PutApiV1PostActionHideByPostIdResponses,
+  PutApiV1PostActionHideByPostIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1PostActionHideByPostIdResponses,
+    PutApiV1PostActionHideByPostIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/post-action/hide/{postId}", ...options })
+
+/**
+ * Unfollow a post
+ */
+export const deleteApiV1PostActionFollowByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1PostActionFollowByPostIdData, ThrowOnError>,
+): RequestResult<DeleteApiV1PostActionFollowByPostIdResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteApiV1PostActionFollowByPostIdResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/post-action/follow/{postId}", ...options })
+
+/**
+ * Follow a post to receive updates
+ */
+export const putApiV1PostActionFollowByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1PostActionFollowByPostIdData, ThrowOnError>,
+): RequestResult<
+  PutApiV1PostActionFollowByPostIdResponses,
+  PutApiV1PostActionFollowByPostIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1PostActionFollowByPostIdResponses,
+    PutApiV1PostActionFollowByPostIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/post-action/follow/{postId}", ...options })
+
+/**
+ * Record a share of a post
+ */
+export const postApiV1PostActionShareByPostId = <ThrowOnError extends boolean = false>(
+  options: Options<PostApiV1PostActionShareByPostIdData, ThrowOnError>,
+): RequestResult<
+  PostApiV1PostActionShareByPostIdResponses,
+  PostApiV1PostActionShareByPostIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    PostApiV1PostActionShareByPostIdResponses,
+    PostApiV1PostActionShareByPostIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/post-action/share/{postId}", ...options })
+
+/**
+ * Unsave a comment
+ */
+export const deleteApiV1CommentActionSaveByCommentId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1CommentActionSaveByCommentIdData, ThrowOnError>,
+): RequestResult<DeleteApiV1CommentActionSaveByCommentIdResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteApiV1CommentActionSaveByCommentIdResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/comment-action/save/{commentId}", ...options })
+
+/**
+ * Save a comment
+ */
+export const putApiV1CommentActionSaveByCommentId = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1CommentActionSaveByCommentIdData, ThrowOnError>,
+): RequestResult<
+  PutApiV1CommentActionSaveByCommentIdResponses,
+  PutApiV1CommentActionSaveByCommentIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1CommentActionSaveByCommentIdResponses,
+    PutApiV1CommentActionSaveByCommentIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/comment-action/save/{commentId}", ...options })
+
+/**
+ * Unfollow a comment thread
+ */
+export const deleteApiV1CommentActionFollowByCommentId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1CommentActionFollowByCommentIdData, ThrowOnError>,
+): RequestResult<DeleteApiV1CommentActionFollowByCommentIdResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteApiV1CommentActionFollowByCommentIdResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/comment-action/follow/{commentId}", ...options })
+
+/**
+ * Follow a comment thread
+ */
+export const putApiV1CommentActionFollowByCommentId = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1CommentActionFollowByCommentIdData, ThrowOnError>,
+): RequestResult<
+  PutApiV1CommentActionFollowByCommentIdResponses,
+  PutApiV1CommentActionFollowByCommentIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1CommentActionFollowByCommentIdResponses,
+    PutApiV1CommentActionFollowByCommentIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/comment-action/follow/{commentId}", ...options })
+
+/**
+ * Users the current user follows
+ */
+export const getApiV1UserFollowMine = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1UserFollowMineData, ThrowOnError>,
+): RequestResult<GetApiV1UserFollowMineResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1UserFollowMineResponses, unknown, ThrowOnError>({
+    url: "/api/v1/user-follow/mine",
+    ...options,
+  })
+
+/**
+ * Unfollow a user's profile
+ */
+export const deleteApiV1UserFollowByUsername = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1UserFollowByUsernameData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1UserFollowByUsernameResponses,
+  DeleteApiV1UserFollowByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1UserFollowByUsernameResponses,
+    DeleteApiV1UserFollowByUsernameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/user-follow/{username}", ...options })
+
+/**
+ * Follow a user's profile
+ */
+export const putApiV1UserFollowByUsername = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1UserFollowByUsernameData, ThrowOnError>,
+): RequestResult<
+  PutApiV1UserFollowByUsernameResponses,
+  PutApiV1UserFollowByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1UserFollowByUsernameResponses,
+    PutApiV1UserFollowByUsernameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/user-follow/{username}", ...options })
+
+/**
+ * Users the current user has blocked
+ */
+export const getApiV1UserBlockMine = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1UserBlockMineData, ThrowOnError>,
+): RequestResult<GetApiV1UserBlockMineResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1UserBlockMineResponses, unknown, ThrowOnError>({
+    url: "/api/v1/user-block/mine",
+    ...options,
+  })
+
+/**
+ * Unblock a user
+ */
+export const deleteApiV1UserBlockByUsername = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1UserBlockByUsernameData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1UserBlockByUsernameResponses,
+  DeleteApiV1UserBlockByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1UserBlockByUsernameResponses,
+    DeleteApiV1UserBlockByUsernameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/user-block/{username}", ...options })
+
+/**
+ * Block a user
+ */
+export const putApiV1UserBlockByUsername = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1UserBlockByUsernameData, ThrowOnError>,
+): RequestResult<
+  PutApiV1UserBlockByUsernameResponses,
+  PutApiV1UserBlockByUsernameErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1UserBlockByUsernameResponses,
+    PutApiV1UserBlockByUsernameErrors,
+    ThrowOnError
+  >({ url: "/api/v1/user-block/{username}", ...options })
+
+/**
+ * Communities the current user has muted
+ */
+export const getApiV1MutedCommunityMine = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1MutedCommunityMineData, ThrowOnError>,
+): RequestResult<GetApiV1MutedCommunityMineResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1MutedCommunityMineResponses, unknown, ThrowOnError>({
+    url: "/api/v1/muted-community/mine",
+    ...options,
+  })
+
+/**
+ * Unmute a community
+ */
+export const deleteApiV1MutedCommunityByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1MutedCommunityByCommunityIdData, ThrowOnError>,
+): RequestResult<DeleteApiV1MutedCommunityByCommunityIdResponses, unknown, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteApiV1MutedCommunityByCommunityIdResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/v1/muted-community/{communityId}", ...options })
+
+/**
+ * Mute a community
+ */
+export const putApiV1MutedCommunityByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1MutedCommunityByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  PutApiV1MutedCommunityByCommunityIdResponses,
+  PutApiV1MutedCommunityByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    PutApiV1MutedCommunityByCommunityIdResponses,
+    PutApiV1MutedCommunityByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/muted-community/{communityId}", ...options })
+
+/**
+ * List the current user's drafts, newest updated first
+ */
+export const getApiV1Draft = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1DraftData, ThrowOnError>,
+): RequestResult<GetApiV1DraftResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1DraftResponses, unknown, ThrowOnError>({
+    url: "/api/v1/draft",
+    ...options,
+  })
+
+/**
+ * Create a draft
+ */
+export const postApiV1Draft = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1DraftData, ThrowOnError>,
+): RequestResult<PostApiV1DraftResponses, PostApiV1DraftErrors, ThrowOnError> =>
+  (options?.client ?? client).post<PostApiV1DraftResponses, PostApiV1DraftErrors, ThrowOnError>({
+    url: "/api/v1/draft",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Delete a draft
+ */
+export const deleteApiV1DraftById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1DraftByIdData, ThrowOnError>,
+): RequestResult<DeleteApiV1DraftByIdResponses, DeleteApiV1DraftByIdErrors, ThrowOnError> =>
+  (options.client ?? client).delete<
+    DeleteApiV1DraftByIdResponses,
+    DeleteApiV1DraftByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/draft/{id}", ...options })
+
+/**
+ * Get a single draft
+ */
+export const getApiV1DraftById = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1DraftByIdData, ThrowOnError>,
+): RequestResult<GetApiV1DraftByIdResponses, GetApiV1DraftByIdErrors, ThrowOnError> =>
+  (options.client ?? client).get<GetApiV1DraftByIdResponses, GetApiV1DraftByIdErrors, ThrowOnError>(
+    { url: "/api/v1/draft/{id}", ...options },
+  )
+
+/**
+ * Update a draft
+ */
+export const patchApiV1DraftById = <ThrowOnError extends boolean = false>(
+  options: Options<PatchApiV1DraftByIdData, ThrowOnError>,
+): RequestResult<PatchApiV1DraftByIdResponses, PatchApiV1DraftByIdErrors, ThrowOnError> =>
+  (options.client ?? client).patch<
+    PatchApiV1DraftByIdResponses,
+    PatchApiV1DraftByIdErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/draft/{id}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  })
+
+/**
+ * The current user's scheduled posts
+ */
+export const getApiV1ScheduledPostMine = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1ScheduledPostMineData, ThrowOnError>,
+): RequestResult<GetApiV1ScheduledPostMineResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<GetApiV1ScheduledPostMineResponses, unknown, ThrowOnError>({
+    url: "/api/v1/scheduled-post/mine",
+    ...options,
+  })
+
+/**
+ * Scheduled posts for a community (moderators only)
+ */
+export const getApiV1ScheduledPostCommunityByCommunityId = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiV1ScheduledPostCommunityByCommunityIdData, ThrowOnError>,
+): RequestResult<
+  GetApiV1ScheduledPostCommunityByCommunityIdResponses,
+  GetApiV1ScheduledPostCommunityByCommunityIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).get<
+    GetApiV1ScheduledPostCommunityByCommunityIdResponses,
+    GetApiV1ScheduledPostCommunityByCommunityIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/scheduled-post/community/{communityId}", ...options })
+
+/**
+ * Schedule a post for future publication
+ */
+export const postApiV1ScheduledPost = <ThrowOnError extends boolean = false>(
+  options?: Options<PostApiV1ScheduledPostData, ThrowOnError>,
+): RequestResult<PostApiV1ScheduledPostResponses, PostApiV1ScheduledPostErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PostApiV1ScheduledPostResponses,
+    PostApiV1ScheduledPostErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/scheduled-post",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  })
+
+/**
+ * Cancel a scheduled post
+ */
+export const deleteApiV1ScheduledPostById = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteApiV1ScheduledPostByIdData, ThrowOnError>,
+): RequestResult<
+  DeleteApiV1ScheduledPostByIdResponses,
+  DeleteApiV1ScheduledPostByIdErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).delete<
+    DeleteApiV1ScheduledPostByIdResponses,
+    DeleteApiV1ScheduledPostByIdErrors,
+    ThrowOnError
+  >({ url: "/api/v1/scheduled-post/{id}", ...options })
