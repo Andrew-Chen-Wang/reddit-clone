@@ -69,6 +69,8 @@ export function CommentSection({
 }: CommentSectionProps) {
   const queryClient = useQueryClient()
   const meQuery = useQuery(getApiV1UserMeOptions())
+  const postQuery = useQuery(getApiV1PostByIdOptions({ path: { id: postId } }))
+  const postAuthorId = postQuery.data?.author?.id
 
   const baseQuery = useQuery(
     getApiV1CommentPostByPostIdOptions({
@@ -434,6 +436,7 @@ export function CommentSection({
                   key={a.id}
                   node={a}
                   authorHref={a.author ? `/u/${a.author.username}` : undefined}
+                  postAuthorId={postAuthorId}
                   collapsed
                   onToggleCollapse={() => {
                     onExitPermalink()
@@ -452,7 +455,7 @@ export function CommentSection({
           No comments yet. Be the first to share what you think.
         </p>
       ) : (
-        <CommentTree nodes={tree} callbacks={callbacks} />
+        <CommentTree nodes={tree} callbacks={callbacks} postAuthorId={postAuthorId} />
       )}
 
       {!focusCommentId && rootCursor ? (

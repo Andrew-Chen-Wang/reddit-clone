@@ -22,6 +22,8 @@ export type AnonCommentSectionProps = {
   hasMoreRoots: boolean
   nextOffset: number
   locked: boolean
+  /** Author id of the post, for the "OP" badge on the poster's own comments. */
+  postAuthorId?: string
 }
 
 /**
@@ -42,6 +44,7 @@ export function AnonCommentSection({
   hasMoreRoots,
   nextOffset,
   locked,
+  postAuthorId,
 }: AnonCommentSectionProps) {
   const [loginOpen, setLoginOpen] = useState(false)
   const tree = assembleCommentTree(nodes)
@@ -117,6 +120,7 @@ export function AnonCommentSection({
                   key={a.id}
                   node={a}
                   authorHref={a.author ? `/u/${a.author.username}` : undefined}
+                  postAuthorId={postAuthorId}
                   collapsed
                   onToggleCollapse={() => {
                     /* context chain is display-only */
@@ -131,7 +135,7 @@ export function AnonCommentSection({
       {tree.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">No comments yet.</p>
       ) : (
-        <CommentTree nodes={tree} callbacks={callbacks} />
+        <CommentTree nodes={tree} callbacks={callbacks} postAuthorId={postAuthorId} />
       )}
 
       {!focusCommentId && hasMoreRoots ? (
