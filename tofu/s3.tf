@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "spa" {
-  bucket = var.s3_bucket_name
+  bucket = var.spa_bucket_name
 }
 
 resource "aws_s3_bucket_public_access_block" "spa" {
