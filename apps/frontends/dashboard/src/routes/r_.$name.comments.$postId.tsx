@@ -112,7 +112,7 @@ function PostDetailPage() {
               : post
           }
           communityHref={post.community ? `/r/${post.community.name}` : undefined}
-          authorHref={post.author ? `/u/${post.author.username}` : undefined}
+          authorHref={post.author ? `/user/${post.author.username}` : undefined}
           voteDisabled={post.isLocked}
           onUpvote={() => {
             vote(1)

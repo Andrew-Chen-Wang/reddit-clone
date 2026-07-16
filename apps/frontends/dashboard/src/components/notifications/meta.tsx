@@ -116,7 +116,7 @@ export function destinationFor(n: NotificationItem): string {
 
   switch (n.type) {
     case "new_follower":
-      return s?.actorUsername ? `/u/${s.actorUsername}` : "/notifications"
+      return s?.actorUsername ? `/user/${s.actorUsername}` : "/notifications"
     case "chat_request":
       return "/chat?filter=requests"
     case "join_request_approved":

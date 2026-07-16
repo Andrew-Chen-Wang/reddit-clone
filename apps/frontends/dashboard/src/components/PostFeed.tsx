@@ -418,7 +418,7 @@ export function PostFeed({
               variant={view}
               href={permalinkFor(post)}
               communityHref={post.community ? `/r/${post.community.name}` : undefined}
-              authorHref={post.author ? `/u/${post.author.username}` : undefined}
+              authorHref={post.author ? `/user/${post.author.username}` : undefined}
               showCommunity={showCommunity}
               onUpvote={() => {
                 vote(post, 1)

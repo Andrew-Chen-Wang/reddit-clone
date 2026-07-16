@@ -322,7 +322,7 @@ export function CommentSection({
   }
 
   const callbacks: CommentTreeCallbacks = {
-    buildAuthorHref: (username) => `/u/${username}`,
+    buildAuthorHref: (username) => `/user/${username}`,
     buildPermalinkHref: (commentId) => permalinkPath(commentId),
     voteDisabled: locked,
     onVote: locked
@@ -435,7 +435,7 @@ export function CommentSection({
                 <CommentNodeView
                   key={a.id}
                   node={a}
-                  authorHref={a.author ? `/u/${a.author.username}` : undefined}
+                  authorHref={a.author ? `/user/${a.author.username}` : undefined}
                   postAuthorId={postAuthorId}
                   collapsed
                   onToggleCollapse={() => {

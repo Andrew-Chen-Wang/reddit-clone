@@ -55,7 +55,7 @@ export function AnonCommentSection({
   }
 
   const callbacks: CommentTreeCallbacks = {
-    buildAuthorHref: (username) => `/u/${username}`,
+    buildAuthorHref: (username) => `/user/${username}`,
     buildPermalinkHref: (commentId) => permalink(commentId),
     onVote: () => {
       setLoginOpen(true)
@@ -119,7 +119,7 @@ export function AnonCommentSection({
                 <CommentNodeView
                   key={a.id}
                   node={a}
-                  authorHref={a.author ? `/u/${a.author.username}` : undefined}
+                  authorHref={a.author ? `/user/${a.author.username}` : undefined}
                   postAuthorId={postAuthorId}
                   collapsed
                   onToggleCollapse={() => {

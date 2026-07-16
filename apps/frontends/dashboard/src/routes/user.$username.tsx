@@ -35,7 +35,7 @@ const PUBLIC_TABS: ProfileTab[] = ["overview", "posts", "comments"]
 
 type ProfileSearch = { tab?: ProfileTab }
 
-export const Route = createFileRoute("/u/$username")({
+export const Route = createFileRoute("/user/$username")({
   validateSearch: (search: Record<string, unknown>): ProfileSearch => ({
     tab: PROFILE_TABS.includes(search.tab as ProfileTab) ? (search.tab as ProfileTab) : undefined,
   }),
@@ -51,7 +51,7 @@ const PROFILE_SORTS = [
 function postPermalink(post: FeedPost): string {
   return post.community
     ? `/r/${post.community.name}/comments/${post.id}`
-    : `/u/${post.author?.username ?? ""}`
+    : `/user/${post.author?.username ?? ""}`
 }
 
 function PostsTab({ username }: { username: string }) {

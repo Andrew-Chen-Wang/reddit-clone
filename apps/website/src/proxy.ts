@@ -3,22 +3,23 @@ import { NextResponse } from "next/server"
 import { validateSessionToken } from "./lib/auth"
 
 /** Public paths handled by Next.js — everything else goes to the dashboard SPA */
-const NEXTJS_PUBLIC_PREFIXES = ["/login", "/blog", "/api", "/legal", "/about"]
+const NEXTJS_PUBLIC_PREFIXES = ["/login", "/blog", "/api", "/legal", "/about", "/rules"]
 if (process.env.NODE_ENV === "development") {
   NEXTJS_PUBLIC_PREFIXES.push("/dev-login")
 }
 
 /** Exact public paths */
-const NEXTJS_PUBLIC_EXACT = new Set(["/"])
+const NEXTJS_PUBLIC_EXACT = new Set<string>([])
 
 type SharedRoute = { path: string; spa: "dashboard" | "admin" }
 
 /** Routes that serve Next.js for unauthenticated users, SPA for authenticated users.
  *  Paths use Next.js conventions: [param], [...catchAll], [[...optionalCatchAll]] */
 const SHARED_ROUTES: SharedRoute[] = [
+  { path: "/", spa: "dashboard" },
   { path: "/posting", spa: "dashboard" },
   { path: "/posting/[id]", spa: "dashboard" },
-  { path: "/u/[username]", spa: "dashboard" },
+  { path: "/user/[username]", spa: "dashboard" },
   { path: "/r/[name]", spa: "dashboard" },
   { path: "/r/[name]/comments/[...rest]", spa: "dashboard" },
   { path: "/r/[name]/wiki/[[...rest]]", spa: "dashboard" },

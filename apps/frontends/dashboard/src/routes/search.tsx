@@ -132,7 +132,7 @@ function toRowPost(post: PostResult): PostRowPost {
 
 function permalinkForPost(post: PostResult): string {
   if (post.community) return `/r/${post.community.name}/comments/${post.id}`
-  if (post.author) return `/u/${post.author.username}`
+  if (post.author) return `/user/${post.author.username}`
   return "/"
 }
 
@@ -163,7 +163,7 @@ function ProfileResultCard({ profile }: { profile: ProfileResult }) {
   const initial = (profile.displayName ?? profile.username).charAt(0).toUpperCase()
   return (
     <SeoLink
-      href={`/u/${profile.username}`}
+      href={`/user/${profile.username}`}
       className="flex items-center gap-3 rounded-lg border bg-card p-3 hover:border-muted-foreground/30"
     >
       <Avatar className="size-10">
@@ -410,7 +410,7 @@ function SearchPage() {
                     post={toRowPost(post)}
                     href={permalinkForPost(post)}
                     communityHref={post.community ? `/r/${post.community.name}` : undefined}
-                    authorHref={post.author ? `/u/${post.author.username}` : undefined}
+                    authorHref={post.author ? `/user/${post.author.username}` : undefined}
                     onUpvote={() => {
                       vote(post, 1)
                     }}

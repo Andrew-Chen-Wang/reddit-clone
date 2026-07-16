@@ -280,7 +280,7 @@ function QueueRow({
           variant="compact"
           href={`/r/${communityName}/comments/${post.id}`}
           communityHref={`/r/${communityName}`}
-          authorHref={post.author ? `/u/${post.author.username}` : undefined}
+          authorHref={post.author ? `/user/${post.author.username}` : undefined}
           onUpvote={() => {
             onVote(post.id, 1)
           }}

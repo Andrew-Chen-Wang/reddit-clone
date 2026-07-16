@@ -21,5 +21,5 @@ function ProfileRedirect() {
     return <Navigate to="/dashboard" />
   }
 
-  return <Navigate to="/u/$username" params={{ username: data.username }} />
+  return <Navigate to="/user/$username" params={{ username: data.username }} />
 }

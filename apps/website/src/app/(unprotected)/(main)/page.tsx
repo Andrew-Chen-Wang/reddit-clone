@@ -1,8 +1,6 @@
 import { AnonFeed } from "@website/components/AnonFeed"
 import { FeedSortTabs } from "@website/components/FeedSortTabs"
 import { loadPopularFeed, normalizeSort } from "@website/lib/feed-ssr"
-import { getCurrentSession } from "@website/lib/auth"
-import { redirect } from "next/navigation"
 
 const POPULAR_SORTS = [
   { value: "hot", label: "Hot" },
@@ -18,11 +16,6 @@ export default async function HomeLanding({
 }: {
   searchParams: Promise<{ sort?: string; t?: string }>
 }) {
-  const session = await getCurrentSession()
-  if (session) {
-    return redirect("/dashboard")
-  }
-
   const { sort: sortParam, t } = await searchParams
   const sort = normalizeSort(sortParam, ALLOWED)
   const { posts, initialCursor } = await loadPopularFeed(sort, t, null)

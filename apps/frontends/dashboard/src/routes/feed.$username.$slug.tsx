@@ -152,7 +152,7 @@ function CustomFeedPage() {
           <p className="text-sm text-muted-foreground">
             Custom feed by{" "}
             <Link
-              to="/u/$username"
+              to="/user/$username"
               params={{ username: feed.owner.username }}
               className="hover:underline"
             >

@@ -164,7 +164,7 @@ export function TopNav() {
                 disabled={!user}
                 onClick={() => {
                   if (user)
-                    void navigate({ to: "/u/$username", params: { username: user.username } })
+                    void navigate({ to: "/user/$username", params: { username: user.username } })
                 }}
               >
                 <User className="size-4" />

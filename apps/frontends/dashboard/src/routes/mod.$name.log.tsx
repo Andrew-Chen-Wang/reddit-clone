@@ -46,7 +46,7 @@ function TargetCell({ entry, name }: { entry: LogEntry; name: string }) {
   }
   if (entry.targetUsername) {
     return (
-      <SeoLink href={`/u/${entry.targetUsername}`} className="text-primary hover:underline">
+      <SeoLink href={`/user/${entry.targetUsername}`} className="text-primary hover:underline">
         u/{entry.targetUsername}
       </SeoLink>
     )
