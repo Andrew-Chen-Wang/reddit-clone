@@ -23,6 +23,7 @@ export type ErrorObjectT = {
     | "InternalServerError"
     | "ServiceUnavailable"
     | "InsufficientPermissions"
+    | "Suspended"
     | "ValidationFailed"
     | "InvalidInput"
     | "MissingRequiredField"
@@ -43,21 +44,212 @@ export type ErrorResponseT = {
   error: ErrorObjectT
 }
 
-export type GetApiAdminUserTestData = {
+export type GetApiAdminUsersData = {
   body?: never
   path?: never
-  query?: never
-  url: "/api/admin/user/test"
+  query?: {
+    q?: string
+    cursor?: string
+  }
+  url: "/api/admin/users"
 }
 
-export type GetApiAdminUserTestResponses = {
+export type GetApiAdminUsersResponses = {
   /**
-   * Success
+   * Matching users
+   */
+  200: {
+    data: Array<{
+      id: string
+      username: string
+      email: string
+      postKarma: number
+      commentKarma: number
+      createdAt: Date
+      suspendedAt: Date | null
+      suspensionReason: string | null
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiAdminUsersResponse = GetApiAdminUsersResponses[keyof GetApiAdminUsersResponses]
+
+export type PostApiAdminUsersByIdSuspendData = {
+  body?: {
+    reason: string | null
+  }
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/admin/users/{id}/suspend"
+}
+
+export type PostApiAdminUsersByIdSuspendErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiAdminUsersByIdSuspendError =
+  PostApiAdminUsersByIdSuspendErrors[keyof PostApiAdminUsersByIdSuspendErrors]
+
+export type PostApiAdminUsersByIdSuspendResponses = {
+  /**
+   * User suspended
    */
   200: {
     [key: string]: unknown
   }
 }
 
-export type GetApiAdminUserTestResponse =
-  GetApiAdminUserTestResponses[keyof GetApiAdminUserTestResponses]
+export type PostApiAdminUsersByIdSuspendResponse =
+  PostApiAdminUsersByIdSuspendResponses[keyof PostApiAdminUsersByIdSuspendResponses]
+
+export type PostApiAdminUsersByIdUnsuspendData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/admin/users/{id}/unsuspend"
+}
+
+export type PostApiAdminUsersByIdUnsuspendErrors = {
+  /**
+   * User not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiAdminUsersByIdUnsuspendError =
+  PostApiAdminUsersByIdUnsuspendErrors[keyof PostApiAdminUsersByIdUnsuspendErrors]
+
+export type PostApiAdminUsersByIdUnsuspendResponses = {
+  /**
+   * User unsuspended
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiAdminUsersByIdUnsuspendResponse =
+  PostApiAdminUsersByIdUnsuspendResponses[keyof PostApiAdminUsersByIdUnsuspendResponses]
+
+export type GetApiAdminPostsData = {
+  body?: never
+  path?: never
+  query?: {
+    q?: string
+    cursor?: string
+  }
+  url: "/api/admin/posts"
+}
+
+export type GetApiAdminPostsResponses = {
+  /**
+   * Matching posts
+   */
+  200: {
+    data: Array<{
+      id: string
+      title: string
+      communityId: string | null
+      communityName: string | null
+      authorUsername: string | null
+      score: number
+      removedAt: Date | null
+      createdAt: Date
+    }>
+    nextCursor: string | null
+  }
+}
+
+export type GetApiAdminPostsResponse = GetApiAdminPostsResponses[keyof GetApiAdminPostsResponses]
+
+export type PostApiAdminPostsByIdRemoveData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/admin/posts/{id}/remove"
+}
+
+export type PostApiAdminPostsByIdRemoveErrors = {
+  /**
+   * Post not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiAdminPostsByIdRemoveError =
+  PostApiAdminPostsByIdRemoveErrors[keyof PostApiAdminPostsByIdRemoveErrors]
+
+export type PostApiAdminPostsByIdRemoveResponses = {
+  /**
+   * Post removed
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiAdminPostsByIdRemoveResponse =
+  PostApiAdminPostsByIdRemoveResponses[keyof PostApiAdminPostsByIdRemoveResponses]
+
+export type PostApiAdminPostsByIdRestoreData = {
+  body?: never
+  path: {
+    id: string
+  }
+  query?: never
+  url: "/api/admin/posts/{id}/restore"
+}
+
+export type PostApiAdminPostsByIdRestoreErrors = {
+  /**
+   * Post not found
+   */
+  404: ErrorResponseT
+}
+
+export type PostApiAdminPostsByIdRestoreError =
+  PostApiAdminPostsByIdRestoreErrors[keyof PostApiAdminPostsByIdRestoreErrors]
+
+export type PostApiAdminPostsByIdRestoreResponses = {
+  /**
+   * Post restored
+   */
+  200: {
+    [key: string]: unknown
+  }
+}
+
+export type PostApiAdminPostsByIdRestoreResponse =
+  PostApiAdminPostsByIdRestoreResponses[keyof PostApiAdminPostsByIdRestoreResponses]
+
+export type GetApiAdminStatsData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/admin/stats"
+}
+
+export type GetApiAdminStatsResponses = {
+  /**
+   * Counts
+   */
+  200: {
+    users: number
+    posts: number
+    communities: number
+    comments: number
+    reportsPending: number
+  }
+}
+
+export type GetApiAdminStatsResponse = GetApiAdminStatsResponses[keyof GetApiAdminStatsResponses]
