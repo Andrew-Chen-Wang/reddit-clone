@@ -5,6 +5,7 @@ import { Minus, MoreHorizontal, Pencil, Plus, Reply, Share2, Trash2 } from "luci
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/base/ui/avatar"
 import { Badge } from "@ui/base/ui/badge"
 import { Button } from "@ui/base/ui/button"
+import { cn } from "@ui/base/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,13 @@ export type CommentNodeViewProps = {
   authorHref?: string
   collapsed: boolean
   onToggleCollapse: () => void
+  /**
+   * True when this comment has a loaded, expanded subtree — controls the vertical
+   * thread line drawn under the avatar (the line the collapse toggle sits on).
+   */
+  hasThread?: boolean
+  /** Author id of the post this comment belongs to, for the "OP" badge. */
+  postAuthorId?: string
   /** Number of descendants hidden while collapsed (shown in the meta line). */
   collapsedCount?: number
   onUpvote?: () => void
@@ -45,12 +53,21 @@ function initials(username: string): string {
   return username.slice(0, 2).toUpperCase()
 }
 
+/** Small bold-blue "OP" chip shown after the username when the author is the poster. */
+function OpBadge() {
+  return (
+    <span className="text-[11px] font-bold tracking-wide text-blue-500 dark:text-blue-400">OP</span>
+  )
+}
+
 /** Presentational view of one comment (header, body, action row). No recursion. */
 export function CommentNodeView({
   node,
   authorHref,
   collapsed,
   onToggleCollapse,
+  hasThread = false,
+  postAuthorId,
   collapsedCount,
   onUpvote,
   onDownvote,
@@ -63,21 +80,21 @@ export function CommentNodeView({
 }: CommentNodeViewProps) {
   const isRemoved = node.isDeleted || node.bodyMd === null
   const canEdit = node.isAuthor && !isRemoved && (onEdit ?? onDelete) != null
+  const isOp = postAuthorId != null && node.author?.id === postAuthorId
 
   if (collapsed) {
     return (
-      <div className="flex items-center gap-1.5 py-1 text-xs text-muted-foreground">
-        <Button
+      <div className="flex items-center gap-2 py-0.5 text-xs text-muted-foreground">
+        <button
           type="button"
-          variant="ghost"
-          size="icon-sm"
           aria-label="Expand comment"
-          className="size-5 shrink-0"
           onClick={onToggleCollapse}
+          className="flex size-[18px] shrink-0 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:border-foreground/50 hover:text-foreground"
         >
-          <Plus className="size-3.5" />
-        </Button>
+          <Plus className="size-3" />
+        </button>
         <span className="font-medium text-foreground/80">{authorLabel(node)}</span>
+        {isOp ? <OpBadge /> : null}
         <span aria-hidden>·</span>
         <span>{formatCompactNumber(node.score)} points</span>
         <span aria-hidden>·</span>
@@ -92,46 +109,56 @@ export function CommentNodeView({
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label="Collapse comment"
-          className="size-5 shrink-0"
-          onClick={onToggleCollapse}
-        >
-          <Minus className="size-3.5" />
-        </Button>
-        <Avatar size="sm" className="size-5">
+    <div className="flex gap-2">
+      {/* Avatar rail: avatar on top, then the collapse thread-line + toggle. */}
+      <div className="flex w-8 shrink-0 flex-col items-center">
+        <Avatar size="sm" className="size-8">
           {node.author?.avatarImageKey ? (
             <AvatarImage src={node.author.avatarImageKey} alt="" />
           ) : null}
-          <AvatarFallback className="text-[9px]">
+          <AvatarFallback className="text-[11px]">
             {node.author ? initials(node.author.username) : "?"}
           </AvatarFallback>
         </Avatar>
-        {isRemoved ? (
-          <span className="font-medium text-foreground/70">{authorLabel(node)}</span>
-        ) : authorHref && node.author ? (
-          <SeoLink href={authorHref} className="font-medium text-foreground hover:underline">
-            {node.author.username}
-          </SeoLink>
-        ) : (
-          <span className="font-medium text-foreground">{authorLabel(node)}</span>
+        {editor ? null : (
+          <button
+            type="button"
+            aria-label="Collapse comment thread"
+            onClick={onToggleCollapse}
+            className="group/thread relative flex w-full flex-1 cursor-pointer flex-col items-center justify-end pt-1"
+          >
+            {hasThread ? (
+              <span className="absolute top-1 bottom-3 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover/thread:bg-foreground/40" />
+            ) : null}
+            <span className="relative z-[1] flex size-[18px] items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-colors group-hover/thread:border-foreground/50 group-hover/thread:text-foreground">
+              <Minus className="size-3" />
+            </span>
+          </button>
         )}
-        {node.isSticky ? (
-          <Badge variant="secondary" className="gap-1 px-1.5 py-0 text-[10px] font-medium">
-            Stickied comment
-          </Badge>
-        ) : null}
-        <span aria-hidden>·</span>
-        <RelativeTime date={node.createdAt} />
-        {node.editedAt ? <span className="italic">(edited)</span> : null}
       </div>
 
-      <div className="pl-6">
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
+          {isRemoved ? (
+            <span className="font-medium text-foreground/70">{authorLabel(node)}</span>
+          ) : authorHref && node.author ? (
+            <SeoLink href={authorHref} className="font-medium text-foreground hover:underline">
+              {node.author.username}
+            </SeoLink>
+          ) : (
+            <span className="font-medium text-foreground">{authorLabel(node)}</span>
+          )}
+          {isOp ? <OpBadge /> : null}
+          {node.isSticky ? (
+            <Badge variant="secondary" className="gap-1 px-1.5 py-0 text-[10px] font-medium">
+              Stickied comment
+            </Badge>
+          ) : null}
+          <span aria-hidden>·</span>
+          <RelativeTime date={node.createdAt} />
+          {node.editedAt ? <span className="italic">(edited)</span> : null}
+        </div>
+
         {editor ??
           (isRemoved ? (
             <p className="text-sm text-muted-foreground italic">[deleted]</p>
@@ -140,7 +167,7 @@ export function CommentNodeView({
           ))}
 
         {editor ? null : (
-          <div className="mt-1 flex items-center gap-0.5">
+          <div className="mt-0.5 flex items-center gap-1">
             <VoteCluster
               score={node.score}
               userVote={node.userVote}
@@ -148,13 +175,16 @@ export function CommentNodeView({
               onDownvote={() => onDownvote?.()}
               disabled={(voteDisabled ?? false) || isRemoved}
               size="sm"
+              variant="plain"
             />
             {onReply && !isRemoved ? (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 gap-1.5 rounded-full text-xs font-semibold text-muted-foreground"
+                className={cn(
+                  "h-7 gap-1.5 rounded-full px-2 text-xs font-semibold text-muted-foreground",
+                )}
                 onClick={onReply}
               >
                 <Reply className="size-4" />
@@ -166,7 +196,7 @@ export function CommentNodeView({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 gap-1.5 rounded-full text-xs font-semibold text-muted-foreground"
+                className="h-7 gap-1.5 rounded-full px-2 text-xs font-semibold text-muted-foreground"
                 onClick={onShare}
               >
                 <Share2 className="size-4" />

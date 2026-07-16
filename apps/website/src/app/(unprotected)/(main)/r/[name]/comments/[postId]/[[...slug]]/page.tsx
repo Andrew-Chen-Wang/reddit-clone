@@ -108,6 +108,7 @@ export default async function PostDetailPage({
           hasMoreRoots={hasMoreRoots}
           nextOffset={offset + ROOT_PAGE_SIZE}
           locked={post.isLocked}
+          postAuthorId={post.author?.id}
         />
       </div>
 

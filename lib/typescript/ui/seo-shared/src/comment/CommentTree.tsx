@@ -43,6 +43,8 @@ export type CommentTreeCallbacks = {
 export type CommentTreeProps = {
   nodes: CommentTreeNode[]
   callbacks: CommentTreeCallbacks
+  /** Author id of the post, used to badge the poster's own comments with "OP". */
+  postAuthorId?: string
   className?: string
 }
 
@@ -64,7 +66,7 @@ function nextVote(current: number, direction: 1 | -1): -1 | 0 | 1 {
  * thread" link once a branch exceeds {@link MAX_VISUAL_DEPTH} levels. All
  * interactions are delegated to `callbacks`.
  */
-export function CommentTree({ nodes, callbacks, className }: CommentTreeProps) {
+export function CommentTree({ nodes, callbacks, postAuthorId, className }: CommentTreeProps) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(() => new Set())
 
   function toggleCollapse(id: string) {
@@ -76,7 +78,19 @@ export function CommentTree({ nodes, callbacks, className }: CommentTreeProps) {
     })
   }
 
-  function renderNode(node: CommentTreeNode, visualDepth: number): ReactNode {
+  /**
+   * @param isLast   whether this node is the last of its sibling group (controls
+   *                 whether the parent's thread line continues past it).
+   * @param collapseParent collapses the parent's subtree — wired to the gutter
+   *                 line drawn to the left of this node (Reddit: clicking the
+   *                 line beside a reply collapses the comment it belongs to).
+   */
+  function renderNode(
+    node: CommentTreeNode,
+    visualDepth: number,
+    isLast: boolean,
+    collapseParent?: () => void,
+  ): ReactNode {
     const isCollapsed = collapsed.has(node.id)
     const atMaxDepth = visualDepth >= MAX_VISUAL_DEPTH
     const remaining = unloadedReplyCount(node)
@@ -85,8 +99,8 @@ export function CommentTree({ nodes, callbacks, className }: CommentTreeProps) {
     const showChildrenArea = !isCollapsed && !atMaxDepth && node.children.length > 0
     const isLoadingReplies = callbacks.loadingReplies?.has(node.id) ?? false
 
-    return (
-      <div className="flex flex-col">
+    const main = (
+      <div className={cn("min-w-0 flex-1", visualDepth > 0 && "pt-2")}>
         <CommentNodeView
           node={node}
           authorHref={
@@ -98,6 +112,8 @@ export function CommentTree({ nodes, callbacks, className }: CommentTreeProps) {
           onToggleCollapse={() => {
             toggleCollapse(node.id)
           }}
+          hasThread={showChildrenArea}
+          postAuthorId={postAuthorId}
           collapsedCount={countLoadedDescendants(node)}
           voteDisabled={callbacks.voteDisabled}
           onUpvote={
@@ -118,11 +134,11 @@ export function CommentTree({ nodes, callbacks, className }: CommentTreeProps) {
         />
 
         {!isCollapsed && isReplying ? (
-          <div className="mt-2 pl-6">{callbacks.renderReplyComposer?.(node)}</div>
+          <div className="mt-2 pl-10">{callbacks.renderReplyComposer?.(node)}</div>
         ) : null}
 
         {!isCollapsed && atMaxDepth && node.childCount > 0 ? (
-          <div className="mt-1 pl-6">
+          <div className="mt-1 pl-10">
             <SeoLink
               href={callbacks.buildPermalinkHref(node.id)}
               className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
@@ -134,36 +150,38 @@ export function CommentTree({ nodes, callbacks, className }: CommentTreeProps) {
         ) : null}
 
         {showChildrenArea ? (
-          <div className="relative mt-1 pl-5">
-            <button
-              type="button"
-              aria-label="Collapse thread"
-              onClick={() => {
-                toggleCollapse(node.id)
-              }}
-              className="group/line absolute top-0 bottom-0 left-1.5 flex w-4 cursor-pointer justify-center"
-            >
-              <span className="w-0.5 rounded-full bg-border transition-colors group-hover/line:bg-foreground/40" />
-            </button>
-            <div className="flex flex-col gap-3">
-              {node.children.map((child) => (
-                <Fragment key={child.id}>{renderNode(child, visualDepth + 1)}</Fragment>
-              ))}
-              {remaining > 0 ? (
-                <MoreReplies
-                  node={node}
-                  remaining={remaining}
-                  loading={isLoadingReplies}
-                  callbacks={callbacks}
-                />
-              ) : null}
-            </div>
+          <div className="flex flex-col">
+            {node.children.map((child, i) => (
+              <Fragment key={child.id}>
+                {renderNode(
+                  child,
+                  visualDepth + 1,
+                  i === node.children.length - 1 && remaining === 0,
+                  () => {
+                    toggleCollapse(node.id)
+                  },
+                )}
+              </Fragment>
+            ))}
+            {remaining > 0 ? (
+              <div className="flex">
+                <ThreadGutter isLast onCollapse={undefined} />
+                <div className="min-w-0 flex-1 pt-2">
+                  <MoreReplies
+                    node={node}
+                    remaining={remaining}
+                    loading={isLoadingReplies}
+                    callbacks={callbacks}
+                  />
+                </div>
+              </div>
+            ) : null}
           </div>
         ) : null}
 
         {/* Leaf node (or budget-truncated) with unloaded replies but no rendered children yet. */}
         {!isCollapsed && !atMaxDepth && node.children.length === 0 && remaining > 0 ? (
-          <div className="mt-1 pl-6">
+          <div className="mt-1 pl-10">
             <MoreReplies
               node={node}
               remaining={remaining}
@@ -174,13 +192,53 @@ export function CommentTree({ nodes, callbacks, className }: CommentTreeProps) {
         ) : null}
       </div>
     )
+
+    if (visualDepth === 0) return main
+
+    return (
+      <div className="flex">
+        <ThreadGutter isLast={isLast} onCollapse={collapseParent} />
+        {main}
+      </div>
+    )
   }
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>
       {nodes.map((node) => (
-        <Fragment key={node.id}>{renderNode(node, 0)}</Fragment>
+        <Fragment key={node.id}>{renderNode(node, 0, true, undefined)}</Fragment>
       ))}
+    </div>
+  )
+}
+
+/**
+ * The 32px-wide left column drawn beside every non-root comment. It renders the
+ * curved elbow that connects the parent's vertical thread line into this
+ * comment's avatar, plus (when this isn't the last sibling) the straight
+ * continuation carrying the line down to the next sibling. The continuation is a
+ * click target that collapses the parent subtree.
+ */
+function ThreadGutter({ isLast, onCollapse }: { isLast: boolean; onCollapse?: () => void }) {
+  return (
+    <div className="relative w-8 shrink-0">
+      {/* Curved elbow into the avatar (border-left + border-bottom + rounded corner). */}
+      <span className="pointer-events-none absolute top-0 left-1/2 h-[26px] w-1/2 rounded-bl-[11px] border-b border-l border-border" />
+      {/* Straight line to the next sibling; clicking it collapses the parent. */}
+      {!isLast ? (
+        onCollapse ? (
+          <button
+            type="button"
+            aria-label="Collapse thread"
+            onClick={onCollapse}
+            className="group/gline absolute inset-y-0 left-1/2 flex w-3 -translate-x-1/2 cursor-pointer justify-center"
+          >
+            <span className="w-px bg-border transition-colors group-hover/gline:bg-foreground/40" />
+          </button>
+        ) : (
+          <span className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border" />
+        )
+      ) : null}
     </div>
   )
 }

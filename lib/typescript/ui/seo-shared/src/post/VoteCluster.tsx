@@ -14,6 +14,12 @@ export type VoteClusterProps = {
   disabled?: boolean
   orientation?: "vertical" | "horizontal"
   size?: "sm" | "md"
+  /**
+   * `pill` (default): rounded background capsule used in feeds/post headers.
+   * `plain`: no capsule background — bare inline arrows + count, used inline in
+   * the comment action row (Reddit comment style). Hover tint is per-button.
+   */
+  variant?: "pill" | "plain"
 }
 
 /**
@@ -30,19 +36,26 @@ export function VoteCluster({
   disabled = false,
   orientation = "horizontal",
   size = "md",
+  variant = "pill",
 }: VoteClusterProps) {
   const upActive = userVote > 0
   const downActive = userVote < 0
+  const active = upActive || downActive
   const iconSize = size === "sm" ? "size-4" : "size-5"
   const scoreText = size === "sm" ? "text-xs" : "text-sm"
+  const plain = variant === "plain"
+  // Reddit's pill fills with orangered / periwinkle and turns its contents white
+  // when voted. The plain (comment) variant has no capsule, so it only tints text.
+  const pillFilled = !plain && active
 
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-full bg-muted",
+        "inline-flex items-center",
         orientation === "vertical" ? "flex-col" : "flex-row",
-        upActive && "bg-orange-500/15",
-        downActive && "bg-violet-500/15",
+        plain
+          ? "gap-0.5"
+          : cn("rounded-full bg-muted", upActive && "bg-[#d93a00]", downActive && "bg-[#6a5cff]"),
       )}
       data-orientation={orientation}
     >
@@ -53,19 +66,27 @@ export function VoteCluster({
         disabled={disabled}
         onClick={onUpvote}
         className={cn(
-          "flex items-center justify-center rounded-full p-1 transition-colors hover:text-orange-500 disabled:pointer-events-none",
-          upActive ? "text-orange-500" : "text-muted-foreground",
+          "flex items-center justify-center rounded-full p-1 transition-colors disabled:pointer-events-none",
+          plain && "hover:bg-orange-500/10",
+          pillFilled
+            ? "text-white"
+            : cn("hover:text-orange-500", upActive ? "text-orange-500" : "text-muted-foreground"),
         )}
       >
         <ArrowBigUp className={cn(iconSize, upActive && "fill-current")} />
       </button>
       <span
         className={cn(
-          "min-w-8 select-none text-center font-semibold tabular-nums",
+          "select-none text-center font-semibold tabular-nums",
+          plain ? "min-w-4 px-0.5" : "min-w-8",
           scoreText,
-          upActive && "text-orange-500",
-          downActive && "text-violet-500",
-          !upActive && !downActive && "text-foreground",
+          pillFilled
+            ? "text-white"
+            : cn(
+                upActive && "text-orange-500",
+                downActive && "text-violet-500",
+                !active && "text-foreground",
+              ),
         )}
       >
         {score === 0 ? "Vote" : formatCompactNumber(score)}
@@ -77,8 +98,11 @@ export function VoteCluster({
         disabled={disabled}
         onClick={onDownvote}
         className={cn(
-          "flex items-center justify-center rounded-full p-1 transition-colors hover:text-violet-500 disabled:pointer-events-none",
-          downActive ? "text-violet-500" : "text-muted-foreground",
+          "flex items-center justify-center rounded-full p-1 transition-colors disabled:pointer-events-none",
+          plain && "hover:bg-violet-500/10",
+          pillFilled
+            ? "text-white"
+            : cn("hover:text-violet-500", downActive ? "text-violet-500" : "text-muted-foreground"),
         )}
       >
         <ArrowBigDown className={cn(iconSize, downActive && "fill-current")} />
