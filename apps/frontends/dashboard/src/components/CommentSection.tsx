@@ -14,9 +14,12 @@ import {
 } from "@ui/base/ui/alert-dialog"
 import { Button } from "@ui/base/ui/button"
 import { Spinner } from "@ui/base/ui/spinner"
-import { assembleCommentTree, type CommentNode } from "@ui/seo-shared/comment/types"
+import {
+  assembleCommentTree,
+  assembleFocusedThread,
+  type CommentNode,
+} from "@ui/seo-shared/comment/types"
 import { CommentComposer } from "@ui/seo-shared/comment/CommentComposer"
-import { CommentNodeView } from "@ui/seo-shared/comment/CommentNodeView"
 import { CommentSkeleton } from "@ui/seo-shared/comment/CommentSkeleton"
 import { CommentSorter } from "@ui/seo-shared/comment/CommentSorter"
 import { CommentTree, type CommentTreeCallbacks } from "@ui/seo-shared/comment/CommentTree"
@@ -104,7 +107,10 @@ export function CommentSection({
     setRootCursor(baseQuery.data.nextCursor)
   }
 
-  const tree = useMemo(() => assembleCommentTree(flat), [flat])
+  const tree = useMemo(
+    () => (focusCommentId ? assembleFocusedThread(ancestors, flat) : assembleCommentTree(flat)),
+    [flat, ancestors, focusCommentId],
+  )
 
   function invalidatePost() {
     void queryClient.invalidateQueries({
@@ -333,7 +339,8 @@ export function CommentSection({
     onReply: locked
       ? undefined
       : (node) => {
-          setReplyingId(node.id)
+          // Toggle: pressing Reply again on the open composer closes it.
+          setReplyingId((prev) => (prev === node.id ? null : node.id))
           setReplyDraft("")
           setEditingId(null)
         },
@@ -418,7 +425,10 @@ export function CommentSection({
       )}
 
       {focusCommentId ? (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1 rounded-md border bg-muted/30 px-3 py-2">
+          <span className="text-xs font-medium text-muted-foreground">
+            You are viewing a single comment&apos;s thread.
+          </span>
           <button
             type="button"
             onClick={onExitPermalink}
@@ -426,25 +436,6 @@ export function CommentSection({
           >
             ← View all comments
           </button>
-          {ancestors.length > 0 ? (
-            <div className="flex flex-col gap-1 rounded-md border border-dashed bg-muted/30 p-2">
-              <span className="px-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                Context
-              </span>
-              {ancestors.map((a) => (
-                <CommentNodeView
-                  key={a.id}
-                  node={a}
-                  authorHref={a.author ? `/user/${a.author.username}` : undefined}
-                  postAuthorId={postAuthorId}
-                  collapsed
-                  onToggleCollapse={() => {
-                    onExitPermalink()
-                  }}
-                />
-              ))}
-            </div>
-          ) : null}
         </div>
       ) : null}
 
@@ -455,7 +446,12 @@ export function CommentSection({
           No comments yet. Be the first to share what you think.
         </p>
       ) : (
-        <CommentTree nodes={tree} callbacks={callbacks} postAuthorId={postAuthorId} />
+        <CommentTree
+          nodes={tree}
+          callbacks={callbacks}
+          postAuthorId={postAuthorId}
+          highlightCommentId={focusCommentId}
+        />
       )}
 
       {!focusCommentId && rootCursor ? (

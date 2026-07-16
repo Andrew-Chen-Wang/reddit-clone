@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
+import { cn } from "@ui/base/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/base/ui/collapsible"
 import {
   Sidebar,
@@ -56,6 +57,16 @@ type JoinedCommunity = {
   isFavorite: boolean
 }
 
+/**
+ * Sidebar spacing scale (matches reddit's compact new-UI rhythm):
+ * - Menu rows are 40px tall (h-10) with the sidebar's base 16px left indent and 8px icon gap.
+ * - Section headings are uppercase, muted, and letter-spaced.
+ * - Row actions (favorite stars) are vertically centered against the 40px row.
+ */
+const MENU_ROW_CLASS = "h-10"
+const SECTION_LABEL_CLASS = "uppercase tracking-wider font-semibold text-sidebar-foreground/60"
+const ROW_ACTION_CLASS = "top-2.5"
+
 function useFavoriteToggle() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -76,6 +87,7 @@ function FavoriteStar({ communityId, isFavorite }: { communityId: string; isFavo
   return (
     <SidebarMenuAction
       aria-label={isFavorite ? "Unfavorite" : "Favorite"}
+      className={ROW_ACTION_CLASS}
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -102,6 +114,7 @@ function CommunityLink({
       <SidebarMenuButton
         render={<Link to="/r/$name" params={{ name: community.name }} />}
         tooltip={`r/${community.name}`}
+        className={MENU_ROW_CLASS}
       >
         <CommunityIcon name={community.name} iconUrl={mediaUrl(community.iconImageKey)} size="sm" />
         <span>r/{community.name}</span>
@@ -124,6 +137,7 @@ function ModCommunityLink({
       <SidebarMenuButton
         render={<Link to="/mod/$name" params={{ name: community.name }} />}
         tooltip={`Mod r/${community.name}`}
+        className={MENU_ROW_CLASS}
       >
         <CommunityIcon name={community.name} iconUrl={mediaUrl(community.iconImageKey)} size="sm" />
         <span>r/{community.name}</span>
@@ -307,6 +321,7 @@ function CustomFeedStar({ feedId, isFavorite }: { feedId: string; isFavorite: bo
   return (
     <SidebarMenuAction
       aria-label={isFavorite ? "Unfavorite" : "Favorite"}
+      className={ROW_ACTION_CLASS}
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -328,7 +343,10 @@ function CustomFeedsSection() {
   return (
     <Collapsible defaultOpen className="group/feeds">
       <SidebarGroup>
-        <SidebarGroupLabel render={<CollapsibleTrigger />} className="group/label cursor-pointer">
+        <SidebarGroupLabel
+          render={<CollapsibleTrigger />}
+          className={cn("group/label cursor-pointer", SECTION_LABEL_CLASS)}
+        >
           Custom Feeds
           <ChevronRight className="ml-auto transition-transform group-data-[panel-open]/label:rotate-90" />
         </SidebarGroupLabel>
@@ -341,6 +359,7 @@ function CustomFeedsSection() {
                     setCreateOpen(true)
                   }}
                   tooltip="Create Custom Feed"
+                  className={MENU_ROW_CLASS}
                 >
                   <Plus />
                   <span>Create Custom Feed</span>
@@ -354,6 +373,7 @@ function CustomFeedsSection() {
                           <Link to="/feed/$username/$slug" params={{ username, slug: feed.slug }} />
                         }
                         tooltip={feed.name}
+                        className={MENU_ROW_CLASS}
                       >
                         <Layers />
                         <span>{feed.name}</span>
@@ -401,7 +421,11 @@ export function AppSidebar() {
             <SidebarMenu>
               {MAIN_NAV.map(({ to, label, icon: Icon }) => (
                 <SidebarMenuItem key={label}>
-                  <SidebarMenuButton render={<Link to={to} />} tooltip={label}>
+                  <SidebarMenuButton
+                    render={<Link to={to} />}
+                    tooltip={label}
+                    className={MENU_ROW_CLASS}
+                  >
                     <Icon />
                     <span>{label}</span>
                   </SidebarMenuButton>
@@ -417,7 +441,7 @@ export function AppSidebar() {
             <SidebarGroup>
               <SidebarGroupLabel
                 render={<CollapsibleTrigger />}
-                className="group/label cursor-pointer"
+                className={cn("group/label cursor-pointer", SECTION_LABEL_CLASS)}
               >
                 Moderation
                 <ChevronRight className="ml-auto transition-transform group-data-[panel-open]/label:rotate-90" />
@@ -430,13 +454,18 @@ export function AppSidebar() {
                       <SidebarMenuButton
                         render={<Link to="/mod/$name" params={{ name: "mod" }} />}
                         tooltip="Mod Queue"
+                        className={MENU_ROW_CLASS}
                       >
                         <ShieldCheck />
                         <span>Mod Queue</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                      <SidebarMenuButton render={<Link to="/r/mod" />} tooltip="r/Mod">
+                      <SidebarMenuButton
+                        render={<Link to="/r/mod" />}
+                        tooltip="r/Mod"
+                        className={MENU_ROW_CLASS}
+                      >
                         <ShieldCheck />
                         <span>r/Mod</span>
                       </SidebarMenuButton>
@@ -453,7 +482,7 @@ export function AppSidebar() {
 
         {/* Recent */}
         <SidebarGroup>
-          <SidebarGroupLabel>Recent</SidebarGroupLabel>
+          <SidebarGroupLabel className={SECTION_LABEL_CLASS}>Recent</SidebarGroupLabel>
           <SidebarGroupContent>
             {recentCommunities.length > 0 ? (
               <SidebarMenu>
@@ -482,7 +511,7 @@ export function AppSidebar() {
           <SidebarGroup>
             <SidebarGroupLabel
               render={<CollapsibleTrigger />}
-              className="group/label cursor-pointer"
+              className={cn("group/label cursor-pointer", SECTION_LABEL_CLASS)}
             >
               Communities
               <ChevronRight className="ml-auto transition-transform group-data-[panel-open]/label:rotate-90" />
@@ -496,6 +525,7 @@ export function AppSidebar() {
                         setWizardOpen(true)
                       }}
                       tooltip="Create Community"
+                      className={MENU_ROW_CLASS}
                     >
                       <Plus />
                       <span>Create Community</span>
@@ -519,11 +549,12 @@ export function AppSidebar() {
 
         {/* Resources */}
         <SidebarGroup>
-          <SidebarGroupLabel>Resources</SidebarGroupLabel>
+          <SidebarGroupLabel className={SECTION_LABEL_CLASS}>Resources</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  className={MENU_ROW_CLASS}
                   render={
                     // oxlint-disable-next-line no-html-link-for-pages -- /about is a Next.js page outside the SPA router
                     <a href="/about">
@@ -534,6 +565,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  className={MENU_ROW_CLASS}
                   render={
                     // oxlint-disable-next-line no-html-link-for-pages -- /rules is a Next.js page outside the SPA router
                     <a href="/rules">
@@ -544,6 +576,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  className={MENU_ROW_CLASS}
                   render={
                     // oxlint-disable-next-line no-html-link-for-pages -- /legal is a Next.js page outside the SPA router
                     <a href="/legal">

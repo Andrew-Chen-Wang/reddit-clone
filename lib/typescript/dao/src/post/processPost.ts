@@ -48,6 +48,7 @@ export interface ProcessedPost {
   title: string
   bodyMd: string | null
   linkUrl: string | null
+  linkImageUrl: string | null
   isNsfw: boolean
   isSpoiler: boolean
   isOc: boolean
@@ -156,6 +157,7 @@ export async function processPosts(
       title: r.title,
       bodyMd: r.bodyMd,
       linkUrl: r.linkUrl,
+      linkImageUrl: r.linkImageKey ? mediaPublicUrl(r.linkImageKey) : null,
       isNsfw: r.isNsfw,
       isSpoiler: r.isSpoiler,
       isOc: r.isOc,

@@ -124,8 +124,9 @@ export function TopNav() {
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
-      <div className="flex h-14 items-center gap-4 px-4">
-        <div className="flex items-center gap-1">
+      <div className="flex h-14 items-center gap-2 px-2 sm:px-4">
+        {/* Left zone: hamburger + logo */}
+        <div className="flex flex-1 items-center gap-1">
           <button
             type="button"
             aria-label="Toggle sidebar"
@@ -141,19 +142,23 @@ export function TopNav() {
             ReadIt
           </Link>
         </div>
-        <SearchSuggest />
-        <div className="ml-auto flex items-center gap-1">
+
+        {/* Center zone: search, horizontally centered with a max width */}
+        <div className="flex min-w-0 flex-1 justify-center">
+          <SearchSuggest />
+        </div>
+
+        {/* Right zone: actions */}
+        <div className="flex flex-1 items-center justify-end gap-1">
           <ChatButton />
           <NotificationBell />
-        </div>
-        <Link
-          to="/submit"
-          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-1.5")}
-        >
-          <Plus className="size-4" />
-          <span className="hidden sm:inline">Create</span>
-        </Link>
-        <div>
+          <Link
+            to="/submit"
+            className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "gap-1.5")}
+          >
+            <Plus className="size-4" />
+            <span className="hidden sm:inline">Create</span>
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger
               aria-label="Account menu"

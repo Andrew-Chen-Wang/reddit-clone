@@ -18,6 +18,7 @@ export const POST_COLUMNS = [
   "post.title",
   "post.bodyMd",
   "post.linkUrl",
+  "post.linkImageKey",
   "post.communityId",
   "post.profileUserId",
   "post.authorUserId",
@@ -43,6 +44,7 @@ export type RawPostRow = {
   title: string
   bodyMd: string | null
   linkUrl: string | null
+  linkImageKey: string | null
   communityId: string | null
   profileUserId: string | null
   authorUserId: string
@@ -361,6 +363,32 @@ export function fetchPost(db: Kysely<DB>) {
       .orderBy("post.id", "desc")
   }
 
+  function authoredPostsFeed(opts: {
+    authorUserId: string
+    sort: Exclude<PostSort, "rising">
+    windowStart: Date | null
+  }): PostQuery {
+    const base = withMediaGuard(
+      db
+        .selectFrom("post")
+        .where("post.authorUserId", "=", opts.authorUserId)
+        .where("post.removedAt", "is", null)
+        .select(POST_COLUMNS),
+    )
+    return applyNonRisingSort(base, opts.sort, opts.windowStart)
+  }
+
+  function viewedPostsFeed(userId: string): PostQuery {
+    return db
+      .selectFrom("post")
+      .innerJoin("postView", "postView.postId", "post.id")
+      .where("postView.userId", "=", userId)
+      .where("post.removedAt", "is", null)
+      .select(POST_COLUMNS)
+      .orderBy("postView.viewedAt", "desc")
+      .orderBy("post.id", "desc")
+  }
+
   function profileFeed(profileUserId: string): PostQuery {
     return withMediaGuard(
       db
@@ -472,6 +500,8 @@ export function fetchPost(db: Kysely<DB>) {
     savedPostsFeed,
     hiddenPostsFeed,
     votedPostsFeed,
+    authoredPostsFeed,
+    viewedPostsFeed,
     profileFeed,
     getStickyForCommunity,
     getRawById,

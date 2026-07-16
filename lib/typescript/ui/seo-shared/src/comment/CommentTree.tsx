@@ -45,6 +45,11 @@ export type CommentTreeProps = {
   callbacks: CommentTreeCallbacks
   /** Author id of the post, used to badge the poster's own comments with "OP". */
   postAuthorId?: string
+  /**
+   * On a single-comment permalink, the id of the target comment. It renders with
+   * a highlight so the eye lands on it after the dimmed ancestor chain.
+   */
+  highlightCommentId?: string
   className?: string
 }
 
@@ -66,7 +71,13 @@ function nextVote(current: number, direction: 1 | -1): -1 | 0 | 1 {
  * thread" link once a branch exceeds {@link MAX_VISUAL_DEPTH} levels. All
  * interactions are delegated to `callbacks`.
  */
-export function CommentTree({ nodes, callbacks, postAuthorId, className }: CommentTreeProps) {
+export function CommentTree({
+  nodes,
+  callbacks,
+  postAuthorId,
+  highlightCommentId,
+  className,
+}: CommentTreeProps) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(() => new Set())
   // Id of the comment whose thread line is currently hovered. All connector
   // segments belonging to that comment (its own stub + every child gutter)
@@ -123,6 +134,7 @@ export function CommentTree({ nodes, callbacks, postAuthorId, className }: Comme
             setHoveredId(h ? node.id : null)
           }}
           postAuthorId={postAuthorId}
+          highlighted={highlightCommentId === node.id}
           collapsedCount={countLoadedDescendants(node)}
           voteDisabled={callbacks.voteDisabled}
           onUpvote={
@@ -143,7 +155,17 @@ export function CommentTree({ nodes, callbacks, postAuthorId, className }: Comme
         />
 
         {!isCollapsed && isReplying ? (
-          <div className="mt-2 pl-10">{callbacks.renderReplyComposer?.(node)}</div>
+          <div className="flex">
+            {/* Carry the parent's thread line straight down the composer's left
+                gutter so the connector stays unbroken (matching Reddit), instead
+                of leaving a gap where the reply box sits. */}
+            <div className="relative w-8 shrink-0" aria-hidden>
+              {showChildrenArea ? (
+                <span className="pointer-events-none absolute -top-2 bottom-0 left-1/2 w-px -translate-x-1/2 bg-border" />
+              ) : null}
+            </div>
+            <div className="min-w-0 flex-1 pt-2">{callbacks.renderReplyComposer?.(node)}</div>
+          </div>
         ) : null}
 
         {!isCollapsed && atMaxDepth && node.childCount > 0 ? (

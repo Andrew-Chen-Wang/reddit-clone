@@ -9,6 +9,7 @@ import {
 import { type Job, Worker } from "bullmq"
 import { processDraftExpiry } from "./jobs/draftExpiry"
 import { processEsBackfill } from "./jobs/esBackfill"
+import { processLinkPreviewFetch } from "./jobs/linkPreviewFetch"
 import {
   processEsSyncComment,
   processEsSyncCommunity,
@@ -78,6 +79,9 @@ function makeSlowWorker() {
       }
       if (job.name === "es-backfill") {
         await processEsBackfill(job.data as JobPayloadMap["es-backfill"])
+      }
+      if (job.name === "link-preview-fetch") {
+        await processLinkPreviewFetch(job.data as JobPayloadMap["link-preview-fetch"])
       }
     },
     { connection, concurrency: 5, removeOnComplete: { age: 86400 } },

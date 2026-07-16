@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactElement, ReactNode } from "react"
-import { ExternalLink, Lock, MessageSquare, Pin, Share2 } from "lucide-react"
+import { ArrowLeft, ExternalLink, Lock, MessageSquare, Pin, Share2 } from "lucide-react"
 import { Badge } from "@ui/base/ui/badge"
 import { cn } from "@ui/base/lib/utils"
 import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
@@ -17,6 +17,8 @@ export type PostDetailCardProps = {
   post: PostRowPost
   communityHref?: string
   authorHref?: string
+  /** Round back-arrow button (Reddit-style). Omit to hide it (e.g. static SSR). */
+  onBack?: () => void
   onUpvote: () => void
   onDownvote: () => void
   voteDisabled?: boolean
@@ -44,6 +46,7 @@ export function PostDetailCard({
   post,
   communityHref,
   authorHref,
+  onBack,
   onUpvote,
   onDownvote,
   voteDisabled,
@@ -67,46 +70,62 @@ export function PostDetailCard({
     ) : null
   return (
     <article className="flex flex-col gap-3 rounded-lg border bg-card p-4">
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        {post.stickyPosition !== null ? (
-          <Pin className="size-3.5 text-green-600 dark:text-green-500" aria-label="Pinned" />
+      {/*
+        Reddit-style two-line header: a round back button, the community avatar,
+        then "r/community · <time>" on line 1 and the author "u/username" on line 2.
+      */}
+      <div className="flex items-start gap-2">
+        {onBack ? (
+          <button
+            type="button"
+            aria-label="Go back"
+            onClick={onBack}
+            className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <ArrowLeft className="size-5" />
+          </button>
         ) : null}
         {post.community ? (
-          <>
-            <CommunityIcon
-              name={post.community.name}
-              iconUrl={post.community.iconImageKey}
-              size="sm"
-            />
-            {communityLink ? (
-              wrapCommunityLink ? (
-                wrapCommunityLink(communityLink, post.community.name)
-              ) : (
-                communityLink
-              )
-            ) : (
-              <span className="font-medium text-foreground">r/{post.community.name}</span>
-            )}
-            <span aria-hidden>·</span>
-          </>
+          <CommunityIcon
+            name={post.community.name}
+            iconUrl={post.community.iconImageKey}
+            size="md"
+          />
         ) : null}
-        {post.author ? (
-          <>
-            <span>Posted by</span>
-            {authorLink ? (
-              wrapAuthorLink ? (
-                wrapAuthorLink(authorLink, post.author.username)
+        <div className="flex min-w-0 flex-col">
+          <div className="flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
+            {post.stickyPosition !== null ? (
+              <Pin className="size-3.5 text-green-600 dark:text-green-500" aria-label="Pinned" />
+            ) : null}
+            {post.community ? (
+              communityLink ? (
+                wrapCommunityLink ? (
+                  wrapCommunityLink(communityLink, post.community.name)
+                ) : (
+                  communityLink
+                )
               ) : (
-                authorLink
+                <span className="font-medium text-foreground">r/{post.community.name}</span>
               )
-            ) : (
-              <span>u/{post.author.username}</span>
-            )}
-            <span aria-hidden>·</span>
-          </>
-        ) : null}
-        <RelativeTime date={post.createdAt} />
-        {post.editedAt ? <span className="italic">(edited)</span> : null}
+            ) : null}
+            {post.community ? <span aria-hidden>·</span> : null}
+            <RelativeTime date={post.createdAt} />
+            {post.editedAt ? <span className="italic">(edited)</span> : null}
+          </div>
+          {post.author ? (
+            <div className="text-xs text-muted-foreground">
+              {authorLink ? (
+                wrapAuthorLink ? (
+                  wrapAuthorLink(authorLink, post.author.username)
+                ) : (
+                  authorLink
+                )
+              ) : (
+                <span>u/{post.author.username}</span>
+              )}
+            </div>
+          ) : null}
+        </div>
         {menuSlot ? <span className="ml-auto">{menuSlot}</span> : null}
       </div>
 
@@ -153,15 +172,36 @@ export function PostDetailCard({
       {post.type === "text" && post.bodyMd ? <Markdown content={post.bodyMd} /> : null}
 
       {post.type === "link" && post.linkUrl ? (
-        <a
-          href={post.linkUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex w-fit items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium text-primary hover:bg-muted"
-        >
-          {domainFromUrl(post.linkUrl)}
-          <ExternalLink className="size-4" />
-        </a>
+        post.linkImageUrl ? (
+          <a
+            href={post.linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-fit max-w-full overflow-hidden rounded-lg border hover:border-foreground/30"
+          >
+            {/* oxlint-disable-next-line no-img-element */}
+            <img
+              src={post.linkImageUrl}
+              alt=""
+              loading="lazy"
+              className="max-h-96 w-full object-cover"
+            />
+            <span className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-primary">
+              <ExternalLink className="size-4" />
+              {domainFromUrl(post.linkUrl)}
+            </span>
+          </a>
+        ) : (
+          <a
+            href={post.linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-fit items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium text-primary hover:bg-muted"
+          >
+            {domainFromUrl(post.linkUrl)}
+            <ExternalLink className="size-4" />
+          </a>
+        )
       ) : null}
 
       <div className="flex items-center gap-1.5 pt-1">

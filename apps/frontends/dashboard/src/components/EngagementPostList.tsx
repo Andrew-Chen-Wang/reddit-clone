@@ -11,6 +11,7 @@ import { PostActionsMenu } from "@frontends/dashboard/components/PostActionsMenu
 import { PostShareMenu } from "@frontends/dashboard/components/PostShareMenu"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import type { FeedPost } from "@frontends/dashboard/components/PostFeed"
+import type { ViewMode } from "@frontends/dashboard/components/profile/useFeedView"
 import { putApiV1PostVoteByPostId } from "@lib/api-client/generated/sdk.gen"
 import { useEffect, useRef } from "react"
 import { toast } from "sonner"
@@ -23,6 +24,8 @@ export type EngagementPostListProps = {
   permalinkFor: (post: FeedPost) => string
   emptyTitle: string
   emptyDescription: string
+  /** Card / compact density; defaults to card. */
+  view?: ViewMode
   /** Seed the action menu's toggle state for lists where it is known. */
   menuInitial?: { saved?: boolean; hidden?: boolean }
   /** Which menu actions should drop the post from this list (deletes always do). */
@@ -54,6 +57,7 @@ export function EngagementPostList({
   permalinkFor,
   emptyTitle,
   emptyDescription,
+  view = "card",
   menuInitial,
   removeTriggers,
 }: EngagementPostListProps) {
@@ -133,7 +137,7 @@ export function EngagementPostList({
 
   const posts = list.data?.pages.flatMap((p) => p.posts) ?? []
 
-  if (list.isLoading) return <PostFeedSkeleton />
+  if (list.isLoading) return <PostFeedSkeleton variant={view} />
   if (list.isError) {
     return (
       <div className="rounded-lg border bg-card p-10 text-center">
@@ -161,11 +165,14 @@ export function EngagementPostList({
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div
+      className={view === "compact" ? "overflow-hidden rounded-lg border" : "flex flex-col gap-3"}
+    >
       {posts.map((post) => (
         <PostRow
           key={post.id}
           post={toDisplayPost(post)}
+          variant={view}
           href={permalinkFor(post)}
           communityHref={post.community ? `/r/${post.community.name}` : undefined}
           authorHref={post.author ? `/user/${post.author.username}` : undefined}
@@ -215,7 +222,7 @@ export function EngagementPostList({
           }
         />
       ))}
-      {list.isFetchingNextPage ? <PostFeedSkeleton count={2} /> : null}
+      {list.isFetchingNextPage ? <PostFeedSkeleton count={2} variant={view} /> : null}
       <div ref={sentinelRef} aria-hidden className="h-px" />
     </div>
   )

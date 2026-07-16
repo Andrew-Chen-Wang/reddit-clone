@@ -1,5 +1,5 @@
-import { AnonFeed } from "@website/components/AnonFeed"
-import { loadProfileFeed } from "@website/lib/feed-ssr"
+import { AnonProfileOverview, type AnonOverviewItem } from "@website/components/AnonProfileOverview"
+import { loadProfileOverview } from "@website/lib/feed-ssr"
 import { getCurrentSession } from "@website/lib/auth"
 import { ProfileHeader } from "@ui/seo-shared/profile/ProfileHeader"
 import { fetchUser } from "@lib/dao/user/fetch"
@@ -46,7 +46,36 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   }
 
   const session = await getCurrentSession()
-  const feed = await loadProfileFeed(user.id, session?.user.id ?? null)
+  const overview = await loadProfileOverview(user.id, session?.user.id ?? null)
+
+  // Map the merged DAO items into presentational shapes, computing permalinks.
+  const items: AnonOverviewItem[] = overview.map((item) =>
+    item.kind === "post"
+      ? { kind: "post", post: item.post }
+      : {
+          kind: "comment",
+          comment: {
+            id: item.comment.id,
+            bodyMd: item.comment.bodyMd,
+            score: item.comment.score,
+            isDeleted: item.comment.isDeleted,
+            createdAt: item.comment.createdAt,
+            editedAt: item.comment.editedAt,
+            post: {
+              title: item.comment.post.title,
+              href: item.comment.post.community
+                ? `/r/${item.comment.post.community.name}/comments/${item.comment.post.id}?comment=${item.comment.id}`
+                : undefined,
+              community: item.comment.post.community
+                ? {
+                    name: item.comment.post.community.name,
+                    href: `/r/${item.comment.post.community.name}`,
+                  }
+                : null,
+            },
+          },
+        },
+  )
 
   return (
     <div className="pb-10">
@@ -61,26 +90,17 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
           commentKarma: user.commentKarma,
           createdAt: user.createdAt,
         }}
-      />
-
-      <div className="mx-auto mt-4 w-full max-w-3xl px-4">
-        {feed.posts.length === 0 ? (
+      >
+        {items.length === 0 ? (
           <div className="rounded-lg border bg-card p-10 text-center">
             <p className="text-sm font-medium text-muted-foreground">
-              u/{user.username} hasn&apos;t posted yet
+              u/{user.username} hasn&apos;t posted or commented yet
             </p>
           </div>
         ) : (
-          <AnonFeed
-            source={{ kind: "profile", username: user.username }}
-            sort="new"
-            t="all"
-            initialPosts={feed.posts}
-            initialCursor={feed.initialCursor}
-            showCommunity
-          />
+          <AnonProfileOverview items={items} />
         )}
-      </div>
+      </ProfileHeader>
     </div>
   )
 }

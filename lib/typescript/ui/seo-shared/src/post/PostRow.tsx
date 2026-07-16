@@ -1,7 +1,17 @@
 "use client"
 
 import type { CSSProperties, ReactElement, ReactNode } from "react"
-import { FileText, Link2, Lock, MessageSquare, Pin, Play, Share2 } from "lucide-react"
+import {
+  ExternalLink,
+  Eye,
+  FileText,
+  Link2,
+  Lock,
+  MessageSquare,
+  Pin,
+  Play,
+  Share2,
+} from "lucide-react"
 import { Badge } from "@ui/base/ui/badge"
 import { cn } from "@ui/base/lib/utils"
 import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
@@ -18,6 +28,14 @@ export type PostRowPost = {
   title: string
   bodyMd: string | null
   linkUrl: string | null
+  /**
+   * Preview image scraped from a link post's target (Open Graph). Optional: the
+   * SSR DAO already provides it; the generated SPA client gains it once the
+   * post serializer is regenerated. Renders as the link thumbnail/preview.
+   * TODO(m16-backend): wire `linkImageUrl` into the OpenAPI post serializer so
+   * the generated api-client type carries it (SSR DAO already returns it).
+   */
+  linkImageUrl?: string | null
   isNsfw: boolean
   isSpoiler: boolean
   isOc: boolean
@@ -25,6 +43,8 @@ export type PostRowPost = {
   stickyPosition: number | null
   score: number
   commentCount: number
+  /** Total post views. Optional so callers without the field (e.g. mod queue) still fit. */
+  viewCount?: number
   createdAt: string | Date
   editedAt: string | Date | null
   userVote: number
@@ -65,17 +85,34 @@ function CompactThumb({ post, media }: { post: PostRowPost; media: MediaGalleryI
     )
   }
   if (post.type === "link" && post.linkUrl) {
+    const domain = domainFromUrl(post.linkUrl)
     return (
       <a
         href={post.linkUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={domainFromUrl(post.linkUrl)}
-        className={cn(COMPACT_THUMB_PLACEHOLDER, "relative z-10 hover:bg-muted/70")}
+        aria-label={domain}
+        className={cn(
+          COMPACT_THUMB,
+          "relative z-10 flex items-center justify-center bg-muted text-muted-foreground hover:bg-muted/70",
+        )}
       >
-        <Link2 className="size-6" />
+        {post.linkImageUrl ? (
+          // oxlint-disable-next-line no-img-element
+          <img
+            src={post.linkImageUrl}
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 size-full object-cover"
+          />
+        ) : (
+          <Link2 className="size-6" />
+        )}
+        <span className="absolute top-1 right-1 flex size-5 items-center justify-center rounded bg-black/60 text-white">
+          <ExternalLink className="size-3" />
+        </span>
         <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-black/70 to-transparent px-1.5 py-1 text-[10px] font-medium text-white">
-          {domainFromUrl(post.linkUrl)}
+          {domain}
         </span>
       </a>
     )
@@ -227,6 +264,15 @@ function MetaLine({
       ) : null}
       <RelativeTime date={post.createdAt} />
       {post.editedAt ? <span className="italic">(edited)</span> : null}
+      {post.viewCount != null ? (
+        <>
+          <span aria-hidden>·</span>
+          <span className="inline-flex items-center gap-1">
+            <Eye className="size-3.5" />
+            {formatCompactNumber(post.viewCount)} views
+          </span>
+        </>
+      ) : null}
     </div>
   )
 }
@@ -412,14 +458,36 @@ export function PostRow({
       {preview ? <p className="line-clamp-3 text-sm text-muted-foreground">{preview}</p> : null}
 
       {post.type === "link" && post.linkUrl ? (
-        <a
-          href={post.linkUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative z-10 inline-flex w-fit items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-muted"
-        >
-          {domainFromUrl(post.linkUrl)}
-        </a>
+        post.linkImageUrl ? (
+          <a
+            href={post.linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative z-10 block w-fit max-w-full overflow-hidden rounded-lg border hover:border-foreground/30"
+          >
+            {/* oxlint-disable-next-line no-img-element */}
+            <img
+              src={post.linkImageUrl}
+              alt=""
+              loading="lazy"
+              className="max-h-80 w-full object-cover"
+            />
+            <span className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-primary">
+              <ExternalLink className="size-3.5" />
+              {domainFromUrl(post.linkUrl)}
+            </span>
+          </a>
+        ) : (
+          <a
+            href={post.linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative z-10 inline-flex w-fit items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-muted"
+          >
+            <ExternalLink className="size-3.5" />
+            {domainFromUrl(post.linkUrl)}
+          </a>
+        )
       ) : null}
 
       <Footer

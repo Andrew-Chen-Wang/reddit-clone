@@ -7,6 +7,11 @@ import { PostFeed, type FeedPost } from "@frontends/dashboard/components/PostFee
 import { CommentWithPostList } from "@frontends/dashboard/components/CommentWithPostList"
 import { EngagementPostList } from "@frontends/dashboard/components/EngagementPostList"
 import { ProfileActions } from "@frontends/dashboard/components/ProfileActions"
+import { OverviewFeed } from "@frontends/dashboard/components/profile/OverviewFeed"
+import { HistoryTab } from "@frontends/dashboard/components/profile/HistoryTab"
+import { FeedViewMenu } from "@frontends/dashboard/components/profile/FeedViewMenu"
+import { PROFILE_SORTS } from "@frontends/dashboard/components/profile/FeedSortMenu"
+import { useFeedView, type ViewMode } from "@frontends/dashboard/components/profile/useFeedView"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import {
   getApiV1UserByUsernameByUsernameComments,
@@ -19,12 +24,12 @@ import {
   getApiV1UserByUsernameByUsernameOptions,
   getApiV1UserMeOptions,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-
 const PROFILE_TABS = [
   "overview",
   "posts",
   "comments",
   "saved",
+  "history",
   "hidden",
   "upvoted",
   "downvoted",
@@ -42,16 +47,21 @@ export const Route = createFileRoute("/user/$username")({
   component: ProfilePage,
 })
 
-const PROFILE_SORTS = [
-  { value: "new", label: "New" },
-  { value: "top", label: "Top" },
-  { value: "hot", label: "Hot" },
-]
-
 function postPermalink(post: FeedPost): string {
   return post.community
     ? `/r/${post.community.name}/comments/${post.id}`
     : `/user/${post.author?.username ?? ""}`
+}
+
+/** A right-aligned toolbar carrying just the card/compact view toggle. */
+function ViewToolbar({ view, onChange }: { view: ViewMode; onChange: (next: ViewMode) => void }) {
+  return (
+    <div className="flex items-center">
+      <div className="ml-auto">
+        <FeedViewMenu view={view} onChange={onChange} />
+      </div>
+    </div>
+  )
 }
 
 function PostsTab({ username }: { username: string }) {
@@ -63,36 +73,44 @@ function PostsTab({ username }: { username: string }) {
       showCommunity
       permalinkFor={postPermalink}
       emptyTitle="No posts yet"
-      emptyDescription={`u/${username} hasn't posted yet.`}
+      emptyDescription={`u/${username} hasn't posted in any community yet.`}
     />
   )
 }
 
 function CommentsTab({ username }: { username: string }) {
+  const { view, setView } = useFeedView()
   return (
-    <CommentWithPostList
-      queryKey={["profile-comments", username]}
-      fetchPage={async (cursor) => {
-        const { data } = await getApiV1UserByUsernameByUsernameComments({
-          path: { username },
-          query: { cursor },
-          throwOnError: true,
-        })
-        return { comments: data.data, nextCursor: data.nextCursor }
-      }}
-      emptyTitle="No comments yet"
-      emptyDescription={`u/${username} hasn't commented yet.`}
-    />
+    <div className="flex flex-col gap-3">
+      <ViewToolbar view={view} onChange={setView} />
+      <CommentWithPostList
+        queryKey={["profile-comments", username]}
+        compact={view === "compact"}
+        fetchPage={async (cursor) => {
+          const { data } = await getApiV1UserByUsernameByUsernameComments({
+            path: { username },
+            query: { cursor },
+            throwOnError: true,
+          })
+          return { comments: data.data, nextCursor: data.nextCursor }
+        }}
+        emptyTitle="No comments yet"
+        emptyDescription={`u/${username} hasn't commented yet.`}
+      />
+    </div>
   )
 }
 
 function SavedTab() {
+  const { view, setView } = useFeedView()
   return (
     <div className="flex flex-col gap-8">
+      <ViewToolbar view={view} onChange={setView} />
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold text-muted-foreground">Saved posts</h2>
         <EngagementPostList
           queryKey={["me", "saved", "posts"]}
+          view={view}
           fetchPage={async (cursor) => {
             const { data } = await getApiV1UserMeSaved({
               query: { type: "posts", cursor },
@@ -111,6 +129,7 @@ function SavedTab() {
         <h2 className="text-sm font-semibold text-muted-foreground">Saved comments</h2>
         <CommentWithPostList
           queryKey={["me", "saved", "comments"]}
+          compact={view === "compact"}
           fetchPage={async (cursor) => {
             const { data } = await getApiV1UserMeSaved({
               query: { type: "comments", cursor },
@@ -127,49 +146,64 @@ function SavedTab() {
 }
 
 function HiddenTab() {
+  const { view, setView } = useFeedView()
   return (
-    <EngagementPostList
-      queryKey={["me", "hidden"]}
-      fetchPage={async (cursor) => {
-        const { data } = await getApiV1UserMeHidden({ query: { cursor }, throwOnError: true })
-        return { posts: data.data, nextCursor: data.nextCursor }
-      }}
-      permalinkFor={postPermalink}
-      emptyTitle="Nothing hidden"
-      emptyDescription="Posts you hide appear here."
-      menuInitial={{ hidden: true }}
-      removeTriggers={{ unhide: true }}
-    />
+    <div className="flex flex-col gap-3">
+      <ViewToolbar view={view} onChange={setView} />
+      <EngagementPostList
+        queryKey={["me", "hidden"]}
+        view={view}
+        fetchPage={async (cursor) => {
+          const { data } = await getApiV1UserMeHidden({ query: { cursor }, throwOnError: true })
+          return { posts: data.data, nextCursor: data.nextCursor }
+        }}
+        permalinkFor={postPermalink}
+        emptyTitle="Nothing hidden"
+        emptyDescription="Posts you hide appear here."
+        menuInitial={{ hidden: true }}
+        removeTriggers={{ unhide: true }}
+      />
+    </div>
   )
 }
 
 function UpvotedTab() {
+  const { view, setView } = useFeedView()
   return (
-    <EngagementPostList
-      queryKey={["me", "upvoted"]}
-      fetchPage={async (cursor) => {
-        const { data } = await getApiV1UserMeUpvoted({ query: { cursor }, throwOnError: true })
-        return { posts: data.data, nextCursor: data.nextCursor }
-      }}
-      permalinkFor={postPermalink}
-      emptyTitle="No upvoted posts"
-      emptyDescription="Posts you upvote appear here."
-    />
+    <div className="flex flex-col gap-3">
+      <ViewToolbar view={view} onChange={setView} />
+      <EngagementPostList
+        queryKey={["me", "upvoted"]}
+        view={view}
+        fetchPage={async (cursor) => {
+          const { data } = await getApiV1UserMeUpvoted({ query: { cursor }, throwOnError: true })
+          return { posts: data.data, nextCursor: data.nextCursor }
+        }}
+        permalinkFor={postPermalink}
+        emptyTitle="No upvoted posts"
+        emptyDescription="Posts you upvote appear here."
+      />
+    </div>
   )
 }
 
 function DownvotedTab() {
+  const { view, setView } = useFeedView()
   return (
-    <EngagementPostList
-      queryKey={["me", "downvoted"]}
-      fetchPage={async (cursor) => {
-        const { data } = await getApiV1UserMeDownvoted({ query: { cursor }, throwOnError: true })
-        return { posts: data.data, nextCursor: data.nextCursor }
-      }}
-      permalinkFor={postPermalink}
-      emptyTitle="No downvoted posts"
-      emptyDescription="Posts you downvote appear here."
-    />
+    <div className="flex flex-col gap-3">
+      <ViewToolbar view={view} onChange={setView} />
+      <EngagementPostList
+        queryKey={["me", "downvoted"]}
+        view={view}
+        fetchPage={async (cursor) => {
+          const { data } = await getApiV1UserMeDownvoted({ query: { cursor }, throwOnError: true })
+          return { posts: data.data, nextCursor: data.nextCursor }
+        }}
+        permalinkFor={postPermalink}
+        emptyTitle="No downvoted posts"
+        emptyDescription="Posts you downvote appear here."
+      />
+    </div>
   )
 }
 
@@ -241,16 +275,7 @@ function ProfilePage() {
           </TabsList>
 
           <TabsContent value="overview">
-            <div className="flex flex-col gap-8">
-              <section className="flex flex-col gap-3">
-                <h2 className="text-sm font-semibold text-muted-foreground">Posts</h2>
-                <PostsTab username={data.username} />
-              </section>
-              <section className="flex flex-col gap-3">
-                <h2 className="text-sm font-semibold text-muted-foreground">Comments</h2>
-                <CommentsTab username={data.username} />
-              </section>
-            </div>
+            <OverviewFeed username={data.username} />
           </TabsContent>
           <TabsContent value="posts">
             <PostsTab username={data.username} />
@@ -262,6 +287,9 @@ function ProfilePage() {
             <>
               <TabsContent value="saved">
                 <SavedTab />
+              </TabsContent>
+              <TabsContent value="history">
+                <HistoryTab />
               </TabsContent>
               <TabsContent value="hidden">
                 <HiddenTab />

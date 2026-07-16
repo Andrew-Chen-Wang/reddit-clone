@@ -1,9 +1,10 @@
 import { enqueueEsSyncUser } from "@utils/queues"
 import { fetchComment } from "@lib/dao/comment/fetch"
-import { type RawPostRow, fetchPost } from "@lib/dao/post/fetch"
+import { fetchPost } from "@lib/dao/post/fetch"
 import { processPosts } from "@lib/dao/post/processPost"
 import { crudUser } from "@lib/dao/user/crud"
 import { fetchUser } from "@lib/dao/user/fetch"
+import { fetchUserOverview } from "@lib/dao/userOverview/fetch"
 import { db } from "@template-nextjs/db"
 import { Hono } from "hono"
 import { describeRoute } from "hono-typebox-openapi"
@@ -24,12 +25,34 @@ import {
 } from "./user.serializer"
 import {
   commentTabSchemaResponse,
+  overviewSchemaQuery,
+  overviewSchemaResponse,
   postTabSchemaQuery,
   savedTabSchemaQuery,
   savedTabSchemaResponse,
 } from "./user-tabs.serializer"
 
 const TAB_PAGE_SIZE = 25
+
+function encodeOverviewCursor(createdAt: Date, id: string): string {
+  return Buffer.from(JSON.stringify({ c: createdAt.getTime(), i: id })).toString("base64url")
+}
+
+function decodeOverviewCursor(cursor: string | null): { createdAt: Date; id: string } | null {
+  if (!cursor) return null
+  try {
+    const parsed = JSON.parse(Buffer.from(cursor, "base64url").toString("utf-8")) as {
+      c?: number
+      i?: string
+    }
+    if (typeof parsed.c !== "number" || typeof parsed.i !== "string") return null
+    const createdAt = new Date(parsed.c)
+    if (Number.isNaN(createdAt.getTime())) return null
+    return { createdAt, id: parsed.i }
+  } catch {
+    return null
+  }
+}
 
 const app = new Hono()
   .get(
@@ -122,6 +145,70 @@ const app = new Hono()
       })
 
       const data = await buildCommentsWithPost(results, user?.id ?? null)
+      return c.json({ data, nextCursor })
+    },
+  )
+  .get(
+    "/by-username/:username/overview",
+    authNoThrowMiddleware,
+    describeRoute({
+      description: "A user's posts and comments interleaved, newest first",
+      responses: {
+        200: {
+          description: "User overview",
+          content: { "application/json": { schema: resolver(overviewSchemaResponse) } },
+        },
+        404: {
+          description: "User not found",
+          content: { "application/json": { schema: resolver(ErrorSchemaResponse) } },
+        },
+      },
+    }),
+    validator("param", userByUsernameSchemaParam),
+    validator("query", overviewSchemaQuery),
+    async (c) => {
+      const user = c.var.user
+      const { username } = c.req.valid("param")
+      const cursor = c.req.valid("query").cursor ?? null
+
+      const profile = await fetchUser(db).getOneByUsername(username, ["id"])
+      if (!profile) return throwNotFound(c, "User not found")
+
+      const decoded = decodeOverviewCursor(cursor)
+      const { items, hasMore } = await fetchUserOverview(db).getPage({
+        authorUserId: profile.id,
+        cursorCreatedAt: decoded?.createdAt ?? null,
+        cursorId: decoded?.id ?? null,
+        limit: TAB_PAGE_SIZE,
+      })
+
+      const postRows = items.flatMap((i) => (i.kind === "post" ? [i.post] : []))
+      const commentRows = items.flatMap((i) => (i.kind === "comment" ? [i.comment] : []))
+
+      const [processedPosts, processedComments] = await Promise.all([
+        processPosts(db, postRows, user?.id ?? null),
+        buildCommentsWithPost(commentRows, user?.id ?? null),
+      ])
+      const postById = new Map(processedPosts.map((p) => [p.id, p]))
+      const commentById = new Map(processedComments.map((cm) => [cm.id, cm]))
+
+      type OverviewOut =
+        | { kind: "post"; post: (typeof processedPosts)[number] }
+        | { kind: "comment"; comment: (typeof processedComments)[number] }
+      const data: OverviewOut[] = []
+      for (const item of items) {
+        if (item.kind === "post") {
+          const post = postById.get(item.id)
+          if (post) data.push({ kind: "post", post })
+        } else {
+          const comment = commentById.get(item.id)
+          if (comment) data.push({ kind: "comment", comment })
+        }
+      }
+
+      const last = items.at(-1)
+      const nextCursor = hasMore && last ? encodeOverviewCursor(last.createdAt, last.id) : null
+
       return c.json({ data, nextCursor })
     },
   )

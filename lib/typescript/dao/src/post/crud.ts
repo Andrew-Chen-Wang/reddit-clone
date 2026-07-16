@@ -136,6 +136,10 @@ export function crudPost(db: Kysely<DB>) {
       .execute()
   }
 
+  async function setLinkImageKey(id: string, linkImageKey: string | null): Promise<void> {
+    await db.updateTable("post").set({ linkImageKey }).where("id", "=", id).execute()
+  }
+
   async function incrementShareCount(id: string): Promise<void> {
     await db
       .updateTable("post")
@@ -225,6 +229,7 @@ export function crudPost(db: Kysely<DB>) {
     deleteOwn,
     deleteById,
     setFlair,
+    setLinkImageKey,
     incrementShareCount,
     incrementViewCount,
     modRemove,

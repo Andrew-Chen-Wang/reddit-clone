@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { Button } from "@ui/base/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@ui/base/ui/card"
+import { Card, CardContent } from "@ui/base/ui/card"
 import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import { formatCompactNumber } from "@ui/seo-shared/format-number"
@@ -30,10 +30,12 @@ export function RecentPostsRail() {
 
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between gap-2 pb-2">
-        <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      {/* Explicit flex row: base CardHeader is display:grid, so justify-between
+          can't right-align the Clear action there. */}
+      <div className="flex items-center justify-between gap-2 px-4 pb-2">
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Recent Posts
-        </CardTitle>
+        </span>
         <Button
           variant="link"
           size="sm"
@@ -45,7 +47,7 @@ export function RecentPostsRail() {
         >
           Clear
         </Button>
-      </CardHeader>
+      </div>
       <CardContent className="flex flex-col gap-3">
         {posts.map((post) => {
           const permalink = post.communityName

@@ -14,6 +14,7 @@ import type {
   GetApiV1FeedModResponse,
   GetApiV1FeedPopularResponse,
   GetApiV1FeedProfileByUsernameResponse,
+  GetApiV1HistoryPostsResponse,
   GetApiV1HistoryRecentCommunitiesResponse,
   GetApiV1HistoryRecentPostsResponse,
   GetApiV1ModLogByCommunityIdResponse,
@@ -38,6 +39,7 @@ import type {
   GetApiV1SearchResponse,
   GetApiV1UserBlockMineResponse,
   GetApiV1UserByUsernameByUsernameCommentsResponse,
+  GetApiV1UserByUsernameByUsernameOverviewResponse,
   GetApiV1UserByUsernameByUsernameResponse,
   GetApiV1UserFollowMineResponse,
   GetApiV1UserMeDownvotedResponse,
@@ -66,6 +68,19 @@ export const getApiV1UserByUsernameByUsernameCommentsResponseTransformer = async
     item.createdAt = new Date(item.createdAt)
     if (item.editedAt) {
       item.editedAt = new Date(item.editedAt)
+    }
+    return item
+  })
+  return data
+}
+
+export const getApiV1UserByUsernameByUsernameOverviewResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1UserByUsernameByUsernameOverviewResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.post.createdAt = new Date(item.post.createdAt)
+    if (item.post.editedAt) {
+      item.post.editedAt = new Date(item.post.editedAt)
     }
     return item
   })
@@ -304,6 +319,19 @@ export const getApiV1HistoryRecentPostsResponseTransformer = async (
 ): Promise<GetApiV1HistoryRecentPostsResponse> => {
   data.data = data.data.map((item: any) => {
     item.viewedAt = new Date(item.viewedAt)
+    return item
+  })
+  return data
+}
+
+export const getApiV1HistoryPostsResponseTransformer = async (
+  data: any,
+): Promise<GetApiV1HistoryPostsResponse> => {
+  data.data = data.data.map((item: any) => {
+    item.createdAt = new Date(item.createdAt)
+    if (item.editedAt) {
+      item.editedAt = new Date(item.editedAt)
+    }
     return item
   })
   return data
