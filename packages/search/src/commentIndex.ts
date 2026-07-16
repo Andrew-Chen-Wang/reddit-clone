@@ -59,6 +59,7 @@ export interface SearchCommentsParams {
   sort?: ContentSort
   communityId?: string | null
   authorUsername?: string | null
+  postId?: string | null
   createdAfter?: string | null
   limit?: number
   offset?: number
@@ -73,6 +74,7 @@ export async function searchComments(
   if (nsfw) filter.push(nsfw)
   if (params.communityId) filter.push({ term: { community_id: params.communityId } })
   if (params.authorUsername) filter.push({ term: { author_username: params.authorUsername } })
+  if (params.postId) filter.push({ term: { post_id: params.postId } })
   const window = createdAfterFilter(params.createdAfter ?? null)
   if (window) filter.push(window)
 
