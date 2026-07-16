@@ -29,7 +29,7 @@ import {
   patchApiV1UserMeSettingsMutation,
   postApiV1AuthLogoutMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
-import { LogOut, Monitor, Moon, Search, Settings, Sun, User } from "lucide-react"
+import { LogOut, Monitor, Moon, Plus, Search, Settings, Sun, User } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -133,7 +133,14 @@ export function TopNav() {
             disabled
           />
         </div>
-        <div className="ml-auto">
+        <Link
+          to="/submit"
+          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "ml-auto gap-1.5")}
+        >
+          <Plus className="size-4" />
+          <span className="hidden sm:inline">Create</span>
+        </Link>
+        <div>
           <DropdownMenu>
             <DropdownMenuTrigger
               aria-label="Account menu"

@@ -10,6 +10,7 @@ import {
 } from "@ui/base/ui/dropdown-menu"
 import { CommunityHeader } from "@ui/seo-shared/community/CommunityHeader"
 import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
+import { PostFeed, type FeedPost } from "@frontends/dashboard/components/PostFeed"
 import {
   getApiV1CommunityByNameOptions,
   getApiV1CommunityMemberMineOptions,
@@ -31,6 +32,14 @@ const NOTIFICATION_LABELS: Record<NotificationLevel, string> = {
   low: "Low",
   frequent: "Frequent",
 }
+
+const COMMUNITY_SORTS = [
+  { value: "hot", label: "Hot" },
+  { value: "new", label: "New" },
+  { value: "top", label: "Top" },
+  { value: "rising", label: "Rising" },
+  { value: "controversial", label: "Controversial" },
+]
 
 function CommunityPage() {
   const { name } = Route.useParams()
@@ -210,14 +219,15 @@ function CommunityPage() {
 
       <div className="mx-auto mt-4 flex w-full max-w-5xl flex-col gap-6 px-4 lg:flex-row">
         <div className="min-w-0 flex-1">
-          <div className="rounded-lg border bg-card p-10 text-center">
-            <p className="text-sm font-medium text-muted-foreground">
-              This community doesn&apos;t have any posts yet
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Be the first to share something with r/{community.name}.
-            </p>
-          </div>
+          <PostFeed
+            source={{ kind: "community", name: community.name }}
+            sorts={COMMUNITY_SORTS}
+            defaultSort="hot"
+            showCommunity={false}
+            permalinkFor={(post: FeedPost) => `/r/${community.name}/comments/${post.id}`}
+            emptyTitle="This community doesn't have any posts yet"
+            emptyDescription={`Be the first to share something with r/${community.name}.`}
+          />
         </div>
 
         <aside className="w-full shrink-0 lg:w-80">

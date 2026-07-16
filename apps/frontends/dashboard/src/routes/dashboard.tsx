@@ -1,34 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { NavLinks } from "@ui/seo-shared/nav-links"
+import { PostFeed, type FeedPost } from "@frontends/dashboard/components/PostFeed"
+import { RecentPostsRail } from "@frontends/dashboard/components/RecentPostsRail"
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardHome,
 })
 
-const quickLinks = [
-  { href: "/profile", label: "Profile" },
-  { href: "/settings", label: "Settings" },
+const HOME_SORTS = [
+  { value: "best", label: "Best" },
+  { value: "hot", label: "Hot" },
+  { value: "new", label: "New" },
+  { value: "top", label: "Top" },
+  { value: "rising", label: "Rising" },
 ]
+
+function permalinkFor(post: FeedPost): string {
+  if (post.community) return `/r/${post.community.name}/comments/${post.id}`
+  if (post.author) return `/u/${post.author.username}`
+  return "/"
+}
 
 function DashboardHome() {
   return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold">Welcome to your Dashboard</h1>
-      <NavLinks className="mb-6" links={quickLinks} />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-sm text-muted-foreground">Total Projects</p>
-          <p className="mt-1 text-3xl font-bold">12</p>
-        </div>
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-sm text-muted-foreground">Active Tasks</p>
-          <p className="mt-1 text-3xl font-bold">34</p>
-        </div>
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-sm text-muted-foreground">Completed</p>
-          <p className="mt-1 text-3xl font-bold">89</p>
-        </div>
+    <div className="mx-auto mt-4 flex w-full max-w-5xl flex-col gap-6 px-4 lg:flex-row">
+      <div className="min-w-0 flex-1">
+        <PostFeed
+          source={{ kind: "home" }}
+          sorts={HOME_SORTS}
+          defaultSort="best"
+          permalinkFor={permalinkFor}
+          emptyTitle="Your home feed is empty"
+          emptyDescription="Join some communities to see posts here."
+        />
       </div>
+      <aside className="w-full shrink-0 lg:w-80">
+        <RecentPostsRail />
+      </aside>
     </div>
   )
 }

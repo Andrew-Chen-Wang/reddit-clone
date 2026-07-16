@@ -16,6 +16,7 @@ import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
 import {
   getApiV1CommunityMemberMineOptions,
   getApiV1CommunityMemberModeratedOptions,
+  getApiV1HistoryRecentCommunitiesOptions,
   patchApiV1CommunityMemberByCommunityIdMembershipMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import { ChevronRight, Compass, Home, Plus, ShieldCheck, Star, TrendingUp } from "lucide-react"
@@ -98,12 +99,14 @@ export function AppSidebar() {
   const [wizardOpen, setWizardOpen] = useState(false)
   const { data: mine } = useQuery(getApiV1CommunityMemberMineOptions())
   const { data: moderated } = useQuery(getApiV1CommunityMemberModeratedOptions())
+  const { data: recent } = useQuery(getApiV1HistoryRecentCommunitiesOptions())
 
   const joined = ((mine?.data ?? []) as JoinedCommunity[]).toSorted((a, b) => {
     if (a.isFavorite !== b.isFavorite) return a.isFavorite ? -1 : 1
     return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
   })
   const moderatedCommunities = moderated?.data ?? []
+  const recentCommunities = (recent?.data ?? []).slice(0, 5)
 
   return (
     <Sidebar collapsible="icon" className="top-14! h-[calc(100svh-3.5rem)]!">
@@ -164,9 +167,25 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Recent</SidebarGroupLabel>
           <SidebarGroupContent>
-            <p className="px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-              Communities you visit will show up here.
-            </p>
+            {recentCommunities.length > 0 ? (
+              <SidebarMenu>
+                {recentCommunities.map((community) => (
+                  <CommunityLink
+                    key={community.communityId}
+                    community={{
+                      id: community.communityId,
+                      name: community.name,
+                      displayName: null,
+                      iconImageKey: community.iconImageKey,
+                    }}
+                  />
+                ))}
+              </SidebarMenu>
+            ) : (
+              <p className="px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+                Communities you visit will show up here.
+              </p>
+            )}
           </SidebarGroupContent>
         </SidebarGroup>
 

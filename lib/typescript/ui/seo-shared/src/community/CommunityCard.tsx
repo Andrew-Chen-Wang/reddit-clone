@@ -26,7 +26,10 @@ export function CommunityCard({ community, joinSlot }: CommunityCardProps) {
         <div className="flex items-center gap-2">
           <CommunityIcon name={community.name} iconUrl={community.iconUrl} size="md" />
           <div className="min-w-0 flex-1">
-            <SeoLink href={`/r/${community.name}`} className="block truncate font-semibold hover:underline">
+            <SeoLink
+              href={`/r/${community.name}`}
+              className="block truncate font-semibold hover:underline"
+            >
               r/{community.name}
             </SeoLink>
             <p className="truncate text-xs text-muted-foreground">

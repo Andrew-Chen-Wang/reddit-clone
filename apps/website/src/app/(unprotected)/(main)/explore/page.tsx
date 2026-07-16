@@ -28,7 +28,13 @@ const COMMUNITY_FIELDS: [
   "isNsfw",
 ] = ["id", "name", "displayName", "description", "iconImageKey", "memberCount", "isNsfw"]
 
-function TopicChips({ topics, active }: { topics: { slug: string; name: string }[]; active?: string }) {
+function TopicChips({
+  topics,
+  active,
+}: {
+  topics: { slug: string; name: string }[]
+  active?: string
+}) {
   return (
     <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
       <Link

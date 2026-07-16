@@ -1,9 +1,4 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@ui/base/ui/accordion"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@ui/base/ui/accordion"
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/base/ui/avatar"
 import { Card, CardContent } from "@ui/base/ui/card"
 import { SeoLink } from "@ui/seo-shared/_internal/seo-link"
@@ -143,7 +138,10 @@ export function CommunityRightRail({
               })}
             </ul>
             {moderators.length > shownMods.length ? (
-              <SeoLink href={`/r/${name}/moderators`} className="text-sm text-primary hover:underline">
+              <SeoLink
+                href={`/r/${name}/moderators`}
+                className="text-sm text-primary hover:underline"
+              >
                 View all moderators
               </SeoLink>
             ) : null}
