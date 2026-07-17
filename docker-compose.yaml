@@ -1,26 +1,65 @@
 services:
   postgres:
-    container_name: nextjs_spa_split_postgres
+    container_name: reddit_clone_postgres
     image: postgres:18
     ports:
-      - "24313:5432"
+      - "51359:5432"
     volumes:
       - postgres:/var/lib/postgresql
     environment:
-      - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=main
 
-  #valkey:
-  #  image: valkey:latest
-  #  container_name: template_nextjs_valkey
-  #  ports:
-  #    - "41013:6379"
-  #  volumes:
-  #    - valkey-data:/data
+  valkey:
+    container_name: reddit_clone_valkey
+    image: valkey/valkey:latest
+    ports:
+      - "55791:6379"
+    volumes:
+      - valkey-data:/data
+
+  elasticsearch:
+    container_name: reddit_clone_elasticsearch
+    image: elasticsearch:9.4.3
+    ports:
+      - "42601:9200"
+      - "42602:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms16g -Xmx16g
+      - ELASTIC_PASSWORD=wgUi6pBdBJq03hpDw2ulNuW
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  garage:
+    container_name: reddit_clone_garage
+    image: dxflrs/garage:v2.3.0
+    restart: unless-stopped
+    ports:
+      - "51199:3900"
+      - "21693:3902"
+      - "59387:3903"
+    volumes:
+      - ./.config/garage.toml:/etc/garage.toml
+      - garage-data:/var/lib/garage/data
+      - garage-meta:/var/lib/garage/meta
 
 volumes:
   postgres:
     driver: local
-  #valkey-data:
-  #  driver: local
+  valkey-data:
+    driver: local
+  esdata:
+    driver: local
+  garage-data:
+    driver: local
+  garage-meta:
+    driver: local
