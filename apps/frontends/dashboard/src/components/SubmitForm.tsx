@@ -2,20 +2,31 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { cn } from "@ui/base/lib/utils"
 import { Button } from "@ui/base/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@ui/base/ui/command"
 import { Input } from "@ui/base/ui/input"
 import { Label } from "@ui/base/ui/label"
 import { LoadingButton } from "@ui/base/ui/loading-button"
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/base/ui/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/base/ui/select"
 import { Switch } from "@ui/base/ui/switch"
 import { Tabs, TabsList, TabsTrigger } from "@ui/base/ui/tabs"
 import { CommunityIcon } from "@ui/seo-shared/community/CommunityIcon"
+import { formatCompactNumber } from "@ui/seo-shared/format-number"
 import { Markdown } from "@ui/seo-shared/Markdown"
 import { MarkdownEditor } from "@ui/spa-shared/MarkdownEditor"
 import {
+  getApiV1CommunityByNameOptions,
   getApiV1CommunityMemberMineOptions,
   getApiV1DraftOptions,
   getApiV1FlairByCommunityIdPostTemplatesOptions,
+  getApiV1SearchSuggestOptions,
+  getApiV1UserMeOptions,
   postApiV1DraftMutation,
   postApiV1PostMutation,
 } from "@lib/api-client/generated/@tanstack/react-query.gen"
@@ -35,6 +46,8 @@ import {
   type MediaDraft,
 } from "@frontends/dashboard/lib/mediaUpload"
 import {
+  ChevronsUpDown,
+  CircleUserRound,
   Clock,
   Film,
   FileText,
@@ -62,6 +75,12 @@ export type SubmitFormProps = {
   /** When set, the community is fixed (r/name/submit). Otherwise a picker is shown. */
   fixedCommunity?: SubmitFormCommunity
 }
+
+/** Where the post goes: the author's own profile, or a community. */
+type Destination = { kind: "profile" } | ({ kind: "community" } & SubmitFormCommunity)
+
+const SEARCH_MIN_CHARS = 2
+const SEARCH_DEBOUNCE_MS = 200
 
 function isValidHttpUrl(value: string): boolean {
   try {
@@ -245,13 +264,57 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
     ...getApiV1CommunityMemberMineOptions(),
     enabled: !fixedCommunity,
   })
+  const { data: me } = useQuery({
+    ...getApiV1UserMeOptions(),
+    enabled: !fixedCommunity,
+  })
 
-  const [pickedId, setPickedId] = useState<string | null>(null)
+  const [destination, setDestination] = useState<Destination | null>(
+    fixedCommunity ? { kind: "community", ...fixedCommunity } : null,
+  )
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [search, setSearch] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState("")
+  useEffect(() => {
+    const id = setTimeout(() => {
+      setDebouncedSearch(search.trim())
+    }, SEARCH_DEBOUNCE_MS)
+    return () => {
+      clearTimeout(id)
+    }
+  }, [search])
+
   const communities = mine?.data ?? []
-  const picked = communities.find((c) => c.id === pickedId)
   const community: SubmitFormCommunity | undefined =
-    fixedCommunity ??
-    (picked ? { id: picked.id, name: picked.name, displayName: picked.displayName } : undefined)
+    destination?.kind === "community" ? destination : undefined
+  const isProfile = destination?.kind === "profile"
+
+  const { data: suggest } = useQuery({
+    ...getApiV1SearchSuggestOptions({ query: { q: debouncedSearch } }),
+    enabled: !fixedCommunity && pickerOpen && debouncedSearch.length >= SEARCH_MIN_CHARS,
+  })
+  const joinedIds = new Set(communities.map((c) => c.id))
+  const suggested = (suggest?.communities ?? []).filter((c) => !joinedIds.has(c.id))
+
+  // Postability is enforced server-side; this pre-check only improves the UX for
+  // non-joined picks (restricted communities, bans).
+  const needsPostCheck =
+    !fixedCommunity && destination?.kind === "community" && !joinedIds.has(destination.id)
+  const { data: pickedDetail } = useQuery({
+    ...getApiV1CommunityByNameOptions({
+      path: { name: destination?.kind === "community" ? destination.name : "" },
+    }),
+    enabled: needsPostCheck,
+  })
+  const destinationBlocked = needsPostCheck && pickedDetail?.viewer.canPost === false
+
+  function pickDestination(dest: Destination) {
+    setDestination(dest)
+    // Flair templates belong to a single community; a stale id would be rejected.
+    setFlairTemplateId(null)
+    setPickerOpen(false)
+    setSearch("")
+  }
 
   const [type, setType] = useState<PostType>("text")
   const [title, setTitle] = useState("")
@@ -279,7 +342,21 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
     setIsSpoiler(draft.isSpoiler)
     setIsOc(draft.isOc)
     setFlairTemplateId(draft.flairTemplateId)
-    if (!fixedCommunity && draft.communityId) setPickedId(draft.communityId)
+    if (!fixedCommunity) {
+      if (draft.isProfile) {
+        setDestination({ kind: "profile" })
+      } else if (draft.communityId) {
+        const found = communities.find((c) => c.id === draft.communityId)
+        if (found) {
+          setDestination({
+            kind: "community",
+            id: found.id,
+            name: found.name,
+            displayName: found.displayName,
+          })
+        }
+      }
+    }
     setLoadedDraftId(draft.id)
     toast.success("Draft loaded")
   }
@@ -371,6 +448,10 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
           to: "/r/$name/comments/$",
           params: { name: community.name, _splat: result.id },
         })
+      } else if (me) {
+        void navigate({ to: "/user/$username", params: { username: me.username } })
+      } else {
+        void navigate({ to: "/" })
       }
     },
     onError: () => {
@@ -382,15 +463,16 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
   const linkValid = type === "link" ? isValidHttpUrl(linkUrl) : true
   const mediaValid = type === "media" ? mediaDrafts.length > 0 : true
   const busy = createPost.isPending || uploading
-  const canSubmit = !!community && titleValid && linkValid && mediaValid && !busy
+  const canSubmit =
+    destination !== null && !destinationBlocked && titleValid && linkValid && mediaValid && !busy
 
   async function submitMedia() {
-    if (!community) return
+    if (!destination) return
     setUploading(true)
     try {
       const { data } = await postApiV1Post({
         body: {
-          communityId: community.id,
+          communityId: community?.id,
           type: "media",
           title: title.trim(),
           media: mediaDrafts.map((m) => ({
@@ -403,7 +485,7 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
           isNsfw,
           isSpoiler,
           isOc,
-          flairTemplateId,
+          flairTemplateId: community ? flairTemplateId : null,
         },
         throwOnError: true,
       })
@@ -432,10 +514,16 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
 
       await postApiV1MediaConfirm({ body: { postId: data.id }, throwOnError: true })
       clearLoadedDraft()
-      void navigate({
-        to: "/r/$name/comments/$",
-        params: { name: community.name, _splat: data.id },
-      })
+      if (community) {
+        void navigate({
+          to: "/r/$name/comments/$",
+          params: { name: community.name, _splat: data.id },
+        })
+      } else if (me) {
+        void navigate({ to: "/user/$username", params: { username: me.username } })
+      } else {
+        void navigate({ to: "/" })
+      }
     } catch {
       toast.error("Could not upload media", {
         description: "One or more files failed to upload. Please try again.",
@@ -445,14 +533,14 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
   }
 
   function submit() {
-    if (!community) return
+    if (!destination) return
     if (type === "media") {
       void submitMedia()
       return
     }
     createPost.mutate({
       body: {
-        communityId: community.id,
+        communityId: community?.id,
         type,
         title: title.trim(),
         bodyMd: type === "text" ? bodyMd : undefined,
@@ -460,7 +548,7 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
         isNsfw,
         isSpoiler,
         isOc,
-        flairTemplateId,
+        flairTemplateId: community ? flairTemplateId : null,
       },
     })
   }
@@ -471,7 +559,7 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
     saveDraft.mutate({
       body: {
         communityId: community?.id ?? null,
-        isProfile: false,
+        isProfile,
         type,
         title: title.trim() || null,
         bodyMd: type === "text" ? bodyMd : null,
@@ -479,16 +567,16 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
         isNsfw,
         isSpoiler,
         isOc,
-        flairTemplateId,
+        flairTemplateId: community ? flairTemplateId : null,
       },
     })
   }
 
   function buildSchedulePayload() {
-    if (!community || !titleValid || type === "media") return null
+    if (!destination || destinationBlocked || !titleValid || type === "media") return null
     return {
-      communityId: community.id,
-      isProfile: false,
+      communityId: community?.id ?? null,
+      isProfile,
       type,
       title: title.trim(),
       bodyMd: type === "text" ? bodyMd : undefined,
@@ -496,7 +584,7 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
       isNsfw,
       isSpoiler,
       isOc,
-      flairTemplateId,
+      flairTemplateId: community ? flairTemplateId : null,
     }
   }
 
@@ -529,19 +617,119 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
         </div>
       ) : (
         <div className="mb-4">
-          <Label className="mb-1.5 block">Community</Label>
-          <Select value={pickedId ?? ""} onValueChange={setPickedId}>
-            <SelectTrigger className="w-full sm:w-72">
-              <SelectValue placeholder="Choose a community" />
-            </SelectTrigger>
-            <SelectContent>
-              {communities.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  r/{c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label className="mb-1.5 block">Post to</Label>
+          <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
+            <PopoverTrigger
+              render={
+                <Button type="button" variant="outline" className="w-full justify-between sm:w-72">
+                  {destination === null ? (
+                    <span className="text-muted-foreground">Choose where to post</span>
+                  ) : isProfile ? (
+                    <span className="flex items-center gap-2">
+                      <CircleUserRound className="size-4" />
+                      u/{me?.username}
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <CommunityIcon name={community?.name ?? ""} size="sm" />
+                      r/{community?.name}
+                    </span>
+                  )}
+                  <ChevronsUpDown className="size-4 opacity-50" />
+                </Button>
+              }
+            />
+            <PopoverContent className="w-72 p-0" align="start">
+              <Command shouldFilter={false}>
+                <CommandInput
+                  value={search}
+                  onValueChange={setSearch}
+                  placeholder="Search communities"
+                />
+                <CommandList>
+                  {me ? (
+                    <CommandGroup heading="Your profile">
+                      <CommandItem
+                        value="__profile__"
+                        onSelect={() => {
+                          pickDestination({ kind: "profile" })
+                        }}
+                      >
+                        <CircleUserRound className="size-4" />
+                        <span className="truncate">u/{me.username}</span>
+                      </CommandItem>
+                    </CommandGroup>
+                  ) : null}
+                  {(() => {
+                    const q = search.trim().toLowerCase()
+                    const joined = q
+                      ? communities.filter(
+                          (c) =>
+                            c.name.toLowerCase().includes(q) ||
+                            (c.displayName?.toLowerCase().includes(q) ?? false),
+                        )
+                      : communities
+                    return joined.length > 0 ? (
+                      <CommandGroup heading="Your communities">
+                        {joined.map((c) => (
+                          <CommandItem
+                            key={c.id}
+                            value={c.id}
+                            onSelect={() => {
+                              pickDestination({
+                                kind: "community",
+                                id: c.id,
+                                name: c.name,
+                                displayName: c.displayName,
+                              })
+                            }}
+                          >
+                            <CommunityIcon name={c.name} size="sm" />
+                            <span className="truncate">r/{c.name}</span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    ) : null
+                  })()}
+                  {suggested.length > 0 ? (
+                    <CommandGroup heading="Other communities">
+                      {suggested.map((c) => (
+                        <CommandItem
+                          key={c.id}
+                          value={c.id}
+                          onSelect={() => {
+                            pickDestination({
+                              kind: "community",
+                              id: c.id,
+                              name: c.name,
+                              displayName: c.displayName,
+                            })
+                          }}
+                        >
+                          <CommunityIcon name={c.name} size="sm" />
+                          <span className="min-w-0 flex-1 truncate">r/{c.name}</span>
+                          <span className="shrink-0 text-xs text-muted-foreground">
+                            {formatCompactNumber(c.memberCount)}
+                          </span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  ) : null}
+                  <CommandEmpty>
+                    {search.trim().length >= SEARCH_MIN_CHARS
+                      ? "No communities found."
+                      : "Type to search all communities."}
+                  </CommandEmpty>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+          {destinationBlocked ? (
+            <p className="mt-1.5 text-xs text-destructive">
+              You don&apos;t have permission to post in r/{community?.name} — only approved members
+              can post.
+            </p>
+          ) : null}
         </div>
       )}
 
@@ -667,7 +855,7 @@ export function SubmitForm({ fixedCommunity }: SubmitFormProps) {
             type="button"
             variant="outline"
             size="sm"
-            disabled={busy || type === "media" || !community || !titleValid}
+            disabled={busy || type === "media" || !destination || destinationBlocked || !titleValid}
             onClick={() => {
               setScheduleOpen(true)
             }}

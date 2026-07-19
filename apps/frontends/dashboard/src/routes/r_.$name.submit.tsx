@@ -32,6 +32,17 @@ function SubmitPage() {
     )
   }
 
+  if (!community.viewer.canPost) {
+    return (
+      <div className="mx-auto flex min-h-[50vh] max-w-2xl flex-col items-center justify-center gap-2 px-4 text-center">
+        <h1 className="text-xl font-semibold">You can&apos;t post in r/{community.name}</h1>
+        <p className="text-sm text-muted-foreground">
+          Posting here is limited to approved members.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <SubmitForm
       fixedCommunity={{

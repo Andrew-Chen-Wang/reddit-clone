@@ -1200,6 +1200,7 @@ export type GetApiV1CommunityByNameResponses = {
     }>
     viewer: {
       isMember: boolean
+      canPost: boolean
       isFavorite: boolean
       isModerator: boolean
       notificationLevel: "off" | "low" | "frequent" | null
@@ -1249,6 +1250,7 @@ export type GetApiV1CommunityByIdSettingsResponses = {
     name: string
     displayName: string | null
     description: string
+    visibility: string
     defaultCommentSort: string
     topicId: string | null
     isNsfw: boolean
@@ -1315,6 +1317,7 @@ export type PatchApiV1CommunityByIdData = {
   body?: {
     displayName?: string | null
     description?: string
+    visibility?: "public" | "restricted" | "private"
     defaultCommentSort?: "best" | "top" | "new" | "controversial" | "old"
     topicId?: string | null
     isNsfw?: boolean

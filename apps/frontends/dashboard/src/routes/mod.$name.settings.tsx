@@ -27,6 +27,20 @@ const COMMENT_SORTS = [
   { value: "old", label: "Old" },
 ] as const
 
+const COMMUNITY_TYPES = [
+  { value: "public", label: "Public", description: "Anyone can view, post, and comment." },
+  {
+    value: "restricted",
+    label: "Restricted",
+    description: "Anyone can view, but only approved users can post.",
+  },
+  {
+    value: "private",
+    label: "Private",
+    description: "Only approved members can view and post.",
+  },
+] as const
+
 const TOGGLES = [
   {
     key: "isNsfw" as const,
@@ -141,6 +155,40 @@ function GeneralSettingsInner({ community }: { community: CommunityWithSettings 
           <CardTitle>Community</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <Label>Community type</Label>
+              <p className="text-sm text-muted-foreground">
+                {COMMUNITY_TYPES.find((t) => t.value === community.visibility)?.description ??
+                  "Who can view and post here."}
+                {community.visibility === "private"
+                  ? " Switching away from private makes all existing content visible to everyone."
+                  : ""}
+              </p>
+            </div>
+            <Select
+              items={Object.fromEntries(COMMUNITY_TYPES.map((t) => [t.value, t.label]))}
+              value={community.visibility}
+              onValueChange={(v) => {
+                const match = COMMUNITY_TYPES.find((t) => t.value === v)
+                if (match && match.value !== community.visibility) {
+                  save({ visibility: match.value })
+                }
+              }}
+            >
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {COMMUNITY_TYPES.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Separator />
           <div className="flex items-center justify-between gap-4">
             <div>
               <Label>Topic</Label>

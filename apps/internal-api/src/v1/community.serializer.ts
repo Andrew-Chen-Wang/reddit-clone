@@ -45,6 +45,7 @@ const bodyPolicy = Type.Union([
 export const communityUpdateSchemaRequest = Type.Object({
   displayName: Type.Optional(Nullable(Type.String({ maxLength: 100 }))),
   description: Type.Optional(Type.String({ minLength: 1, maxLength: 500 })),
+  visibility: Type.Optional(visibility),
   defaultCommentSort: Type.Optional(commentSort),
   topicId: Type.Optional(Nullable(UUID7String)),
   isNsfw: Type.Optional(Type.Boolean()),
@@ -72,6 +73,7 @@ export const communitySettingsSchemaResponse = Type.Object({
   name: Type.String(),
   displayName: Nullable(Type.String()),
   description: Type.String(),
+  visibility: Type.String(),
   defaultCommentSort: Type.String(),
   topicId: Nullable(UUID7String),
   isNsfw: Type.Boolean(),
@@ -143,6 +145,7 @@ export const communityDetailSchemaResponse = Type.Object({
   ),
   viewer: Type.Object({
     isMember: Type.Boolean(),
+    canPost: Type.Boolean(),
     isFavorite: Type.Boolean(),
     isModerator: Type.Boolean(),
     notificationLevel: Nullable(notificationLevel),

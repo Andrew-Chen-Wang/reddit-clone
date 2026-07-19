@@ -115,6 +115,11 @@ const app = new Hono()
       )
       if (!view.ok) return throwNotFound(c, "Community not found")
 
+      const post = await getCommunityAuthz(db).canPost(
+        { id: community.id, visibility: community.visibility },
+        user?.id ?? null,
+      )
+
       const rules = await fetchCommunityRule(db).getManyForCommunity(community.id, [
         "id",
         "name",
@@ -181,6 +186,7 @@ const app = new Hono()
         })),
         viewer: {
           isMember,
+          canPost: post.ok,
           isFavorite,
           isModerator,
           notificationLevel,
@@ -235,6 +241,7 @@ const app = new Hono()
         "name",
         "displayName",
         "description",
+        "visibility",
         "defaultCommentSort",
         "topicId",
         "isNsfw",

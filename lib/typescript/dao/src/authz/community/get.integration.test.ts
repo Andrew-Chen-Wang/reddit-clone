@@ -11,10 +11,13 @@ const nonMemberId = v7()
 const memberId = v7()
 const modConfigId = v7()
 const modEverythingId = v7()
+const approvedId = v7()
+const bannedId = v7()
 const privateCommunityId = v7()
 const publicCommunityId = v7()
+const restrictedCommunityId = v7()
 
-const userIds = [nonMemberId, memberId, modConfigId, modEverythingId]
+const userIds = [nonMemberId, memberId, modConfigId, modEverythingId, approvedId, bannedId]
 
 beforeAll(async () => {
   await db
@@ -35,6 +38,16 @@ beforeAll(async () => {
         id: modEverythingId,
         username: `authz-me-${suffix}`,
         email: `authz-me-${suffix}@example.invalid`,
+      },
+      {
+        id: approvedId,
+        username: `authz-ap-${suffix}`,
+        email: `authz-ap-${suffix}@example.invalid`,
+      },
+      {
+        id: bannedId,
+        username: `authz-b-${suffix}`,
+        email: `authz-b-${suffix}@example.invalid`,
       },
     ])
     .execute()
@@ -58,6 +71,14 @@ beforeAll(async () => {
         createdByUserId: modEverythingId,
         memberCount: 0,
       },
+      {
+        id: restrictedCommunityId,
+        name: `authzres${suffix}`,
+        description: "restricted community",
+        visibility: "restricted",
+        createdByUserId: modEverythingId,
+        memberCount: 1,
+      },
     ])
     .execute()
 
@@ -67,6 +88,31 @@ beforeAll(async () => {
       { id: v7(), communityId: privateCommunityId, userId: memberId },
       { id: v7(), communityId: privateCommunityId, userId: modConfigId },
       { id: v7(), communityId: privateCommunityId, userId: modEverythingId },
+      { id: v7(), communityId: restrictedCommunityId, userId: memberId },
+    ])
+    .execute()
+
+  await db
+    .insertInto("communityApprovedUser")
+    .values([
+      {
+        id: v7(),
+        communityId: restrictedCommunityId,
+        userId: approvedId,
+        approvedByUserId: modEverythingId,
+      },
+    ])
+    .execute()
+
+  await db
+    .insertInto("communityBan")
+    .values([
+      {
+        id: v7(),
+        communityId: publicCommunityId,
+        userId: bannedId,
+        bannedByUserId: modEverythingId,
+      },
     ])
     .execute()
 
@@ -94,7 +140,7 @@ beforeAll(async () => {
 afterAll(async () => {
   await db
     .deleteFrom("community")
-    .where("id", "in", [privateCommunityId, publicCommunityId])
+    .where("id", "in", [privateCommunityId, publicCommunityId, restrictedCommunityId])
     .execute()
   await db.deleteFrom("user").where("id", "in", userIds).execute()
   await db.destroy()
@@ -144,5 +190,35 @@ describe.skipIf(process.env.CI === "true")("getCommunityAuthz", () => {
   it("denies a member who is not a moderator", async () => {
     const result = await getCommunityAuthz(db).canModerate(privateCommunityId, memberId)
     expect(result.ok).toBe(false)
+  })
+
+  it("lets a non-member post in a public community", async () => {
+    const result = await getCommunityAuthz(db).canPost(publicCommunityId, nonMemberId)
+    expect(result.ok).toBe(true)
+  })
+
+  it("denies a banned user posting in a public community", async () => {
+    const result = await getCommunityAuthz(db).canPost(publicCommunityId, bannedId)
+    expect(result).toEqual({ ok: false, reason: "BANNED" })
+  })
+
+  it("denies a non-member posting in a restricted community", async () => {
+    const result = await getCommunityAuthz(db).canPost(restrictedCommunityId, nonMemberId)
+    expect(result).toEqual({ ok: false, reason: "NOT_A_MEMBER" })
+  })
+
+  it("lets a member post in a restricted community", async () => {
+    const result = await getCommunityAuthz(db).canPost(restrictedCommunityId, memberId)
+    expect(result.ok).toBe(true)
+  })
+
+  it("lets an approved user post in a restricted community", async () => {
+    const result = await getCommunityAuthz(db).canPost(restrictedCommunityId, approvedId)
+    expect(result.ok).toBe(true)
+  })
+
+  it("denies posting for an anonymous viewer", async () => {
+    const result = await getCommunityAuthz(db).canPost(publicCommunityId, null)
+    expect(result).toEqual({ ok: false, reason: "NOT_AUTHENTICATED" })
   })
 })

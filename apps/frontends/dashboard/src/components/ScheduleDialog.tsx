@@ -61,7 +61,7 @@ export function ScheduleDialog({ open, onOpenChange, getPayload }: ScheduleDialo
   function submit() {
     const payload = getPayload()
     if (!payload) {
-      toast.error("Add a title and community before scheduling.")
+      toast.error("Add a title and destination before scheduling.")
       return
     }
     const when = new Date(scheduledAt)
