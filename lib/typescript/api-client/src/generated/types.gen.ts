@@ -185,6 +185,7 @@ export type GetApiV1UserByUsernameByUsernameCommentsResponses = {
           id: string
           name: string
         } | null
+        profileUsername: string | null
       }
     }>
     nextCursor: string | null
@@ -324,6 +325,7 @@ export type GetApiV1UserByUsernameByUsernameOverviewResponses = {
                 id: string
                 name: string
               } | null
+              profileUsername: string | null
             }
           }
         }
@@ -521,6 +523,7 @@ export type GetApiV1UserMeSavedResponses = {
           id: string
           name: string
         } | null
+        profileUsername: string | null
       }
     }>
     nextCursor: string | null

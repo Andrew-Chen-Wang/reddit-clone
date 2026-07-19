@@ -94,6 +94,7 @@ export type OverviewComment = {
     id: string
     title: string
     community: { id: string; name: string } | null
+    profileUsername: string | null
   }
 }
 
@@ -119,6 +120,7 @@ export async function loadProfileOverview(
     .selectFrom("comment")
     .innerJoin("post", "post.id", "comment.postId")
     .leftJoin("community", "community.id", "post.communityId")
+    .leftJoin("user as profileOwner", "profileOwner.id", "post.profileUserId")
     .where("comment.authorUserId", "=", profileUserId)
     .where("comment.isDeleted", "=", false)
     .where("comment.removedAt", "is", null)
@@ -133,6 +135,7 @@ export async function loadProfileOverview(
       "post.title as postTitle",
       "community.id as communityId",
       "community.name as communityName",
+      "profileOwner.username as profileUsername",
     ])
     .orderBy("comment.createdAt", "desc")
     .orderBy("comment.id", "desc")
@@ -164,6 +167,7 @@ export async function loadProfileOverview(
           row.communityId && row.communityName
             ? { id: row.communityId, name: row.communityName }
             : null,
+        profileUsername: row.profileUsername ?? null,
       },
     },
   }))

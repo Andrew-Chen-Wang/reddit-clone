@@ -1,22 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useEffect, type ReactElement, type ReactNode } from "react"
-import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
-import { LegalFooter } from "@ui/seo-shared/LegalFooter"
 import { PostDetailCard } from "@ui/seo-shared/post/PostDetailCard"
 import type { CommentSortValue } from "@ui/seo-shared/comment/types"
 import { CommentSection } from "@frontends/dashboard/components/CommentSection"
 import { PostCommentSearch } from "@frontends/dashboard/components/PostCommentSearch"
 import { PostActionsMenu } from "@frontends/dashboard/components/PostActionsMenu"
 import { PostShareMenu } from "@frontends/dashboard/components/PostShareMenu"
-import {
-  CommunityLinkHoverCard,
-  UserLinkHoverCard,
-} from "@frontends/dashboard/components/PostHoverCards"
-import {
-  getApiV1CommunityByNameOptions,
-  getApiV1PostByIdOptions,
-} from "@lib/api-client/generated/@tanstack/react-query.gen"
+import { UserLinkHoverCard } from "@frontends/dashboard/components/PostHoverCards"
+import { getApiV1PostByIdOptions } from "@lib/api-client/generated/@tanstack/react-query.gen"
 import { putApiV1PostVoteByPostId } from "@lib/api-client/generated/sdk.gen"
 import { mediaUrl } from "@frontends/dashboard/lib/mediaUrl"
 import { toast } from "sonner"
@@ -29,22 +21,18 @@ function asCommentSort(value: unknown): CommentSortValue | undefined {
     : undefined
 }
 
-function wrapCommunityLink(link: ReactElement, communityName: string): ReactNode {
-  return <CommunityLinkHoverCard name={communityName}>{link}</CommunityLinkHoverCard>
-}
-
 function wrapAuthorLink(link: ReactElement, username: string): ReactNode {
   return <UserLinkHoverCard username={username}>{link}</UserLinkHoverCard>
 }
 
 type CommentSearch = { sort?: CommentSortValue; comment?: string }
 
-export const Route = createFileRoute("/r_/$name/comments/$")({
+export const Route = createFileRoute("/user_/$username/comments/$")({
   validateSearch: (search: Record<string, unknown>): CommentSearch => ({
     sort: asCommentSort(search.sort),
     comment: typeof search.comment === "string" ? search.comment : undefined,
   }),
-  component: PostDetailPage,
+  component: ProfilePostDetailPage,
 })
 
 type PostData = NonNullable<ReturnType<typeof usePost>["data"]>
@@ -58,16 +46,15 @@ function nextVoteValue(current: number, direction: 1 | -1): 1 | 0 | -1 {
   return current === -1 ? 0 : -1
 }
 
-function PostDetailPage() {
-  // Splat route: the URL is /r/:name/comments/:id[/:slug]. The id is the first
-  // splat segment; any trailing slug is cosmetic and ignored for lookup.
-  const { name, _splat } = Route.useParams()
+function ProfilePostDetailPage() {
+  // Splat route: the URL is /user/:username/comments/:id[/:slug]. The id is the
+  // first splat segment; any trailing slug is cosmetic and ignored for lookup.
+  const { username, _splat } = Route.useParams()
   const postId = (_splat ?? "").split("/")[0]
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const queryClient = useQueryClient()
   const postQuery = usePost(postId)
-  const communityQuery = useQuery(getApiV1CommunityByNameOptions({ path: { name } }))
 
   const postKey = getApiV1PostByIdOptions({ path: { id: postId } }).queryKey
 
@@ -90,24 +77,30 @@ function PostDetailPage() {
     voteMutation.mutate(newVote)
   }
 
-  // M17c: the title-slug in the URL is cosmetic — the post is always fetched by
-  // id. Once the post loads, append/replace its canonical slug onto the URL with
-  // a history REPLACE (never a push) so the back button still leaves the post.
-  // TODO(m17-backend): `slug` isn't on the generated post-by-id type yet; this
-  // reads it defensively and no-ops until the field is generated. It also needs
-  // a trailing-slug catch-all route so a slugged URL resolves the post by id on
-  // reload/direct navigation (the current route matches only .../$postId).
+  // A community post reached via a /user/... URL redirects to its canonical
+  // community permalink.
+  const communityName = postQuery.data?.community?.name
+  useEffect(() => {
+    if (!communityName) return
+    void navigate({
+      to: "/r/$name/comments/$",
+      params: { name: communityName, _splat: postId },
+      replace: true,
+    })
+  }, [communityName, postId, navigate])
+
+  // Keep the cosmetic title-slug on the URL canonical (history REPLACE only).
   const postSlug = (postQuery.data as { slug?: string } | undefined)?.slug
   useEffect(() => {
-    if (typeof window === "undefined" || !postSlug) return
-    const canonicalPath = `/r/${name}/comments/${postId}/${postSlug}`
+    if (typeof window === "undefined" || !postSlug || communityName) return
+    const canonicalPath = `/user/${username}/comments/${postId}/${postSlug}`
     if (window.location.pathname === canonicalPath) return
     window.history.replaceState(
       window.history.state,
       "",
       canonicalPath + window.location.search + window.location.hash,
     )
-  }, [postSlug, name, postId])
+  }, [postSlug, communityName, username, postId])
 
   if (postQuery.isLoading) {
     return (
@@ -127,9 +120,8 @@ function PostDetailPage() {
     )
   }
 
-  const community = communityQuery.data
-  const sort: CommentSortValue =
-    search.sort ?? asCommentSort(community?.defaultCommentSort) ?? "best"
+  const sort: CommentSortValue = search.sort ?? "best"
+  const postPath = `/user/${username}/comments/${postId}`
 
   return (
     <div className="mx-auto mt-4 flex w-full max-w-5xl flex-col gap-6 px-4 pb-10 lg:flex-row">
@@ -137,21 +129,16 @@ function PostDetailPage() {
         <PostDetailCard
           post={{
             ...post,
-            // Insights (view count) are author-only; the generated response still
-            // sends viewCount to everyone, so gate it here until the backend does.
-            // TODO(m17-backend): send author-only `viewCount` on the post serializer.
             viewCount: post.isAuthor ? post.viewCount : undefined,
             community: post.community
               ? { ...post.community, iconImageKey: mediaUrl(post.community.iconImageKey) }
               : null,
           }}
           insightsHref={`/poststats/${postId}`}
-          communityHref={post.community ? `/r/${post.community.name}` : undefined}
           authorHref={post.author ? `/user/${post.author.username}` : undefined}
           onBack={() => {
             window.history.back()
           }}
-          wrapCommunityLink={wrapCommunityLink}
           wrapAuthorLink={wrapAuthorLink}
           voteDisabled={post.isLocked}
           onUpvote={() => {
@@ -162,12 +149,8 @@ function PostDetailPage() {
           }}
           shareSlot={
             <PostShareMenu
-              post={{
-                id: post.id,
-                title: post.title,
-                community: post.community ? { name: post.community.name } : null,
-              }}
-              permalink={`/r/${name}/comments/${postId}`}
+              post={{ id: post.id, title: post.title, community: null }}
+              permalink={postPath}
             />
           }
           menuSlot={
@@ -181,16 +164,14 @@ function PostDetailPage() {
                 isOc: post.isOc,
                 isAuthor: post.isAuthor,
                 author: post.author ? { username: post.author.username } : null,
-                community: post.community
-                  ? { id: post.community.id, name: post.community.name }
-                  : null,
-                flair: post.flair ? { id: post.flair.id } : null,
+                community: null,
+                flair: null,
               }}
               onHidden={() => {
-                void navigate({ to: "/r/$name", params: { name } })
+                void navigate({ to: "/user/$username", params: { username } })
               }}
               onDeleted={() => {
-                void navigate({ to: "/r/$name", params: { name } })
+                void navigate({ to: "/user/$username", params: { username } })
               }}
               onEdited={() => {
                 void queryClient.invalidateQueries({ queryKey: postKey })
@@ -199,11 +180,11 @@ function PostDetailPage() {
           }
         />
 
-        <PostCommentSearch postId={postId} target={{ kind: "community", name }} />
+        <PostCommentSearch postId={postId} target={{ kind: "profile", username }} />
 
         <CommentSection
           postId={postId}
-          postPath={`/r/${name}/comments/${postId}`}
+          postPath={postPath}
           sort={sort}
           focusCommentId={search.comment}
           commentCount={post.commentCount}
@@ -216,26 +197,6 @@ function PostDetailPage() {
           }}
         />
       </div>
-
-      {community ? (
-        <aside className="flex w-full shrink-0 flex-col gap-4 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-4.5rem)] lg:w-80 lg:self-start lg:overflow-y-auto">
-          <CommunityRightRail
-            name={community.name}
-            displayName={community.displayName}
-            description={community.description}
-            visibility={community.visibility}
-            memberCount={community.memberCount}
-            createdAt={community.createdAt}
-            rules={community.rules}
-            moderators={community.moderators.map((m) => ({
-              userId: m.userId,
-              username: m.username,
-              avatarImageKey: m.avatarImageKey,
-            }))}
-          />
-          <LegalFooter />
-        </aside>
-      ) : null}
     </div>
   )
 }

@@ -2,6 +2,7 @@ import type { RawCommentRow } from "@lib/dao/comment/fetch"
 import { processComments } from "@lib/dao/comment/processComment"
 import { fetchCommunity } from "@lib/dao/community/fetch"
 import { fetchPost } from "@lib/dao/post/fetch"
+import { fetchUser } from "@lib/dao/user/fetch"
 import { db } from "@template-nextjs/db"
 
 export async function buildCommentsWithPost(rows: RawCommentRow[], viewerId: string | null) {
@@ -10,7 +11,12 @@ export async function buildCommentsWithPost(rows: RawCommentRow[], viewerId: str
   const processed = await processComments(db, rows, viewerId)
 
   const postIds = [...new Set(rows.map((r) => r.postId))]
-  const posts = await fetchPost(db).getManyByIds(postIds, ["id", "title", "communityId"])
+  const posts = await fetchPost(db).getManyByIds(postIds, [
+    "id",
+    "title",
+    "communityId",
+    "profileUserId",
+  ])
   const postById = new Map(posts.map((p) => [p.id, p]))
 
   const communityIds = [
@@ -19,9 +25,18 @@ export async function buildCommentsWithPost(rows: RawCommentRow[], viewerId: str
   const communities = await fetchCommunity(db).getManyByIds(communityIds, ["id", "name"])
   const communityById = new Map(communities.map((cm) => [cm.id, cm]))
 
+  const profileUserIds = [
+    ...new Set(posts.map((p) => p.profileUserId).filter((id): id is string => id !== null)),
+  ]
+  const profileUsers = await fetchUser(db).getManyByIds(profileUserIds, ["id", "username"])
+  const profileUserById = new Map(profileUsers.map((u) => [u.id, u]))
+
   return processed.map((comment) => {
     const post = postById.get(comment.postId)
     const community = post?.communityId ? (communityById.get(post.communityId) ?? null) : null
+    const profileUser = post?.profileUserId
+      ? (profileUserById.get(post.profileUserId) ?? null)
+      : null
     return {
       id: comment.id,
       postId: comment.postId,
@@ -41,6 +56,7 @@ export async function buildCommentsWithPost(rows: RawCommentRow[], viewerId: str
         id: post?.id ?? comment.postId,
         title: post?.title ?? "",
         community: community ? { id: community.id, name: community.name } : null,
+        profileUsername: profileUser?.username ?? null,
       },
     }
   })

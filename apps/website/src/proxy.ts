@@ -20,6 +20,7 @@ const SHARED_ROUTES: SharedRoute[] = [
   { path: "/posting", spa: "dashboard" },
   { path: "/posting/[id]", spa: "dashboard" },
   { path: "/user/[username]", spa: "dashboard" },
+  { path: "/user/[username]/comments/[...rest]", spa: "dashboard" },
   { path: "/r/[name]", spa: "dashboard" },
   { path: "/r/[name]/comments/[...rest]", spa: "dashboard" },
   { path: "/r/[name]/wiki/[[...rest]]", spa: "dashboard" },

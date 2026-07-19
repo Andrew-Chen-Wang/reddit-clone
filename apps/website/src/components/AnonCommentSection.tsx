@@ -15,8 +15,8 @@ import type { CommentSortValue } from "@ui/seo-shared/comment/types"
 import { SeoLink } from "@website/components/seo-link"
 
 export type AnonCommentSectionProps = {
-  postId: string
-  communityName: string
+  /** Base permalink of the post (e.g. /r/name/comments/id or /user/name/comments/id). */
+  basePath: string
   sort: CommentSortValue
   nodes: CommentNode[]
   ancestors: CommentNode[]
@@ -37,8 +37,7 @@ export type AnonCommentSectionProps = {
  * crawlable.
  */
 export function AnonCommentSection({
-  postId,
-  communityName,
+  basePath,
   sort,
   nodes,
   ancestors,
@@ -51,7 +50,6 @@ export function AnonCommentSection({
 }: AnonCommentSectionProps) {
   const [loginOpen, setLoginOpen] = useState(false)
   const tree = focusCommentId ? assembleFocusedThread(ancestors, nodes) : assembleCommentTree(nodes)
-  const basePath = `/r/${communityName}/comments/${postId}`
 
   function permalink(commentId: string): string {
     return `${basePath}?comment=${commentId}&sort=${sort}`

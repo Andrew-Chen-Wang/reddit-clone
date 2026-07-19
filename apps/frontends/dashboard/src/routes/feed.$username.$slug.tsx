@@ -222,7 +222,9 @@ function CustomFeedPage() {
           permalinkFor={(post: FeedPost) =>
             post.community
               ? `/r/${post.community.name}/comments/${post.id}`
-              : `/comments/${post.id}`
+              : post.author
+                ? `/user/${post.author.username}/comments/${post.id}`
+                : "/"
           }
           emptyTitle="No posts yet"
           emptyDescription="The communities in this feed haven't posted anything recently."

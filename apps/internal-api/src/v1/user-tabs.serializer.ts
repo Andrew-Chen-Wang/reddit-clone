@@ -43,6 +43,7 @@ export const commentWithPostSchema = Type.Object({
         name: Type.String(),
       }),
     ),
+    profileUsername: Nullable(Type.String()),
   }),
 })
 

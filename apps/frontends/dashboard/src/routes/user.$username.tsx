@@ -53,9 +53,9 @@ export const Route = createFileRoute("/user/$username")({
 })
 
 function postPermalink(post: FeedPost): string {
-  return post.community
-    ? `/r/${post.community.name}/comments/${post.id}`
-    : `/user/${post.author?.username ?? ""}`
+  if (post.community) return `/r/${post.community.name}/comments/${post.id}`
+  if (post.author) return `/user/${post.author.username}/comments/${post.id}`
+  return "/"
 }
 
 /**

@@ -153,6 +153,7 @@ export function UserLinkHoverCard({
     ? {
         username: u.username,
         displayName: u.displayName,
+        about: u.about,
         avatarUrl: mediaUrl(u.avatarImageKey),
         postKarma: u.postKarma,
         commentKarma: u.commentKarma,

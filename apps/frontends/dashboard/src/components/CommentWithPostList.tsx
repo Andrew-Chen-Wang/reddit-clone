@@ -20,6 +20,7 @@ export type CommentWithPost = {
     id: string
     title: string
     community: { id: string; name: string } | null
+    profileUsername?: string | null
   }
 }
 
@@ -58,6 +59,15 @@ export function CommentCard({
             <Link
               to="/r/$name/comments/$"
               params={{ name: community.name, _splat: comment.post.id }}
+              search={{ comment: comment.id }}
+              className="font-medium text-foreground hover:underline"
+            >
+              {comment.post.title}
+            </Link>
+          ) : comment.post.profileUsername ? (
+            <Link
+              to="/user/$username/comments/$"
+              params={{ username: comment.post.profileUsername, _splat: comment.post.id }}
               search={{ comment: comment.id }}
               className="font-medium text-foreground hover:underline"
             >

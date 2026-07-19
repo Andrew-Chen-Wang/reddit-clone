@@ -14,7 +14,7 @@ export type AnonOverviewItem =
 
 function permalinkFor(post: PostRowPost): string {
   if (post.community) return `/r/${post.community.name}/comments/${post.id}`
-  if (post.author) return `/user/${post.author.username}`
+  if (post.author) return `/user/${post.author.username}/comments/${post.id}`
   return "/"
 }
 

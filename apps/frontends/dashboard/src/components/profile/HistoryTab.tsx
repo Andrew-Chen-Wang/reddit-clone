@@ -14,9 +14,9 @@ import { useFeedView } from "./useFeedView"
 const HISTORY_QUERY_KEY = ["me", "history"]
 
 function permalinkForPost(post: FeedPost): string {
-  return post.community
-    ? `/r/${post.community.name}/comments/${post.id}`
-    : `/user/${post.author?.username ?? ""}`
+  if (post.community) return `/r/${post.community.name}/comments/${post.id}`
+  if (post.author) return `/user/${post.author.username}/comments/${post.id}`
+  return "/"
 }
 
 async function fetchHistoryPage(

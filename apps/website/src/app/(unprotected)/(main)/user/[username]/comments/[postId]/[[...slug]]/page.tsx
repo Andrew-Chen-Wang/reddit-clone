@@ -1,32 +1,29 @@
 import { AnonCommentSection } from "@website/components/AnonCommentSection"
 import { AnonPostDetail } from "@website/components/AnonPostDetail"
 import { getCurrentSession } from "@website/lib/auth"
-import { CommunityRightRail } from "@ui/seo-shared/community/CommunityRightRail"
-import { LegalFooter } from "@ui/seo-shared/LegalFooter"
 import type { CommentSortValue } from "@ui/seo-shared/comment/types"
 import { fetchComment, ROOT_PAGE_SIZE } from "@lib/dao/comment/fetch"
 import { processComments } from "@lib/dao/comment/processComment"
 import { fetchCommunity } from "@lib/dao/community/fetch"
-import { fetchCommunityModerator } from "@lib/dao/communityModerator/fetch"
-import { fetchCommunityRule } from "@lib/dao/communityRule/fetch"
 import { fetchPost } from "@lib/dao/post/fetch"
 import { processPosts } from "@lib/dao/post/processPost"
+import { fetchUser } from "@lib/dao/user/fetch"
 import { db } from "@template-nextjs/db"
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ name: string; postId: string }>
+  params: Promise<{ username: string; postId: string }>
 }): Promise<Metadata> {
-  const { name, postId } = await params
+  const { username, postId } = await params
   const post = await fetchPost(db).getOne(postId, ["title", "bodyMd"])
   if (!post) {
     return { title: "Post not found" }
   }
-  const title = `${post.title} : r/${name}`
-  const description = post.bodyMd?.slice(0, 200) ?? `Discussion in r/${name} on ReadIt.`
+  const title = `${post.title} : u/${username}`
+  const description = post.bodyMd?.slice(0, 200) ?? `A post by u/${username} on ReadIt.`
   return { title, description, openGraph: { title, description } }
 }
 
@@ -38,53 +35,44 @@ function asCommentSort(value: unknown): CommentSortValue | undefined {
     : undefined
 }
 
-export default async function PostDetailPage({
+export default async function ProfilePostDetailPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ name: string; postId: string; slug?: string[] }>
+  params: Promise<{ username: string; postId: string; slug?: string[] }>
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const { name, postId } = await params
+  const { username, postId } = await params
   const query = await searchParams
 
-  const community = await fetchCommunity(db).getOneByName(name, [
-    "id",
-    "name",
-    "displayName",
-    "description",
-    "visibility",
-    "memberCount",
-    "createdAt",
-    "defaultCommentSort",
-  ])
-  if (!community || community.visibility === "private") {
+  const user = await fetchUser(db).getOneByUsername(username, ["id", "username"])
+  if (!user) {
     notFound()
   }
 
   const [raw, meta] = await Promise.all([
     fetchPost(db).getRawById(postId),
-    fetchPost(db).getOne(postId, ["removedAt", "communityId"]),
+    fetchPost(db).getOne(postId, ["removedAt", "communityId", "profileUserId"]),
   ])
-  if (!raw || !meta || meta.removedAt !== null || meta.communityId !== community.id) {
+  if (!raw || !meta || meta.removedAt !== null) {
+    notFound()
+  }
+  if (meta.communityId !== null) {
+    // A community post reached via a /user/... URL redirects to its canonical
+    // community permalink.
+    const community = await fetchCommunity(db).getOne(meta.communityId, ["name"])
+    if (!community) notFound()
+    redirect(`/r/${community.name}/comments/${postId}`)
+  }
+  if (meta.profileUserId !== user.id) {
     notFound()
   }
 
   const session = await getCurrentSession()
   const [post] = await processPosts(db, [raw], session?.user.id ?? null)
 
-  const [rules, moderators] = await Promise.all([
-    fetchCommunityRule(db).getManyForCommunity(community.id, [
-      "id",
-      "name",
-      "description",
-      "position",
-    ]),
-    fetchCommunityModerator(db).getManyForCommunity(community.id),
-  ])
-
   const viewerId = session?.user.id ?? null
-  const sort = asCommentSort(query.sort) ?? asCommentSort(community.defaultCommentSort) ?? "best"
+  const sort = asCommentSort(query.sort) ?? "best"
   const focusCommentId = typeof query.comment === "string" ? query.comment : undefined
   const offset = typeof query.offset === "string" ? Math.max(0, Number(query.offset) || 0) : 0
 
@@ -111,11 +99,10 @@ export default async function PostDetailPage({
       <div className="min-w-0 flex-1">
         <AnonPostDetail
           post={post}
-          communityHref={`/r/${community.name}`}
           authorHref={post.author ? `/user/${post.author.username}` : undefined}
         />
         <AnonCommentSection
-          basePath={`/r/${community.name}/comments/${postId}`}
+          basePath={`/user/${username}/comments/${postId}`}
           sort={sort}
           nodes={commentNodes}
           ancestors={commentAncestors}
@@ -127,24 +114,6 @@ export default async function PostDetailPage({
           postAuthorId={post.author?.id}
         />
       </div>
-
-      <aside className="flex w-full shrink-0 flex-col gap-4 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-4.5rem)] lg:w-80 lg:self-start lg:overflow-y-auto">
-        <CommunityRightRail
-          name={community.name}
-          displayName={community.displayName}
-          description={community.description}
-          visibility={community.visibility}
-          memberCount={community.memberCount}
-          createdAt={community.createdAt}
-          rules={rules}
-          moderators={moderators.map((m) => ({
-            userId: m.userId,
-            username: m.username,
-            avatarImageKey: m.avatarImageKey,
-          }))}
-        />
-        <LegalFooter />
-      </aside>
     </div>
   )
 }

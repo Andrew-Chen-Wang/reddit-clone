@@ -9,6 +9,7 @@ import { formatCompactNumber } from "@ui/seo-shared/format-number"
 export type UserHoverCardData = {
   username: string
   displayName: string | null
+  about: string | null
   avatarUrl: string | null
   postKarma: number
   commentKarma: number
@@ -46,6 +47,9 @@ function UserHoverCardBody({
         </div>
         {followSlot}
       </div>
+      {data.about ? (
+        <p className="line-clamp-3 text-xs text-muted-foreground">{data.about}</p>
+      ) : null}
       <div className="grid grid-cols-2 gap-2 text-xs">
         <div>
           <div className="font-semibold text-foreground">{formatCompactNumber(totalKarma)}</div>

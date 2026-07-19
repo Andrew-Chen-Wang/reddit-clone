@@ -8,14 +8,19 @@ import { useEffect, useState } from "react"
 const MIN_CHARS = 2
 const DEBOUNCE_MS = 250
 
+/** Where the post lives, so result links target the right detail route. */
+export type PostCommentSearchTarget =
+  | { kind: "community"; name: string }
+  | { kind: "profile"; username: string }
+
 export type PostCommentSearchProps = {
   postId: string
-  communityName: string
+  target: PostCommentSearchTarget
 }
 
 /** Compact "Search comments" box on the post detail page, scoped to this post via
  *  /v1/search?type=comments&postId=. Results link to the comment permalink (?comment=). */
-export function PostCommentSearch({ postId, communityName }: PostCommentSearchProps) {
+export function PostCommentSearch({ postId, target }: PostCommentSearchProps) {
   const [draft, setDraft] = useState("")
   const [q, setQ] = useState("")
 
@@ -79,8 +84,15 @@ export function PostCommentSearch({ postId, communityName }: PostCommentSearchPr
               {results.map(({ comment }) => (
                 <Link
                   key={comment.id}
-                  to="/r/$name/comments/$"
-                  params={{ name: communityName, _splat: postId }}
+                  {...(target.kind === "community"
+                    ? {
+                        to: "/r/$name/comments/$" as const,
+                        params: { name: target.name, _splat: postId },
+                      }
+                    : {
+                        to: "/user/$username/comments/$" as const,
+                        params: { username: target.username, _splat: postId },
+                      })}
                   search={{ comment: comment.id }}
                   className="rounded-md border bg-card p-2 hover:border-muted-foreground/30"
                 >

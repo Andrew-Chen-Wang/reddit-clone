@@ -65,7 +65,9 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
               title: item.comment.post.title,
               href: item.comment.post.community
                 ? `/r/${item.comment.post.community.name}/comments/${item.comment.post.id}?comment=${item.comment.id}`
-                : undefined,
+                : item.comment.post.profileUsername
+                  ? `/user/${item.comment.post.profileUsername}/comments/${item.comment.post.id}?comment=${item.comment.id}`
+                  : undefined,
               community: item.comment.post.community
                 ? {
                     name: item.comment.post.community.name,

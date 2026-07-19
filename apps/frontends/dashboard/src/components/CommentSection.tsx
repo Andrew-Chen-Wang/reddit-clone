@@ -51,7 +51,8 @@ function applyVoteToNode(node: CommentNode, value: -1 | 0 | 1): CommentNode {
 
 export type CommentSectionProps = {
   postId: string
-  communityName: string
+  /** Base permalink of the post (e.g. /r/name/comments/id or /user/name/comments/id). */
+  postPath: string
   sort: CommentSortValue
   focusCommentId?: string
   commentCount: number
@@ -62,7 +63,7 @@ export type CommentSectionProps = {
 
 export function CommentSection({
   postId,
-  communityName,
+  postPath,
   sort,
   focusCommentId,
   commentCount,
@@ -119,7 +120,7 @@ export function CommentSection({
   }
 
   function permalinkPath(commentId: string): string {
-    return `/r/${communityName}/comments/${postId}?comment=${commentId}&sort=${sort}`
+    return `${postPath}?comment=${commentId}&sort=${sort}`
   }
 
   async function handleVote(node: CommentNode, value: -1 | 0 | 1) {

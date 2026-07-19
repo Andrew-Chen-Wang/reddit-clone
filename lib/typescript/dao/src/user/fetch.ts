@@ -27,6 +27,14 @@ export function fetchUser(db: Kysely<DB>) {
       .executeTakeFirst()
   }
 
+  async function getManyByIds<T extends (keyof DB["user"])[]>(
+    ids: string[],
+    fields: T,
+  ): Promise<Pick<Selectable<DB["user"]>, T[number]>[]> {
+    if (ids.length === 0) return []
+    return await db.selectFrom("user").select(fields).where("id", "in", ids).execute()
+  }
+
   async function isUsernameTaken(username: string): Promise<boolean> {
     const row = await db
       .selectFrom("user")
@@ -36,5 +44,5 @@ export function fetchUser(db: Kysely<DB>) {
     return row !== undefined
   }
 
-  return { getOne, getOneByEmail, getOneByUsername, isUsernameTaken }
+  return { getOne, getOneByEmail, getOneByUsername, getManyByIds, isUsernameTaken }
 }
