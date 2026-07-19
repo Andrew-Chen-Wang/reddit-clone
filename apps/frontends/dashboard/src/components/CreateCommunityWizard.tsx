@@ -123,13 +123,15 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
   }
 
   const nameReady = formatValid && name.length > 0 && availability?.available === true
-  const canProceed = step === 0 ? nameReady : step === 1 ? topicId !== null : true
+  const descriptionReady = description.trim().length > 0
+  const canProceed =
+    step === 0 ? nameReady && descriptionReady : step === 1 ? topicId !== null : true
 
   function handleCreate() {
     createMutation.mutate({
       body: {
         name,
-        description,
+        description: description.trim(),
         visibility,
         isNsfw,
         topicId,
@@ -191,7 +193,9 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="community-description">Description</Label>
+              <Label htmlFor="community-description">
+                Description <span className="text-destructive">*</span>
+              </Label>
               <Textarea
                 id="community-description"
                 value={description}
@@ -200,6 +204,8 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
                 }}
                 placeholder="What is your community about?"
                 rows={4}
+                required
+                maxLength={500}
               />
             </div>
 
@@ -326,7 +332,10 @@ export function CreateCommunityWizard({ open, onOpenChange }: WizardProps) {
               Next
             </Button>
           ) : (
-            <Button onClick={handleCreate} disabled={createMutation.isPending || !nameReady}>
+            <Button
+              onClick={handleCreate}
+              disabled={createMutation.isPending || !nameReady || !descriptionReady}
+            >
               {createMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
               Create Community
             </Button>
